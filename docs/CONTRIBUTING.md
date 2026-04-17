@@ -1,4 +1,4 @@
-# ***Project Guidelines***
+# ***Contribution Guidelines***
 
 ## **Commits**
 
@@ -10,15 +10,14 @@
   - `<type>` is the type of change, following conventional commits types;
   - `<subject>` is a short description of the change in kebab-case.
     - Exemple: feat/add-user-authentication.
-- New feature should be accompanied by tests.
+- Features, refactors, fixes etc should be accompanied by approppriate tests.
 
 ## **Documentation**
 
-- Changes such as refactoring and adding new features, or mutating the project's behavior must be documented;
-- Each documentation artifact must include a changelog section, following the [Keep a Changelong](https://keepachangelog.com/en/1.1.0/) format;
-- Documentation artifacts should be in markdown.
+- Changes such as refactoring and adding new features, or mutating the project's behavior must be documented in the [``CHANGELOG.md``](../CHANGELOG.md);
+- Documentation artifacts should be in markdown;
 
 ## **AI Usage**
 
 - Permitted, no need to clarify in commits;
-- Code quality is the metric for any contribution, regardless of AI used or not;
+- Code quality and tests are the metric for any contribution, regardless of AI used or not;
