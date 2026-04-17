@@ -17,4 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
-Section intentionally left empty.
+### Added
+
+- `REQUIREMENTS.md`
