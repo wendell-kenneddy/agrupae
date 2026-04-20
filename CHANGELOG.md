@@ -22,3 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Mention to `CONTRIBUTING.md` in `README.md`;
 
 ## Unreleased
+
+### Added
+- `STORIES.md`.
+
+### Changed
+- Updated `REQUIREMENTS.md` to include non functional requirements.
