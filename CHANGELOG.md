@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com),
 and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [0.3.0] - 2026-04-21
+
+### Added
+- `STORIES.md`.
+
+### Changed
+- Updated `REQUIREMENTS.md` to include non functional requirements.
+
 ## [0.1.0] - 2026-04-17
 
 ### Added
@@ -22,9 +30,3 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Mention to `CONTRIBUTING.md` in `README.md`;
 
 ## Unreleased
-
-### Added
-- `STORIES.md`.
-
-### Changed
-- Updated `REQUIREMENTS.md` to include non functional requirements.
