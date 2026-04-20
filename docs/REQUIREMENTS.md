@@ -48,7 +48,7 @@ Y = enabled · N = disabled
 
 ---
 
-## 4. Leadership Rules
+## 3. Leadership Rules
 
 - The current group leader has editing and management powers over the group according to the flags enabled in the assignment.
 - In the **Free** preset: the group creator automatically becomes the leader.
@@ -60,67 +60,109 @@ Y = enabled · N = disabled
 
 ---
 
-## 5. Functional Requirements
+## 4. Functional Requirements
 
 > Items marked with `*` indicate secondary priority requirements within the MVP.
+
+> `RFXX` indicates a functional requirement, where `XX` is the ID.
+
+> Non-functional requirements are listed separately in **Section 5**.
+
+### 4.1 Authentication and Users
+
+| ID | Name | Description |
+|---|---|---|
+| RF01 | User registration | New users can register with email and password. The email serves as unique identifier. |
+| RF02 | User login | Registered users can log in with email and password. |
+| RF03 | Session management | Sessions are managed by a pair of access and refresh tokens returned upon login. |
+| RF04 | Session refresh | The system must allow the user to refresh the session. The refresh must be executed automatically by the system everytime the access token expires. Upon refresh, a new token pair is issued and sent to the client. |
+| RF05 | Logout | The system must allow the user to logout, invalidating the whole family of refresh tokens issued since last login. |
+| RF06 | Protection against stolen refresh tokens | If a client sends a refresh request with an already revoked refresh token, the system must invalidate all refresh tokens from the family of the sent refresh token. |
+| RF07 | Profile management | Users can view and edit their profile, including name, email, and skill tags. |
+| RF08 | User list for class leaders | Class leaders can view a list of all users in class for transfer of responsibility purposes. |
+| RF09 | User list for admins | Admins can view a list of all users in the system for management purposes. |
+| RF10 | Role assignment at entry | When joining a class via invitation code, the user receives only the **Student** role in that class, regardless of their global role. A user can be admin in the system, leader of one class, and student in another simultaneously. |
+
+### 4.2 Classes
+
+| ID | Name | Description |
+|---|---|---|
+| RF11  | Class creation | Any authenticated user can create a class with a name. Upon creating it, they automatically become its **leader**, acquiring exclusive management powers over it. An admin who creates a class assumes the same leader role. |
+| RF12 | Invitation code | Each class has a unique auto-generated invitation code, shareable by the leader or admin. |
+| RF13  | Entry via code | Any user enters a class by inserting the invitation code, assuming exclusively the **Student** role in that class — with no management powers — regardless of being leader for other classes or admin. |
+| RF14  | Class archival | Only the class leader or an admin can archive it. Archival freezes all assignments and associated groups. |
+| RF15 | Class visibility | A class is only visible to the user after they join it via invitation code or have created it. |
+| RF16  | Class responsibility transfer | The leader can transfer their responsibility over the class to any other user registered in the system, as long as the targeted user is enrolled in the class, regardless of that user's global role. After the transfer, the previous leader loses all management powers and becomes a student in the class, if already joined via code. The admin can perform the transfer without consent from the current leader. |
+
+### 4.3 Assignments
+
+| ID | Name | Description |
+|---|---|---|
+| RF17  | Assignment creation | The class leader or admin can create assignments within a class, defining: name, description, due date, member limit per group (or unlimited), and flag configuration (via preset or custom). The interface offers Free, Moderate, and Controlled presets as a starting point, with the possibility of adjusting each flag individually. |
+| RF18  | Reference artifacts | The class leader or admin can add reference artifacts to the assignment, visible to all students in the class. |
+| RF19  | Assignment archival | Only the class leader or an admin can archive an assignment individually. When archiving the class, all assignments are automatically archived. |
+| RF20  | Monitoring dashboard | The class leader and admins view, per assignment, all formed groups, number of members, and students still without a group. Data updated on each page load. |
+| RF21  | Assignment editing | Only the class leader or an admin can edit any assignment in the class, regardless of who created it. Flag editing is allowed while the assignment is active, respecting the constraints in Section 3.3. |
+| RF22 | Flag validation on save | The system validates the flag combination when creating or editing an assignment, before persisting. Combinations classified as **Invalid** (Section 2.3) return an error and block saving. Combinations classified as **Warning** display a warning and require explicit user confirmation. |
+| RF23 | Pre-creation of groups by class leader | When `studentsCanCreateGroups = N`, the class leader must pre-create the assignment groups before students can interact. Groups can be created empty (for students to organize) or with composition already defined, according to `classLeaderCanEditComposition`. |
+| RF24 | Leader designation by class leader | When `classLeaderCanEditComposition = Y`, the class leader designates a leader when creating the group and can reassign leadership at any time while the assignment is active. |
+| RF25  | Composition editing by class leader | When `classLeaderCanEditComposition = Y`, the class leader can add or remove students from any group at any time while the assignment is within the deadline. The member limit defined in the assignment also applies to these operations; to exceed it, the class leader must edit the assignment limit before adjusting the composition. |
+
+### 4.4 Groups
+
+| ID | Name | Description |
+|---|---|---|
+| RF26  | Group creation by student | When `studentsCanCreateGroups = Y`, students can create groups within an assignment, defining name and mode (open or closed). The creator automatically becomes the leader. A student cannot create a group if they already belong to another in the same assignment. |
+| RF27 | Open group | In open groups, any student in the class can join directly, as long as there are spots available. |
+| RF28 | Closed group — request | In closed groups, the student requests entry. The leader accepts or rejects. Only one pending request at a time per student per assignment. |
+| RF29 | Automatic cancellation of requests | If a group becomes full before the leader responds, pending requests are automatically canceled. Rejected requests retain visible status to the student in the interface. |
+| RF30  | Mode toggle by leader | When `groupLeaderCanToggleMode = Y`, the leader can toggle the group mode between open and closed at any time while the assignment is within the deadline. |
+| RF31 | Member limit | No group can exceed the member limit defined in the assignment. The rule applies to everyone, including the class leader when editing composition. To exceed the limit, the class leader must edit the assignment limit before adjusting the group. |
+| RF32 | One group per assignment | A student can participate in only one group per assignment. |
+| RF33  | Leaving the group | When `studentCanLeaveGroups = Y`, the student can leave the group at any time while the assignment is within the deadline. When `studentCanLeaveGroups = N`, voluntary exit is blocked. |
+| RF34  | Group dissolution | When `groupLeaderCanDissolveGroup = Y`, the leader can dissolve the group. When `classLeaderCanEditComposition = Y` and `groupLeaderCanDissolveGroup = N`, only the class leader can dissolve. Upon dissolution, all members become without a group. |
+| RF35  | Leadership succession | When `studentCanLeaveGroups = Y` and the leader leaves the group, leadership is automatically transferred to the oldest member, with powers defined by the assignment flags. When `studentCanLeaveGroups = N`, this rule does not apply. |
+| RF36  | Leader management powers | The leader can: edit the group name (always); manage entry requests in closed groups (always); remove members when `groupLeaderCanRemoveMembers = Y`; toggle mode when `groupLeaderCanToggleMode = Y`; dissolve the group when `groupLeaderCanDissolveGroup = Y`. Each power is individually verified against the corresponding flag in the assignment. |
+| RF37 | Group internal artifacts | Group members can add useful artifacts to the group. The visibility of the artifact is managed by the group members. |
+
+### 4.5 Visibility and Discovery
+
+| ID | Name | Description |
+|---|---|---|
+| RF38 | Public group listing | All students in a class can see all groups in an assignment, with name, members, and available spots. |
+| RF39  | List of students without group | All students in the class can see which classmates do not yet belong to any group in the assignment. Users enrolled as students in classes they aren't leaders appear in this list normally. |
+| RF40 | Class leader distinction | The class leader should be visually distinct in user interfaces from other students. |
+
+---
+
+## 5. Non-Functional Requirements
+
+> `RNFXXY` indicates a non-functional requirement, where `XX` is the ID of the referenced functional requirement, and `Y` is the sequential ID of the non-functional requirement for that reference.
 
 ### 5.1 Authentication and Users
 
 | ID | Name | Description |
 |---|---|---|
-| RF01 | User registration | New users can register with email and password. The email serves as unique identifier. |
-| RF02 | User login | Registered users can log in with email and password. Sessions are managed via JWT tokens with refresh mechanism. |
-| RF03 | Profile management | Users can view and edit their profile, including name, email, and skill tags. |
-| RF04 | User list for class leaders | Class leaders can view a list of all users in class for transfer of responsibility purposes. |
-| RF05 | User list for admins | Admins can view a list of all users in the system for management purposes. |
-| RF06 | Role assignment at entry | When joining a class via invitation code, the user receives only the **Student** role in that class, regardless of their global role. A user can be admin in the system, leader of one class, and student in another simultaneously. |
+| RNF02A | Password storage | Password should be stored as a hash using bcrypt, 12 rounds. |
+| RNF02B | Tokens | Upon login, the access token should be issued as a JWT containing user ID, email and role, with a maximum 30min lifespan. The refresh token should be issued as a JWT with a maximum 7 days lifespan, while also being part of a family of tokens. The access token should be sent via response body, and the refresh token via a secure cookie. On the client, the access token should be stored in-memory ONLY. |
+| RNF10A | Authorization validation server-side | All operations involving user roles must be also validated server-side. |
 
-### 5.2 Classes
+### 5.2 Assignments
 
 | ID | Name | Description |
 |---|---|---|
-| RF07  | Class creation | Any authenticated user can create a class with a name. Upon creating it, they automatically become its **leader**, acquiring exclusive management powers over it. An admin who creates a class assumes the same leader role. |
-| RF08 | Invitation code | Each class has a unique auto-generated invitation code, shareable by the leader or admin. |
-| RF09  | Entry via code | Any user enters a class by inserting the invitation code, assuming exclusively the **Student** role in that class — with no management powers — regardless of being leader for other classes or admin. |
-| RF10  | Class archival | Only the class leader or an admin can archive it. Archival freezes all assignments and associated groups. |
-| RF11 | Class visibility | A class is only visible to the user after they join it via invitation code or have created it. |
-| RF38  | Class responsibility transfer | The leader can transfer their responsibility over the class to any other user registered in the system, as long as the targeted user is enrolled in the class, regardless of that user's global role. After the transfer, the previous leader loses all management powers and becomes a student in the class, if already joined via code. The admin can perform the transfer without consent from the current leader. |
+| RNF17A | Preset selection UI/UX | The system must visually differentiate the built-in presets from custom-made flag selections, and display a confirmation dialog in case the custom selected preset triggers an ambiguous state warning. |
+| RNF20A | Monitoring dashboard load time | The dashboard should load within 2 seconds. |
+| RNF21A | Flag validation | Validation of flag sets should be performed both client and server-side. Server-side validation will determine the final classification of the flag set. |
 
-### 5.3 Assignments
+### 5.3 Groups
 
 | ID | Name | Description |
 |---|---|---|
-| RF12  | Assignment creation | The class leader or admin can create assignments within a class, defining: name, description, due date, member limit per group (or unlimited), and flag configuration (via preset or custom). The interface offers Free, Moderate, and Controlled presets as a starting point, with the possibility of adjusting each flag individually. |
-| RF13  | Reference artifacts | The class leader or admin can add reference artifacts to the assignment, visible to all students in the class. |
-| RF14  | Assignment archival | Only the class leader or an admin can archive an assignment individually. When archiving the class, all assignments are automatically archived. |
-| RF15  | Monitoring dashboard | The class leader and admins view, per assignment, all formed groups, number of members, and students still without a group. Data updated on each page load. |
-| RF16  | Assignment editing | Only the class leader or an admin can edit any assignment in the class, regardless of who created it. Flag editing is allowed while the assignment is active, respecting the constraints in Section 3.3. |
-| RF35 | Flag validation on save | The system validates the flag combination when creating or editing an assignment, before persisting. Combinations classified as **Invalid** (Section 2.3) return an error and block saving. Combinations classified as **Warning** display a warning and require explicit user confirmation. |
-| RF36 | Pre-creation of groups by class leader | When `studentsCanCreateGroups = N`, the class leader must pre-create the assignment groups before students can interact. Groups can be created empty (for students to organize) or with composition already defined, according to `classLeaderCanEditComposition`. |
-| RF37 | Leader designation by class leader | When `classLeaderCanEditComposition = Y`, the class leader designates a leader when creating the group and can reassign leadership at any time while the assignment is active. |
-| RF17  | Composition editing by class leader | When `classLeaderCanEditComposition = Y`, the class leader can add or remove students from any group at any time while the assignment is within the deadline. The member limit defined in the assignment also applies to these operations; to exceed it, the class leader must edit the assignment limit before adjusting the composition. |
+| RNF28A | Request status feedback | The student should be able to see a distinct visual feedback for each request, indicating whether it is pending, accepted, or rejected. |
 
-### 5.4 Groups
+### 5.4 Visibility and Discovery
 
 | ID | Name | Description |
 |---|---|---|
-| RF19  | Group creation by student | When `studentsCanCreateGroups = Y`, students can create groups within an assignment, defining name and mode (open or closed). The creator automatically becomes the leader. A student cannot create a group if they already belong to another in the same assignment. |
-| RF20 | Open group | In open groups, any student in the class can join directly, as long as there are spots available. |
-| RF21 | Closed group — request | In closed groups, the student requests entry. The leader accepts or rejects. Only one pending request at a time per student per assignment. |
-| RF22 | Automatic cancellation of requests | If a group becomes full before the leader responds, pending requests are automatically canceled. Rejected requests retain visible status to the student in the interface; no active notifications are sent. |
-| RF23  | Mode toggle by leader | When `groupLeaderCanToggleMode = Y`, the leader can toggle the group mode between open and closed at any time while the assignment is within the deadline. |
-| RF24 | Member limit | No group can exceed the member limit defined in the assignment. The rule applies to everyone, including the class leader when editing composition. To exceed the limit, the class leader must edit the assignment limit before adjusting the group. |
-| RF25 | One group per assignment | A student can participate in only one group per assignment. |
-| RF26  | Leaving the group | When `studentCanLeaveGroups = Y`, the student can leave the group at any time while the assignment is within the deadline. When `studentCanLeaveGroups = N`, voluntary exit is blocked. |
-| RF27  | Group dissolution | When `groupLeaderCanDissolveGroup = Y`, the leader can dissolve the group. When `classLeaderCanEditComposition = Y` and `groupLeaderCanDissolveGroup = N`, only the class leader can dissolve. Upon dissolution, all members become without a group. |
-| RF28  | Leadership succession | When `studentCanLeaveGroups = Y` and the leader leaves the group, leadership is automatically transferred to the oldest member, with powers defined by the assignment flags. When `studentCanLeaveGroups = N`, this rule does not apply. |
-| RF29  | Leader management powers | The leader can: edit the group name (always); manage entry requests in closed groups (always); remove members when `groupLeaderCanRemoveMembers = Y`; toggle mode when `groupLeaderCanToggleMode = Y`; dissolve the group when `groupLeaderCanDissolveGroup = Y`. Each power is individually verified against the corresponding flag in the assignment. |
-| RF30 | Group internal artifacts | Group members can add useful artifacts to the group. The visibility of the artifact is managed by the group members. |
-
-### 5.5 Visibility and Discovery
-
-| ID | Name | Description |
-|---|---|---|
-| RF31 | Public group listing | All students in a class can see all groups in an assignment, with name, members, and available spots. |
-| RF32  | List of students without group | All students in the class can see which classmates do not yet belong to any group in the assignment. Users enrolled as students in classes they don't instruct appear in this list normally. |
-
+| RNF38A | Public group listing load time | The public group listing should be loaded within 1 second. |
