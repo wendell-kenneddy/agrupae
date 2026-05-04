@@ -30,3 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Mention to `CONTRIBUTING.md` in `README.md`;
 
 ## Unreleased
+
+### Added
+- Scaffolded Java backend application
+
+### Changed
+- Fixed backend application alias
