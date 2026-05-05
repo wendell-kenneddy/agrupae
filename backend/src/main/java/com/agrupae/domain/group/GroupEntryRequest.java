@@ -3,6 +3,7 @@ package com.agrupae.domain.group;
 import java.time.Instant;
 import java.util.UUID;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -16,7 +17,7 @@ public class GroupEntryRequest {
     private Instant createdAt = Instant.now();
     private Instant updatedAt = Instant.now();
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     private GroupEntryRequest(
         @NonNull final UUID id,
         @NonNull final UUID groupId,
@@ -40,13 +41,13 @@ public class GroupEntryRequest {
         Instant now = Instant.now();
 
         return GroupEntryRequest.builder()
-        .id(id)
-        .groupId(groupId)
-        .userId(userId)
-        .status(GroupEntryRequestStatus.PENDING)
-        .createdAt(now)
-        .updatedAt(now)
-        .build();
+                .id(id)
+                .groupId(groupId)
+                .userId(userId)
+                .status(GroupEntryRequestStatus.PENDING)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     };
 
     public void accept() throws IllegalStateException {

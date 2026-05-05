@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com),
 and this project adheres to [Semantic Versioning](https://semver.org).
 
+## Unreleased
+### Changed
+- Refactored access level of Builder to private on GroupEntryRequests domain entity
+- Refactored indentation of fluent interface notation at every domain entity
+
+
 ## [0.6.0] 2026-05-05
 
 ### Added
@@ -56,4 +62,3 @@ added invariants into the constructors
 - `GUIDELINES.md` renamed to `CONTRIBUTING.md`;
 - Mention to `CONTRIBUTING.md` in `README.md`;
 
-## Unreleased

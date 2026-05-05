@@ -53,14 +53,14 @@ public class Course {
         Instant now = Instant.now();
         
         return Course.builder()
-        .id(id)
-        .leaderId(leaderId)
-        .name(name)
-        .description(description)
-        .inviteCode(inviteCode)
-        .archived(false)
-        .createdAt(now)
-        .updatedAt(now)
-        .build();
+                .id(id)
+                .leaderId(leaderId)
+                .name(name)
+                .description(description)
+                .inviteCode(inviteCode)
+                .archived(false)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     }
 }

@@ -51,13 +51,13 @@ public class AssignmentArtifact {
         Instant now = Instant.now();
 
         return AssignmentArtifact.builder()
-        .id(id)
-        .groupId(groupId)
-        .name(name)
-        .description(description)
-        .resourceLink(resourceLink)
-        .createdAt(now)
-        .updatedAt(now)
-        .build();
+                .id(id)
+                .groupId(groupId)
+                .name(name)
+                .description(description)
+                .resourceLink(resourceLink)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     }
 }

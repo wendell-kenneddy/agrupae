@@ -56,14 +56,14 @@ public class GroupArtifact {
         Instant now = Instant.now();
 
         return GroupArtifact.builder()
-        .id(id)
-        .groupId(groupId)
-        .name(name)
-        .description(description)
-        .privateArtifact(privateArtifact)
-        .resourceLink(resourceLink)
-        .createdAt(now)
-        .updatedAt(now)
-        .build();
+                .id(id)
+                .groupId(groupId)
+                .name(name)
+                .description(description)
+                .privateArtifact(privateArtifact)
+                .resourceLink(resourceLink)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     }
 }

@@ -59,15 +59,15 @@ public class Assignment {
         Instant now = Instant.now();
 
         return Assignment.builder()
-        .id(id)
-        .courseId(courseId)
-        .name(name)
-        .description(description)
-        .assignmentFlags(assignmentFlags)
-        .dueDate(dueDate)
-        .archived(false)
-        .createdAt(now)
-        .updatedAt(now)
-        .build();
+                .id(id)
+                .courseId(courseId)
+                .name(name)
+                .description(description)
+                .assignmentFlags(assignmentFlags)
+                .dueDate(dueDate)
+                .archived(false)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     }
 }
