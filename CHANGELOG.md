@@ -45,3 +45,4 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - User domain class;
 - Course and CourseArtifact domain classes;
 - Assignment, AssignmentFlags and ForbiddenFlagCombination domain classes;
+- Group and GroupArtifact domain classes;
