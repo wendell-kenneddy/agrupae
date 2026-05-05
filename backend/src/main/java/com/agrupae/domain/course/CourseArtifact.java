@@ -45,20 +45,18 @@ public class CourseArtifact {
         UUID courseId,
         String name,
         String description,
-        String resourceLink,
-        Instant createdAt,
-        Instant updatedAt
+        String resourceLink
     ) {
         UUID id = UUID.randomUUID();
         Instant now = Instant.now();
         
         return CourseArtifact.builder()
-        .id(id)
-        .courseId(courseId)
-        .name(name)
-        .description(description)
-        .createdAt(now)
-        .updatedAt(now)
-        .build();
+                .id(id)
+                .courseId(courseId)
+                .name(name)
+                .description(description)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     }
 }

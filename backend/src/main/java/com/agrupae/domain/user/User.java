@@ -55,14 +55,14 @@ public class User {
         Instant now = Instant.now();
 
         return User.builder()
-        .id(id)
-        .name(name)
-        .email(email)
-        .passwordHash(passwordHash)
-        .role(role)
-        .createdAt(now)
-        .updatedAt(now)
-        .build();
+            .id(id)
+            .name(name)
+            .email(email)
+            .passwordHash(passwordHash)
+            .role(role)
+            .createdAt(now)
+            .updatedAt(now)
+            .build();
     };
 
 }
