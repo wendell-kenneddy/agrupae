@@ -53,14 +53,14 @@ public class Group {
         Instant now = Instant.now();
 
         return Group.builder()
-        .id(id)
-        .assignmentId(assignmentId)
-        .leaderId(leaderId)
-        .name(name)
-        .open(open)
-        .membersCanEditArtifacts(membersCanEditArtifacts)
-        .createdAt(now)
-        .updatedAt(now)
-        .build();
+                .id(id)
+                .assignmentId(assignmentId)
+                .leaderId(leaderId)
+                .name(name)
+                .open(open)
+                .membersCanEditArtifacts(membersCanEditArtifacts)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     }
 }
