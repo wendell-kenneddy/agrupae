@@ -13,10 +13,9 @@ import lombok.NonNull;
 @Getter
 public class User {
     private final UUID id;
-    private  String name;
-    private  String email;
-    @Getter(value = AccessLevel.NONE)
-    private  String passwordHash;
+    private String name;
+    private String email;
+    private String passwordHash;
     private Role role;
     private Instant createdAt;
     private Instant updatedAt;
