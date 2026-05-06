@@ -20,17 +20,19 @@ public class CourseArtifact {
 
     @Builder(access = AccessLevel.PRIVATE)
     private CourseArtifact(
-        @NonNull UUID id,
-        @NonNull UUID courseId,
-        @NonNull String name,
-        String description,
-        @NonNull String resourceLink,
-        @NonNull Instant createdAt,
-        @NonNull Instant updatedAt
-    ) {
-        if (name.isBlank()) throw new IllegalArgumentException("Course artifact name cannot be blank.");
-        if (resourceLink.isBlank()) throw new IllegalArgumentException("Resource link cannot be blank.");
-        if (updatedAt.isBefore(createdAt)) throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            @NonNull UUID id,
+            @NonNull UUID courseId,
+            @NonNull String name,
+            String description,
+            @NonNull String resourceLink,
+            @NonNull Instant createdAt,
+            @NonNull Instant updatedAt) {
+        if (name.isBlank())
+            throw new IllegalArgumentException("Course artifact name cannot be blank.");
+        if (resourceLink.isBlank())
+            throw new IllegalArgumentException("Resource link cannot be blank.");
+        if (updatedAt.isBefore(createdAt))
+            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.courseId = courseId;
@@ -42,19 +44,19 @@ public class CourseArtifact {
     }
 
     public static CourseArtifact create(
-        UUID courseId,
-        String name,
-        String description,
-        String resourceLink
-    ) {
+            UUID courseId,
+            String name,
+            String description,
+            String resourceLink) {
         UUID id = UUID.randomUUID();
         Instant now = Instant.now();
-        
+
         return CourseArtifact.builder()
                 .id(id)
                 .courseId(courseId)
                 .name(name)
                 .description(description)
+                .resourceLink(resourceLink)
                 .createdAt(now)
                 .updatedAt(now)
                 .build();

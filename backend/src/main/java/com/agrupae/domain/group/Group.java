@@ -13,22 +13,23 @@ public class Group {
     private String name;
     private boolean open;
     private boolean membersCanEditArtifacts;
-    private Instant createdAt = Instant.now();
-    private Instant updatedAt = Instant.now();
+    private Instant createdAt;
+    private Instant updatedAt;
 
     @Builder(access = AccessLevel.PRIVATE)
     private Group(
-        @NonNull final UUID id,
-        @NonNull final UUID assignmentId,
-        @NonNull final UUID leaderId,
-        @NonNull final String name,
-        final boolean open,
-        final boolean membersCanEditArtifacts,
-        @NonNull final Instant createdAt,
-        @NonNull final Instant updatedAt
-    ) {
-        if (name.isBlank()) throw new IllegalArgumentException("Group name cannot be blank.");
-        if (updatedAt.isBefore(createdAt)) throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            @NonNull final UUID id,
+            @NonNull final UUID assignmentId,
+            @NonNull final UUID leaderId,
+            @NonNull final String name,
+            final boolean open,
+            final boolean membersCanEditArtifacts,
+            @NonNull final Instant createdAt,
+            @NonNull final Instant updatedAt) {
+        if (name.isBlank())
+            throw new IllegalArgumentException("Group name cannot be blank.");
+        if (updatedAt.isBefore(createdAt))
+            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.assignmentId = assignmentId;
@@ -41,14 +42,11 @@ public class Group {
     }
 
     public static Group create(
-        final UUID assignmentId,
-        final UUID leaderId,
-        final String name,
-        final boolean open,
-        final boolean membersCanEditArtifacts,
-        final Instant createdAt,
-        final Instant updatedAt
-    ) {
+            final UUID assignmentId,
+            final UUID leaderId,
+            final String name,
+            final boolean open,
+            final boolean membersCanEditArtifacts) {
         UUID id = UUID.randomUUID();
         Instant now = Instant.now();
 

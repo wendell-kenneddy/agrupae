@@ -20,17 +20,19 @@ public class AssignmentArtifact {
 
     @Builder(access = AccessLevel.PRIVATE)
     private AssignmentArtifact(
-        @NonNull final UUID id,
-        @NonNull final UUID groupId,
-        @NonNull final String name,
-        @NonNull final String description,
-        @NonNull String resourceLink,
-        @NonNull Instant createdAt,
-        @NonNull Instant updatedAt
-    ) {
-        if (name.isBlank()) throw new IllegalArgumentException("Assignment artifact name cannot be blank.");
-        if (resourceLink.isBlank()) throw new IllegalArgumentException("Resource link cannot be blank.");
-        if (updatedAt.isBefore(createdAt)) throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            @NonNull final UUID id,
+            @NonNull final UUID groupId,
+            @NonNull final String name,
+            @NonNull final String description,
+            @NonNull String resourceLink,
+            @NonNull Instant createdAt,
+            @NonNull Instant updatedAt) {
+        if (name.isBlank())
+            throw new IllegalArgumentException("Assignment artifact name cannot be blank.");
+        if (resourceLink.isBlank())
+            throw new IllegalArgumentException("Resource link cannot be blank.");
+        if (updatedAt.isBefore(createdAt))
+            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.groupId = groupId;
@@ -42,11 +44,10 @@ public class AssignmentArtifact {
     }
 
     public static AssignmentArtifact create(
-        final UUID groupId,
-        final String name,
-        final String description,
-        final String resourceLink
-    ) {
+            final UUID groupId,
+            final String name,
+            final String description,
+            final String resourceLink) {
         UUID id = UUID.randomUUID();
         Instant now = Instant.now();
 

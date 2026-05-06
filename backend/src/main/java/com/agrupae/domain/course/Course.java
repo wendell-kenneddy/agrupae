@@ -21,17 +21,18 @@ public class Course {
 
     @Builder(access = AccessLevel.PRIVATE)
     private Course(
-        @NonNull final UUID id,
-        final UUID leaderId,
-        @NonNull final String name,
-        final String description,
-        @NonNull final String inviteCode,
-        final boolean archived,
-        @NonNull final Instant createdAt,
-        @NonNull final Instant updatedAt
-    ) {
-        if (name.isBlank()) throw new IllegalArgumentException("Course name cannot be blank.");
-        if (updatedAt.isBefore(createdAt)) throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            @NonNull final UUID id,
+            final UUID leaderId,
+            @NonNull final String name,
+            final String description,
+            @NonNull final String inviteCode,
+            final boolean archived,
+            @NonNull final Instant createdAt,
+            @NonNull final Instant updatedAt) {
+        if (name.isBlank())
+            throw new IllegalArgumentException("Course name cannot be blank.");
+        if (updatedAt.isBefore(createdAt))
+            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.leaderId = leaderId;
@@ -44,14 +45,13 @@ public class Course {
     }
 
     public static Course create(
-        UUID leaderId,
-        String name,
-        String description
-    ) {
+            UUID leaderId,
+            String name,
+            String description) {
         UUID id = UUID.randomUUID();
         String inviteCode = UUID.randomUUID().toString();
         Instant now = Instant.now();
-        
+
         return Course.builder()
                 .id(id)
                 .leaderId(leaderId)
