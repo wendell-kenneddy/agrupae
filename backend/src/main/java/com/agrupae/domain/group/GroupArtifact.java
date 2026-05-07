@@ -8,7 +8,6 @@ import lombok.NonNull;
 import java.time.Instant;
 import java.util.UUID;
 
-
 @Getter
 public class GroupArtifact {
     private final UUID id;
@@ -22,18 +21,20 @@ public class GroupArtifact {
 
     @Builder(access = AccessLevel.PRIVATE)
     private GroupArtifact(
-        @NonNull final UUID id,
-        @NonNull final UUID groupId,
-        @NonNull final String name,
-        @NonNull final String description,
-        final boolean privateArtifact,
-        @NonNull String resourceLink,
-        @NonNull Instant createdAt,
-        @NonNull Instant updatedAt
-    ) {
-        if (name.isBlank()) throw new IllegalArgumentException("Group artifact name cannot be blank.");
-        if (resourceLink.isBlank()) throw new IllegalArgumentException("Resource link cannot be blank.");
-        if (updatedAt.isBefore(createdAt)) throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            @NonNull final UUID id,
+            @NonNull final UUID groupId,
+            @NonNull final String name,
+            @NonNull final String description,
+            final boolean privateArtifact,
+            @NonNull String resourceLink,
+            @NonNull Instant createdAt,
+            @NonNull Instant updatedAt) throws IllegalArgumentException {
+        if (name.isBlank())
+            throw new IllegalArgumentException("Group artifact name cannot be blank.");
+        if (resourceLink.isBlank())
+            throw new IllegalArgumentException("Resource link cannot be blank.");
+        if (updatedAt.isBefore(createdAt))
+            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.groupId = groupId;
@@ -46,12 +47,11 @@ public class GroupArtifact {
     }
 
     public static GroupArtifact create(
-        final UUID groupId,
-        final String name,
-        final String description,
-        final boolean privateArtifact,
-        final String resourceLink
-    ) {
+            final UUID groupId,
+            final String name,
+            final String description,
+            final boolean privateArtifact,
+            final String resourceLink) {
         UUID id = UUID.randomUUID();
         Instant now = Instant.now();
 
