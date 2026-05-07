@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
+### Added
+
+- (backend) Added a README.md file with instructions to run the backend application locally.
+- (database) Added database connection properties to application.properties.
+- (database) Added `V04__rename_is_open_to_open.sql` migration script to rename is_open column from
+the groups table to open;
+- (database) Added `V03__add_refresh_token_table.sql` migration script;
+- (database) Added `v02__refactor_naming.sql` migration script to refactor database schema naming.
+
+### Changed
+
+- (database) Moved migration files from resources/db to resources/db/migration.
+- (database) Refactored migration files naming scheme from vX__Y.sql to VX__Y.sql, according to Flyways'
+standards;
+
 ## [0.7.0] 2026-05-07
 
 ### Added
