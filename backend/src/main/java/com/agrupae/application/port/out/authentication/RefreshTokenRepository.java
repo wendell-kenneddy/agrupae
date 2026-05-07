@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.agrupae.domain.refresh_token.RefreshToken;
 
 public interface RefreshTokenRepository {
-    public void save(RefreshToken refreshToken);
+    public RefreshToken save(RefreshToken refreshToken);
 
     public RefreshToken findById(UUID id);
 
