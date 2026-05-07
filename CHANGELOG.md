@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
+### Added
+
+- (database) Added `v02__refactor_naming.sql` migration script to refactor database schema naming;
+
 ### Changed
 
 - (backend) Refactored access level of Builder to private on GroupEntryRequests domain entity;
