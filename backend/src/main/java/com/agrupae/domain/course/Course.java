@@ -28,7 +28,7 @@ public class Course {
             @NonNull final String inviteCode,
             final boolean archived,
             @NonNull final Instant createdAt,
-            @NonNull final Instant updatedAt) {
+            @NonNull final Instant updatedAt) throws IllegalArgumentException {
         if (name.isBlank())
             throw new IllegalArgumentException("Course name cannot be blank.");
         if (updatedAt.isBefore(createdAt))

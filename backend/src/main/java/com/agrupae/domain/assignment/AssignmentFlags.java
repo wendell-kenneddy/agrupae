@@ -9,7 +9,7 @@ public record AssignmentFlags(
         boolean groupLeaderCanRemoveMembers,
         boolean groupLeaderCanChangeMode,
         boolean groupLeaderCanTransferLeadership,
-        boolean supervisorCanEditGroups) {
+        boolean supervisorCanEditGroups) throws ForbiddenFlagCombination {
     public AssignmentFlags {
         if (!studentsCanCreateGroups && !supervisorCanEditGroups) {
             throw new ForbiddenFlagCombination(

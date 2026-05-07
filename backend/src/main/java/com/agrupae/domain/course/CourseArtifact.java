@@ -26,7 +26,7 @@ public class CourseArtifact {
             String description,
             @NonNull String resourceLink,
             @NonNull Instant createdAt,
-            @NonNull Instant updatedAt) {
+            @NonNull Instant updatedAt) throws IllegalArgumentException {
         if (name.isBlank())
             throw new IllegalArgumentException("Course artifact name cannot be blank.");
         if (resourceLink.isBlank())

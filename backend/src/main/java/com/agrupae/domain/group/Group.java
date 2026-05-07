@@ -25,7 +25,7 @@ public class Group {
             final boolean open,
             final boolean membersCanEditArtifacts,
             @NonNull final Instant createdAt,
-            @NonNull final Instant updatedAt) {
+            @NonNull final Instant updatedAt) throws IllegalArgumentException {
         if (name.isBlank())
             throw new IllegalArgumentException("Group name cannot be blank.");
         if (updatedAt.isBefore(createdAt))
