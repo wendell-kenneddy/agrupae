@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - (frontend) Configured Bulletproof architecture with features: auth, classes, assignments, groups;
 - (frontend) Configured ESLint, Prettier and Husky with lint-staged;
 - (frontend) Configured path alias @/ for clean imports;
+- (backend) Added JPA adapters of User and RefreshToken domain entities, covering entities, and mappers;
 - (backend) Added authentication domain entities and value objects;
 - (backend) Added authentication use cases a.k.a inbound ports;
 - (backend) Added user repository;

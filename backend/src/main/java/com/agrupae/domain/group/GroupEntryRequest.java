@@ -13,20 +13,20 @@ public class GroupEntryRequest {
     private final UUID id;
     private UUID groupId;
     private UUID userId;
-    private GroupEntryRequestStatus status = GroupEntryRequestStatus.PENDING;
-    private Instant createdAt = Instant.now();
-    private Instant updatedAt = Instant.now();
+    private GroupEntryRequestStatus status;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     @Builder(access = AccessLevel.PRIVATE)
     private GroupEntryRequest(
-        @NonNull final UUID id,
-        @NonNull final UUID groupId,
-        @NonNull final UUID userId,
-        @NonNull final GroupEntryRequestStatus status,
-        @NonNull final Instant createdAt,
-        @NonNull final Instant updatedAt
-    ) throws IllegalArgumentException {
-        if (updatedAt.isBefore(createdAt)) throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            @NonNull final UUID id,
+            @NonNull final UUID groupId,
+            @NonNull final UUID userId,
+            @NonNull final GroupEntryRequestStatus status,
+            @NonNull final Instant createdAt,
+            @NonNull final Instant updatedAt) throws IllegalArgumentException {
+        if (updatedAt.isBefore(createdAt))
+            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.groupId = groupId;
@@ -61,7 +61,7 @@ public class GroupEntryRequest {
     }
 
     public void reject() throws IllegalStateException {
-         if (this.status != GroupEntryRequestStatus.PENDING) {
+        if (this.status != GroupEntryRequestStatus.PENDING) {
             throw new IllegalStateException("Only PENDING requests can be accepted/rejected.");
         }
 

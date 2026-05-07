@@ -20,22 +20,23 @@ public class Assignment {
     private Instant createdAt;
     private Instant updatedAt;
 
-
     @Builder(access = AccessLevel.PRIVATE)
     private Assignment(
-        @NonNull final UUID id,
-        @NonNull final UUID courseId,
-        @NonNull final String name,
-        final String description,
-        @NonNull final AssignmentFlags assignmentFlags,
-        final boolean archived,
-        @NonNull final Instant dueDate,
-        @NonNull final Instant createdAt,
-        @NonNull final Instant updatedAt
-    ) {
-        if (name.isBlank()) throw new IllegalArgumentException("Assignment name cannot be blank.");
-        if (updatedAt.isBefore(createdAt)) throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
-        if (dueDate.isBefore(createdAt)) throw new IllegalArgumentException("Due date cannot be before assignment creation timestamp.");
+            @NonNull final UUID id,
+            @NonNull final UUID courseId,
+            @NonNull final String name,
+            final String description,
+            @NonNull final AssignmentFlags assignmentFlags,
+            final boolean archived,
+            @NonNull final Instant dueDate,
+            @NonNull final Instant createdAt,
+            @NonNull final Instant updatedAt) throws IllegalArgumentException {
+        if (name.isBlank())
+            throw new IllegalArgumentException("Assignment name cannot be blank.");
+        if (updatedAt.isBefore(createdAt))
+            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+        if (dueDate.isBefore(createdAt))
+            throw new IllegalArgumentException("Due date cannot be before assignment creation timestamp.");
 
         this.id = id;
         this.courseId = courseId;
@@ -49,12 +50,11 @@ public class Assignment {
     }
 
     public static Assignment create(
-        final UUID courseId,
-        final String name,
-        final String description,
-        final Instant dueDate,
-        final AssignmentFlags assignmentFlags
-    ) {
+            final UUID courseId,
+            final String name,
+            final String description,
+            final Instant dueDate,
+            final AssignmentFlags assignmentFlags) {
         UUID id = UUID.randomUUID();
         Instant now = Instant.now();
 
