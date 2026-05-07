@@ -7,12 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
-### Changed
-
-- (backend) Refactored access level of Builder to private on GroupEntryRequests domain entity;
-- (backend) Refactored indentation of fluent interface notation at every domain entity;
-- (backend) Added 'throws clauses' in domain classes constructor methods;
-- (backend) Fixed redundant lines of code in domain classes.
+## [0.7.0] 2026-05-07
 
 ### Added
 
@@ -29,6 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - (backend) Added authentication use cases a.k.a inbound ports;
 - (backend) Added user repository;
 - (backend) Added authentication application services implementing inbound ports.
+
+### Changed
+
+- (backend) Refactored access level of Builder to private on GroupEntryRequests domain entity;
+- (backend) Refactored indentation of fluent interface notation at every domain entity;
+- (backend) Added 'throws clauses' in domain classes constructor methods;
+- (backend) Fixed redundant lines of code in domain classes.
 
 ## [0.6.0] 2026-05-05SS
 
