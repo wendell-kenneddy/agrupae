@@ -22,18 +22,21 @@ public class User {
 
     @Builder(access = AccessLevel.PRIVATE)
     private User(
-        @NonNull final UUID id,
-        @NonNull final String name,
-        @NonNull final String email,
-        @NonNull final String passwordHash,
-        @NonNull final Role role,
-        @NonNull final Instant createdAt,
-        @NonNull final Instant updatedAt
-    ) {
-        if (name.isBlank()) throw new IllegalArgumentException("User name cannot be blank.");
-        if (email.isBlank()) throw new IllegalArgumentException("Email  cannot be blank.");
-        if (passwordHash.isBlank()) throw new IllegalArgumentException("Password name cannot be blank.");
-        if (updatedAt.isBefore(createdAt)) throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            @NonNull final UUID id,
+            @NonNull final String name,
+            @NonNull final String email,
+            @NonNull final String passwordHash,
+            @NonNull final Role role,
+            @NonNull final Instant createdAt,
+            @NonNull final Instant updatedAt) {
+        if (name.isBlank())
+            throw new IllegalArgumentException("User name cannot be blank.");
+        if (email.isBlank())
+            throw new IllegalArgumentException("Email  cannot be blank.");
+        if (passwordHash.isBlank())
+            throw new IllegalArgumentException("Password name cannot be blank.");
+        if (updatedAt.isBefore(createdAt))
+            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.name = name;
@@ -45,23 +48,22 @@ public class User {
     }
 
     public static User create(
-        final String name,
-        final String email,
-        final String passwordHash,
-        final Role role
-    ) {
+            final String name,
+            final String email,
+            final String passwordHash,
+            final Role role) {
         UUID id = UUID.randomUUID();
         Instant now = Instant.now();
 
         return User.builder()
-            .id(id)
-            .name(name)
-            .email(email)
-            .passwordHash(passwordHash)
-            .role(role)
-            .createdAt(now)
-            .updatedAt(now)
-            .build();
+                .id(id)
+                .name(name)
+                .email(email)
+                .passwordHash(passwordHash)
+                .role(role)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     };
 
     public static User reconstruct(
