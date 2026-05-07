@@ -2,15 +2,23 @@ package com.agrupae.infrastructure.config.security;
 
 import java.time.Duration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.agrupae.application.port.out.authentication.TokenConfig;
 
-@ConfigurationProperties(prefix = "jwt")
-public record TokenProperties(long accessTokenTtl, long refreshTokenTtl) implements TokenConfig {
+import lombok.Getter;
+
+@Component
+@Getter
+public class TokenProperties implements TokenConfig {
+    @Value("${jwt.access-token.ttl}")
+    private long accessTokenTtl;
+    @Value("${jwt.refresh-token.ttl}")
+    private long refreshTokenTtl;
 
     @Override
     public Duration refreshTokenTTL() {
-        return Duration.ofSeconds(refreshTokenTtl);
+        return Duration.ofSeconds(this.refreshTokenTtl);
     }
 }
