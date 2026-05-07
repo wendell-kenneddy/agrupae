@@ -28,7 +28,7 @@ public class JWTTokenProvider implements TokenProvider {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("agrupae")
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(tokenProperties.accessTokenTtl()))
+                .expiresAt(now.plusSeconds(tokenProperties.getAccessTokenTtl()))
                 .subject(user.getId().toString())
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole().name())
