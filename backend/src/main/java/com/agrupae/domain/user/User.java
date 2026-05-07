@@ -64,4 +64,24 @@ public class User {
             .build();
     };
 
+    public static User reconstruct(
+        final UUID id,
+        final String name,
+        final String email,
+        final String passwordHash,
+        final Role role,
+        final Instant createdAt,
+        final Instant updatedAt
+    ) {
+        return User.builder()
+            .id(id)
+            .name(name)
+            .email(email)
+            .passwordHash(passwordHash)
+            .role(role)
+            .createdAt(createdAt)
+            .updatedAt(updatedAt)
+            .build();
+    }
+
 }
