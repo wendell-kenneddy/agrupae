@@ -48,6 +48,26 @@ public class RefreshToken {
         this.updatedAt = updatedAt;
     }
 
+    private RefreshToken(
+            final UUID id,
+            final UUID userId,
+            final UUID tokenFamilyId,
+            final String tokenHash,
+            final boolean revoked,
+            final Instant expiresAt,
+            final Instant createdAt,
+            final Instant updatedAt
+    ) {
+        this.id = id;
+        this.userId = userId;
+        this.tokenFamilyId = tokenFamilyId;
+        this.tokenHash = tokenHash;
+        this.revoked = revoked;
+        this.expiresAt = expiresAt;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
     public static RefreshToken create(UUID userId, String tokenHash, Duration duration) {
         UUID familyId = UUID.randomUUID();
         return RefreshToken.buildToken(userId, tokenHash, familyId, duration);
@@ -55,6 +75,31 @@ public class RefreshToken {
 
     public static RefreshToken createForRotation(UUID userId, String tokenHash, UUID familyId, Duration duration) {
         return RefreshToken.buildToken(userId, tokenHash, familyId, duration);
+    }
+
+     public static RefreshToken reconstruct(
+            final UUID id,
+            final UUID userId,
+            final UUID tokenFamilyId,
+            final String tokenHash,
+            final boolean revoked,
+            final Instant expiresAt,
+            final Instant createdAt,
+            final Instant updatedAt
+    ) {
+        return new RefreshToken(id, userId, tokenFamilyId, tokenHash, revoked, expiresAt, createdAt, updatedAt);
+    }
+
+    public void revoke() {
+        if (this.revoked)
+            return;
+
+        this.revoked = true;
+        this.updatedAt = Instant.now();
+    }
+
+    public boolean isExpired() {
+        return Instant.now().isAfter(this.expiresAt);
     }
 
     private static RefreshToken buildToken(UUID userId, String tokenHash, UUID familyId, Duration duration) {
@@ -70,17 +115,5 @@ public class RefreshToken {
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
-    }
-
-    public void revoke() {
-        if (this.revoked)
-            return;
-
-        this.revoked = true;
-        this.updatedAt = Instant.now();
-    }
-
-    public boolean isExpired() {
-        return Instant.now().isAfter(this.expiresAt);
     }
 }
