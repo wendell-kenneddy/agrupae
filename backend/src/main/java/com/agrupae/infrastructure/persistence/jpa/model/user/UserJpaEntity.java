@@ -3,6 +3,9 @@ package com.agrupae.infrastructure.persistence.jpa.model.user;
 import java.time.Instant;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
+
 import com.agrupae.domain.role.Role;
 
 import jakarta.persistence.Column;
@@ -35,6 +38,7 @@ public class UserJpaEntity {
     @Column(nullable = false)
     private String passwordHash;
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(nullable = false)
     private Role role;
     @Column(nullable = false)

@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
-- (backend) Added a README.md file with instructions to run the backend application locally.
-- (database) Added database connection properties to application.properties.
+- (backend) Added AuthController with it's request DTOs;
+- (backend) Added a README.md file with instructions to run the backend application locally;
+- (database) Added database connection properties to application.properties;
 - (database) Added `V04__rename_is_open_to_open.sql` migration script to rename is_open column from
 the groups table to open;
 - (database) Added `V03__add_refresh_token_table.sql` migration script;

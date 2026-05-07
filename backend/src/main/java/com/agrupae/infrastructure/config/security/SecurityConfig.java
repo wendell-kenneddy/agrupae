@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@EnableConfigurationProperties({RSAKeyProperties.class, TokenProperties.class})
+@EnableConfigurationProperties({RSAKeyProperties.class})
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final RSAKeyProperties rsaKeys;
