@@ -10,8 +10,8 @@ import com.agrupae.application.exception.auth.InvalidCredentialsException;
 import com.agrupae.application.exception.auth.InvalidTokenException;
 import com.agrupae.application.exception.auth.TokenExpiredException;
 import com.agrupae.application.exception.auth.TokenRevokedException;
-import com.agrupae.domain.exception.UserAlreadyExistsException;
-import com.agrupae.domain.exception.UserNotFoundException;
+import com.agrupae.application.exception.user.UserAlreadyExistsException;
+import com.agrupae.application.exception.user.UserNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
