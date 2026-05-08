@@ -5,6 +5,8 @@ import lombok.*;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.agrupae.domain.exception.DomainException;
+
 @Getter
 public class Group {
     private final UUID id;
@@ -25,11 +27,11 @@ public class Group {
             final boolean open,
             final boolean membersCanEditArtifacts,
             @NonNull final Instant createdAt,
-            @NonNull final Instant updatedAt) throws IllegalArgumentException {
+            @NonNull final Instant updatedAt) {
         if (name.isBlank())
-            throw new IllegalArgumentException("Group name cannot be blank.");
+            throw new DomainException("Group name cannot be blank.");
         if (updatedAt.isBefore(createdAt))
-            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            throw new DomainException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.assignmentId = assignmentId;

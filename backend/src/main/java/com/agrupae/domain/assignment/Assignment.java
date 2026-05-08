@@ -3,6 +3,8 @@ package com.agrupae.domain.assignment;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.agrupae.domain.exception.DomainException;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,13 +32,13 @@ public class Assignment {
             final boolean archived,
             @NonNull final Instant dueDate,
             @NonNull final Instant createdAt,
-            @NonNull final Instant updatedAt) throws IllegalArgumentException {
+            @NonNull final Instant updatedAt) {
         if (name.isBlank())
-            throw new IllegalArgumentException("Assignment name cannot be blank.");
+            throw new DomainException("Assignment name cannot be blank.");
         if (updatedAt.isBefore(createdAt))
-            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            throw new DomainException("Update timestamp cannot be before creation timestamp.");
         if (dueDate.isBefore(createdAt))
-            throw new IllegalArgumentException("Due date cannot be before assignment creation timestamp.");
+            throw new DomainException("Due date cannot be before assignment creation timestamp.");
 
         this.id = id;
         this.courseId = courseId;
