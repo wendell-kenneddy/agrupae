@@ -11,7 +11,6 @@ import com.agrupae.application.port.out.user.UserRepository;
 import com.agrupae.domain.exception.InvalidTokenException;
 import com.agrupae.domain.exception.TokenExpiredException;
 import com.agrupae.domain.exception.TokenRevokedException;
-import com.agrupae.domain.exception.UserNotFoundException;
 import com.agrupae.domain.refresh_token.RefreshToken;
 import com.agrupae.domain.refresh_token.TokenPair;
 import com.agrupae.domain.user.User;
@@ -26,20 +25,11 @@ public class RefreshService implements RefreshUseCase {
     private final TokenHasher tokenHasher;
     private final TokenConfig tokenConfig;
 
-    public TokenPair handle(UUID userId, String rawRefreshToken) {
-        User user = this.userRepository.findById(userId);
-
-        if (user == null) throw new UserNotFoundException();
-
+    public TokenPair handle(String rawRefreshToken) {
         String refreshTokenHash = this.tokenHasher.hash(rawRefreshToken);
         RefreshToken refreshToken = this.refreshTokenRepository.findByTokenHash(refreshTokenHash);
 
         if (refreshToken == null) throw new InvalidTokenException();
-
-        if (!refreshToken.getUserId().equals(user.getId())) {
-            this.refreshTokenRepository.revokeAllByFamilyId(refreshToken.getTokenFamilyId());
-            throw new InvalidTokenException();
-        }
 
         if (refreshToken.isRevoked()) {
             this.refreshTokenRepository.revokeAllByFamilyId(refreshToken.getTokenFamilyId());
@@ -50,13 +40,16 @@ public class RefreshService implements RefreshUseCase {
             throw new TokenExpiredException();
         }
 
+        User user = this.userRepository.findById(refreshToken.getUserId());
+        if (user == null) throw new InvalidTokenException();
+
         refreshToken.revoke();
         this.refreshTokenRepository.save(refreshToken);
 
         String newAccessToken = this.tokenProvider.generateAccessToken(user);
         String newRawRefreshToken = UUID.randomUUID().toString();
         RefreshToken newRefreshToken = RefreshToken.createForRotation(
-            userId,
+            user.getId(),
             this.tokenHasher.hash(newRawRefreshToken),
             refreshToken.getTokenFamilyId(),
             this.tokenConfig.refreshTokenTTL()

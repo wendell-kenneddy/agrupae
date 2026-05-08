@@ -47,9 +47,8 @@ public class ApplicationServiceConfig {
 
     @Bean
     public LogoutService logoutService(
-            UserRepository userRepository,
             RefreshTokenRepository refreshTokenRepository,
             TokenHasher tokenHasher) {
-        return new LogoutService(userRepository, refreshTokenRepository, tokenHasher);
+        return new LogoutService(refreshTokenRepository, tokenHasher);
     }
 }
