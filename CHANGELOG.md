@@ -47,6 +47,9 @@ standards.
 
 ### Changed
 
+- (backend) Move auth and some user related exceptions to application layer, since they are more in line with
+application concerns. Also properly refactored code related to them;
+- (backend) Removed email claim from access token JWT;
 - (backend) Refactored access level of Builder to private on GroupEntryRequests domain entity;
 - (backend) Refactored indentation of fluent interface notation at every domain entity;
 - (backend) Added 'throws clauses' in domain classes constructor methods;

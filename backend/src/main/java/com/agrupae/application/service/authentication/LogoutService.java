@@ -1,9 +1,9 @@
 package com.agrupae.application.service.authentication;
 
+import com.agrupae.application.exception.auth.InvalidTokenException;
 import com.agrupae.application.port.in.authentication.LogoutUseCase;
 import com.agrupae.application.port.out.authentication.RefreshTokenRepository;
 import com.agrupae.application.port.out.authentication.TokenHasher;
-import com.agrupae.domain.exception.InvalidTokenException;
 import com.agrupae.domain.refresh_token.RefreshToken;
 
 import lombok.RequiredArgsConstructor;
