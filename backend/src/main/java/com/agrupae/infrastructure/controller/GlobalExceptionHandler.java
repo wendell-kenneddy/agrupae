@@ -6,10 +6,10 @@ import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.agrupae.domain.exception.InvalidCredentialsException;
-import com.agrupae.domain.exception.InvalidTokenException;
-import com.agrupae.domain.exception.TokenExpiredException;
-import com.agrupae.domain.exception.TokenRevokedException;
+import com.agrupae.application.exception.auth.InvalidCredentialsException;
+import com.agrupae.application.exception.auth.InvalidTokenException;
+import com.agrupae.application.exception.auth.TokenExpiredException;
+import com.agrupae.application.exception.auth.TokenRevokedException;
 import com.agrupae.domain.exception.UserAlreadyExistsException;
 import com.agrupae.domain.exception.UserNotFoundException;
 
