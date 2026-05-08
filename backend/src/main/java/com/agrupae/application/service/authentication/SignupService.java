@@ -8,10 +8,10 @@ import com.agrupae.application.port.out.authentication.PasswordEncoder;
 import com.agrupae.application.port.out.authentication.RefreshTokenRepository;
 import com.agrupae.application.port.out.authentication.TokenConfig;
 import com.agrupae.application.port.out.authentication.TokenHasher;
+import com.agrupae.application.port.out.authentication.TokenPair;
 import com.agrupae.application.port.out.authentication.TokenProvider;
 import com.agrupae.application.port.out.user.UserRepository;
 import com.agrupae.domain.refresh_token.RefreshToken;
-import com.agrupae.domain.refresh_token.TokenPair;
 import com.agrupae.domain.role.Role;
 import com.agrupae.domain.user.User;
 
@@ -27,26 +27,24 @@ public class SignupService implements SignupUseCase {
     private final TokenConfig tokenConfig;
 
     public TokenPair handle(String name, String email, String password)
-        throws UserAlreadyExistsException
-    {
+            throws UserAlreadyExistsException {
         User user = this.userRepository.findByEmail(email);
 
-        if (user != null) throw new UserAlreadyExistsException(email);
+        if (user != null)
+            throw new UserAlreadyExistsException(email);
 
         User newUser = this.userRepository.save(User.create(
-            name,
-            email,
-            this.passwordEncoder.encode(password),
-            Role.USER
-        ));
+                name,
+                email,
+                this.passwordEncoder.encode(password),
+                Role.USER));
 
         String accessToken = this.tokenProvider.generateAccessToken(newUser);
         String rawRefreshToken = UUID.randomUUID().toString();
         RefreshToken refreshToken = RefreshToken.create(
-            newUser.getId(),
-            this.tokenHasher.hash(rawRefreshToken),
-            this.tokenConfig.refreshTokenTTL()
-        );
+                newUser.getId(),
+                this.tokenHasher.hash(rawRefreshToken),
+                this.tokenConfig.refreshTokenTTL());
 
         this.refreshTokenRepository.save(refreshToken);
 
