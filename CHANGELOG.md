@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added logout and refresh as unprotected endpoints (no authentication needed);
+- (backend) Added GlobalExceptionHandler.java (self-explanatory);
 - (backend) Added AuthController with it's request DTOs;
 - (backend) Added a README.md file with instructions to run the backend application locally;
 - (database) Added database connection properties to application.properties;
@@ -19,9 +21,11 @@ the groups table to open;
 
 ### Changed
 
-- (database) Moved migration files from resources/db to resources/db/migration.
+- (backend) Removed userId argument from both LogoutUseCase.java and RefreshUseCase.java, since the
+User entity can be derived from the RefreshToken entity already;
+- (database) Moved migration files from resources/db to resources/db/migration;
 - (database) Refactored migration files naming scheme from vX__Y.sql to VX__Y.sql, according to Flyways'
-standards;
+standards.
 
 ## [0.7.0] 2026-05-07
 
