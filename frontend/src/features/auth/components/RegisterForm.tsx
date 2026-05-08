@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRegister } from '@/features/auth/hooks/useRegister'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { FaEyeSlash, FaRegEyeSlash } from 'react-icons/fa'
 
 const registerSchema = z.object({
@@ -52,7 +53,7 @@ export function RegisterForm() {
         {isLoading ? 'Carregando...' : 'Cadastrar'}
       </button>
       <p>
-        Já possui um cadastro? <a>Entrar</a>
+        Já possui um cadastro? <Link to="/login">Entrar</Link>
       </p>
     </form>
   )
