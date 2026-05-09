@@ -14,7 +14,7 @@ import com.agrupae.application.port.in.authentication.LogoutUseCase;
 import com.agrupae.application.port.in.authentication.RefreshUseCase;
 import com.agrupae.application.port.in.authentication.SignupUseCase;
 import com.agrupae.application.port.out.authentication.TokenConfig;
-import com.agrupae.domain.refresh_token.TokenPair;
+import com.agrupae.application.port.out.authentication.TokenPair;
 import com.agrupae.infrastructure.controller.auth.dto.LoginRequest;
 import com.agrupae.infrastructure.controller.auth.dto.SignupRequest;
 
@@ -33,9 +33,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
         TokenPair tokenPair = this.loginUseCase.handle(
-            request.email(),
-            request.password()
-        );
+                request.email(),
+                request.password());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, buildRefreshCookie(tokenPair.rawRefreshToken()).toString())
                 .body(tokenPair.accessToken());
@@ -44,10 +43,9 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest request) {
         TokenPair tokenPair = this.signupUseCase.handle(
-            request.name(),
-            request.email(),
-            request.password()
-        );
+                request.name(),
+                request.email(),
+                request.password());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, buildRefreshCookie(tokenPair.rawRefreshToken()).toString())
                 .body(tokenPair.accessToken());

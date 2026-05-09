@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added user profile endpoint (`GET /api/v1/users/me`) returning a `UserProfileView` DTO
+  with user data excluding sensitive fields;
+- (backend) Added `DomainException` handler to `GlobalExceptionHandler.java`;
 - (backend) Added logout and refresh as unprotected endpoints (no authentication needed);
 - (backend) Added GlobalExceptionHandler.java (self-explanatory);
 - (backend) Added AuthController with it's request DTOs;
@@ -21,6 +24,10 @@ the groups table to open;
 
 ### Changed
 
+- (backend) Replaced generic runtime exceptions with `DomainException` across all domain entities;
+- (backend) Made `UserAlreadyExists` and `UserNotFound` exceptions extend `ApplicationException` for
+  consistency with the application layer exception hierarchy;
+- (backend) Moved `TokenPair.java` from the domain layer to the application layer;
 - (backend) Removed userId argument from both LogoutUseCase.java and RefreshUseCase.java, since the
 User entity can be derived from the RefreshToken entity already;
 - (database) Moved migration files from resources/db to resources/db/migration;

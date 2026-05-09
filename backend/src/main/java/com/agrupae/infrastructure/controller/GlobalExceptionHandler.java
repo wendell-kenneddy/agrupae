@@ -12,6 +12,7 @@ import com.agrupae.application.exception.auth.TokenExpiredException;
 import com.agrupae.application.exception.auth.TokenRevokedException;
 import com.agrupae.application.exception.user.UserAlreadyExistsException;
 import com.agrupae.application.exception.user.UserNotFoundException;
+import com.agrupae.domain.exception.DomainException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -21,7 +22,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 
-    @ExceptionHandler({InvalidTokenException.class, TokenRevokedException.class, TokenExpiredException.class})
+    @ExceptionHandler({ InvalidTokenException.class, TokenRevokedException.class, TokenExpiredException.class })
     public ResponseEntity<String> handleTokenErrors(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
@@ -38,7 +39,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingRequestCookieException.class)
     public ResponseEntity<String> handleMissingCookie(MissingRequestCookieException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("Required cookie missing: " + ex.getCookieName());
+    }
+
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<String> handleDomainException(DomainException ex) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(ex.getMessage());
     }
 }

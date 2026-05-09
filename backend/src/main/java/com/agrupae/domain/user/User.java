@@ -3,6 +3,7 @@ package com.agrupae.domain.user;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.agrupae.domain.exception.DomainException;
 import com.agrupae.domain.role.Role;
 
 import lombok.AccessLevel;
@@ -30,13 +31,13 @@ public class User {
             @NonNull final Instant createdAt,
             @NonNull final Instant updatedAt) {
         if (name.isBlank())
-            throw new IllegalArgumentException("User name cannot be blank.");
+            throw new DomainException("User name cannot be blank.");
         if (email.isBlank())
-            throw new IllegalArgumentException("Email  cannot be blank.");
+            throw new DomainException("Email  cannot be blank.");
         if (passwordHash.isBlank())
-            throw new IllegalArgumentException("Password name cannot be blank.");
+            throw new DomainException("Password name cannot be blank.");
         if (updatedAt.isBefore(createdAt))
-            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            throw new DomainException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.name = name;
@@ -67,23 +68,22 @@ public class User {
     };
 
     public static User reconstruct(
-        final UUID id,
-        final String name,
-        final String email,
-        final String passwordHash,
-        final Role role,
-        final Instant createdAt,
-        final Instant updatedAt
-    ) {
+            final UUID id,
+            final String name,
+            final String email,
+            final String passwordHash,
+            final Role role,
+            final Instant createdAt,
+            final Instant updatedAt) {
         return User.builder()
-            .id(id)
-            .name(name)
-            .email(email)
-            .passwordHash(passwordHash)
-            .role(role)
-            .createdAt(createdAt)
-            .updatedAt(updatedAt)
-            .build();
+                .id(id)
+                .name(name)
+                .email(email)
+                .passwordHash(passwordHash)
+                .role(role)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .build();
     }
 
 }

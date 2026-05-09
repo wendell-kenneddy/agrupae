@@ -3,6 +3,8 @@ package com.agrupae.domain.course;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.agrupae.domain.exception.DomainException;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,11 +30,11 @@ public class CourseArtifact {
             @NonNull Instant createdAt,
             @NonNull Instant updatedAt) throws IllegalArgumentException {
         if (name.isBlank())
-            throw new IllegalArgumentException("Course artifact name cannot be blank.");
+            throw new DomainException("Course artifact name cannot be blank.");
         if (resourceLink.isBlank())
-            throw new IllegalArgumentException("Resource link cannot be blank.");
+            throw new DomainException("Resource link cannot be blank.");
         if (updatedAt.isBefore(createdAt))
-            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            throw new DomainException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.courseId = courseId;

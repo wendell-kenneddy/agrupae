@@ -3,6 +3,8 @@ package com.agrupae.domain.course;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.agrupae.domain.exception.DomainException;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,9 +32,9 @@ public class Course {
             @NonNull final Instant createdAt,
             @NonNull final Instant updatedAt) throws IllegalArgumentException {
         if (name.isBlank())
-            throw new IllegalArgumentException("Course name cannot be blank.");
+            throw new DomainException("Course name cannot be blank.");
         if (updatedAt.isBefore(createdAt))
-            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            throw new DomainException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.leaderId = leaderId;

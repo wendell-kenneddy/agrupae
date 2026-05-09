@@ -8,6 +8,8 @@ import lombok.NonNull;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.agrupae.domain.exception.DomainException;
+
 @Getter
 public class GroupArtifact {
     private final UUID id;
@@ -28,13 +30,13 @@ public class GroupArtifact {
             final boolean privateArtifact,
             @NonNull String resourceLink,
             @NonNull Instant createdAt,
-            @NonNull Instant updatedAt) throws IllegalArgumentException {
+            @NonNull Instant updatedAt) {
         if (name.isBlank())
-            throw new IllegalArgumentException("Group artifact name cannot be blank.");
+            throw new DomainException("Group artifact name cannot be blank.");
         if (resourceLink.isBlank())
-            throw new IllegalArgumentException("Resource link cannot be blank.");
+            throw new DomainException("Resource link cannot be blank.");
         if (updatedAt.isBefore(createdAt))
-            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            throw new DomainException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.groupId = groupId;

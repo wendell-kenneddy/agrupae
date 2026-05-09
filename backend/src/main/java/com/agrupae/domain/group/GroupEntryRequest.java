@@ -3,6 +3,8 @@ package com.agrupae.domain.group;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.agrupae.domain.exception.DomainException;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +26,7 @@ public class GroupEntryRequest {
             @NonNull final UUID userId,
             @NonNull final GroupEntryRequestStatus status,
             @NonNull final Instant createdAt,
-            @NonNull final Instant updatedAt) throws IllegalArgumentException {
+            @NonNull final Instant updatedAt) {
         if (updatedAt.isBefore(createdAt))
             throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
 
@@ -50,9 +52,9 @@ public class GroupEntryRequest {
                 .build();
     };
 
-    public void accept() throws IllegalStateException {
+    public void accept() {
         if (this.status != GroupEntryRequestStatus.PENDING) {
-            throw new IllegalStateException("Only PENDING requests can be accepted/rejected.");
+            throw new DomainException("Only PENDING requests can be accepted/rejected.");
         }
 
         Instant now = Instant.now();
@@ -60,9 +62,9 @@ public class GroupEntryRequest {
         this.status = GroupEntryRequestStatus.ACCEPTED;
     }
 
-    public void reject() throws IllegalStateException {
+    public void reject() {
         if (this.status != GroupEntryRequestStatus.PENDING) {
-            throw new IllegalStateException("Only PENDING requests can be accepted/rejected.");
+            throw new DomainException("Only PENDING requests can be accepted/rejected.");
         }
 
         Instant now = Instant.now();
