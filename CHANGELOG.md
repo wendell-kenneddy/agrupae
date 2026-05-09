@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
+## [0.8.0] 2026-05-08
+
 ### Added
 
 - (backend) Added user profile endpoint (`GET /api/v1/users/me`) returning a `UserProfileView` DTO
