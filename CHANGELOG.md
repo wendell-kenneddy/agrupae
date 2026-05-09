@@ -20,9 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - (backend) Added a README.md file with instructions to run the backend application locally;
 - (database) Added database connection properties to application.properties;
 - (database) Added `V04__rename_is_open_to_open.sql` migration script to rename is_open column from
-the groups table to open;
+  the groups table to open;
 - (database) Added `V03__add_refresh_token_table.sql` migration script;
 - (database) Added `v02__refactor_naming.sql` migration script to refactor database schema naming.
+- (frontend) Added landing, login and register pages
+- (frontend) Added auth context with token management
+- (frontend) Added login and register forms with validation
+- (frontend) Added protected routes
 
 ### Changed
 
@@ -31,10 +35,10 @@ the groups table to open;
   consistency with the application layer exception hierarchy;
 - (backend) Moved `TokenPair.java` from the domain layer to the application layer;
 - (backend) Removed userId argument from both LogoutUseCase.java and RefreshUseCase.java, since the
-User entity can be derived from the RefreshToken entity already;
+  User entity can be derived from the RefreshToken entity already;
 - (database) Moved migration files from resources/db to resources/db/migration;
-- (database) Refactored migration files naming scheme from vX__Y.sql to VX__Y.sql, according to Flyways'
-standards.
+- (database) Refactored migration files naming scheme from vX**Y.sql to VX**Y.sql, according to Flyways'
+  standards.
 
 ## [0.7.0] 2026-05-07
 
@@ -57,7 +61,7 @@ standards.
 ### Changed
 
 - (backend) Move auth and some user related exceptions to application layer, since they are more in line with
-application concerns. Also properly refactored code related to them;
+  application concerns. Also properly refactored code related to them;
 - (backend) Removed email claim from access token JWT;
 - (backend) Refactored access level of Builder to private on GroupEntryRequests domain entity;
 - (backend) Refactored indentation of fluent interface notation at every domain entity;
