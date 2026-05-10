@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
+### Added
+
+- (frontend) Add landing, login and register pages
+- (frontend) Add auth context with token management
+- (frontend) Add login and register forms with validation
+- (frontend) Add protected routes
+
 ## [0.8.0] 2026-05-08
 
 ### Added
