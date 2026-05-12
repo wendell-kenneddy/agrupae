@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { register } from '@/features/auth/api/authApi'
+import { setAccessToken } from '@/lib/axios'
 import type { RegisterRequest } from '@/features/auth/types/auth.types'
 
 export function useRegister() {
@@ -13,10 +14,11 @@ export function useRegister() {
     setError(null)
 
     try {
-      await register(data)
-      navigate('/login')
+      const token = await register(data)
+      setAccessToken(token)
+      navigate('/home')
     } catch {
-      setError('Error creating account. Try again.')
+      setError('Erro ao criar conta. Tente novamente.')
     } finally {
       setIsLoading(false)
     }
