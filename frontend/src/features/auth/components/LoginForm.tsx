@@ -5,7 +5,10 @@ import { useLogin } from '@/features/auth/hooks/useLogin'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FaEyeSlash, FaRegEyeSlash } from 'react-icons/fa'
+import { FaEyeSlash, FaRegEyeSlash, FaRegEnvelope } from 'react-icons/fa'
+import { MdOutlineLock } from 'react-icons/md'
+
+import styles from './LoginForm.module.css'
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -24,31 +27,56 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
 
   return (
-    <form onSubmit={handleSubmit(handleLogin)}>
-      <div>
-        <label>Email</label>
-        <input type="email" {...register('email')} />
-        {errors.email && <span>{errors.email.message}</span>}
+    <form className={styles.form} onSubmit={handleSubmit(handleLogin)}>
+      <div className={styles.field}>
+        <label className={styles.label}>Email</label>
+        <div className={styles.inputWrapper}>
+          <FaRegEnvelope className={styles.inputIcon} />
+          <input
+            className={`${styles.input} ${errors.email ? styles.error : ''}`}
+            type="email"
+            placeholder="seu@email.com"
+            {...register('email')}
+          />
+        </div>
+        {errors.email && <span className={styles.errorMsg}>{errors.email.message}</span>}
       </div>
-      <div>
-        <div>
-          <label>Senha</label>
-          <input type={showPassword ? 'text' : 'password'} {...register('password')} />
-          <button type="button" onClick={() => setShowPassword(!showPassword)}>
+
+      <div className={styles.field}>
+        <label className={styles.label}>Senha</label>
+        <div className={styles.inputWrapper}>
+          <MdOutlineLock
+            className={styles.inputIcon}
+            style={{ width: '22px', height: '22px', left: 10 }}
+          />
+          <input
+            className={`${styles.input} ${errors.password ? styles.error : ''}`}
+            type={showPassword ? 'text' : 'password'}
+            placeholder="••••••••"
+            {...register('password')}
+          />
+          <button
+            className={styles.toggleBtn}
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+          >
             {showPassword ? <FaEyeSlash /> : <FaRegEyeSlash />}
           </button>
-          {errors.password && <span>{errors.password.message}</span>}
         </div>
-        <p>Esqueceu sua senha?</p>
+        {errors.password && <span className={styles.errorMsg}>{errors.password.message}</span>}
+        {/* <p className={styles.forgotLink}>Esqueceu sua senha?</p> */}
       </div>
 
-      {error && <span>{error}</span>}
+      {error && <span className={styles.globalError}>{error}</span>}
 
-      <button type="submit" disabled={isLoading}>
+      <button className={styles.submitBtn} type="submit" disabled={isLoading}>
         {isLoading ? 'Carregando...' : 'Entrar'}
       </button>
-      <p>
-        Ainda não possui um cadastro? <Link to="/register">Cadastrar</Link>
+      <p className={styles.footer}>
+        Ainda não possui um cadastro?{' '}
+        <Link className={styles.footerLink} to="/register">
+          Cadastrar
+        </Link>
       </p>
     </form>
   )
