@@ -34,6 +34,9 @@ public class User {
             throw new DomainException("User name cannot be blank.");
         if (email.isBlank())
             throw new DomainException("Email  cannot be blank.");
+        if (!email.matches("[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new DomainException("Invalid email format.");
+        }
         if (passwordHash.isBlank())
             throw new DomainException("Password name cannot be blank.");
         if (updatedAt.isBefore(createdAt))
@@ -84,6 +87,20 @@ public class User {
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
                 .build();
+    }
+
+    public void updateProfile(String name, String email) {
+        if (name.isBlank())
+            throw new DomainException("User name cannot be blank.");
+        if (email.isBlank())
+            throw new DomainException("Email  cannot be blank.");
+        if (!email.matches("[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new DomainException("Invalid email format.");
+        }
+
+        this.name = name;
+        this.email = email;
+        this.updatedAt = Instant.now();
     }
 
 }
