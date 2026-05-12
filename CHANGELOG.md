@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - (frontend) Add auth context with token management
 - (frontend) Add login and register forms with validation
 - (frontend) Add protected routes
+- (backend) Endpoint `PUT /users/me` to allow users to update their profile data (name and email). 
+- (backend) Strict Regex validation for email format in the User's domain entity.
 
 ## [0.8.0] 2026-05-08
 
