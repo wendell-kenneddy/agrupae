@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { refresh } from '@/features/auth/api/authApi'
 
 let accessToken: string | null = null
 
@@ -34,7 +33,8 @@ api.interceptors.response.use(
       originalRequest._retry = true
 
       try {
-        const newToken = await refresh()
+        const response = await api.post<string>('/auth/refresh')
+        const newToken = response.data
         setAccessToken(newToken)
         originalRequest.headers.Authorization = `Bearer ${newToken}`
         return api(originalRequest)

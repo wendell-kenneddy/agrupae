@@ -11,11 +11,6 @@ export async function register(data: RegisterRequest): Promise<string> {
   return response.data
 }
 
-export async function refresh(): Promise<string> {
-  const response = await api.post<string>('/auth/refresh')
-  return response.data
-}
-
 export async function logout(): Promise<void> {
   await api.post('/auth/logout')
 }

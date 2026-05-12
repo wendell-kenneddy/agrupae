@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import type { User } from '@/features/auth/types/auth.types'
-import { setAccessToken } from '@/lib/axios'
-import { refresh } from '@/features/auth/api/authApi'
+import api, { setAccessToken } from '@/lib/axios'
 
 interface AuthContextType {
   user: User | null
@@ -19,8 +18,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function restoreSession() {
       try {
-        const token = await refresh()
-        setAccessToken(token)
+        const response = await api.post<string>('/auth/refresh')
+        setAccessToken(response.data)
       } catch {
         setAccessToken(null)
       } finally {
