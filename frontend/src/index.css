@@ -14,6 +14,17 @@
   --radius-lg: 16px;
 }
 
+#root {
+  display: flex;
+  justify-content: center;
+  min-height: 100dvh;
+}
+
+#root > * {
+  width: 100%;
+  max-width: 480px;
+}
+
 html,
 body,
 #root {
