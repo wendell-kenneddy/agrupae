@@ -3,6 +3,8 @@ import type { ReactNode } from 'react'
 import type { User } from '@/features/auth/types/auth.types'
 import api, { setAccessToken } from '@/lib/axios'
 
+import { getMe } from '@/features/auth/api/authApi'
+
 interface AuthContextType {
   user: User | null
   setUser: (user: User | null) => void
@@ -20,6 +22,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const response = await api.post<string>('/auth/refresh')
         setAccessToken(response.data)
+        const user = await getMe()
+        setUser(user)
       } catch {
         setAccessToken(null)
       } finally {
