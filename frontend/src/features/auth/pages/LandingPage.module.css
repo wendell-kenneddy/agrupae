@@ -1,10 +1,5 @@
 .page {
   height: 100dvh;
-  background:
-    radial-gradient(circle at 10% 90%, rgba(255, 255, 255, 0.4) 0%, transparent 40%),
-    radial-gradient(circle at 95% 5%, rgba(180, 210, 255, 0.4) 0%, transparent 50%),
-    linear-gradient(135deg, #2b6cb0 0%, #7fb2f0 100%);
-  background-attachment: fixed;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -15,6 +10,17 @@
 
 .page::before {
   content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 90%, rgba(255, 255, 255, 0.4) 0%, transparent 40%),
+    radial-gradient(circle at 95% 5%, rgba(180, 210, 255, 0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #2b6cb0 0%, #7fb2f0 100%);
+  z-index: -1;
+}
+
+.page::after {
+  content: '';
   position: absolute;
   bottom: 45%;
   right: -150px;
@@ -23,6 +29,7 @@
   background: url('/logo-icon.svg') center center / contain no-repeat;
   opacity: 0.1;
   pointer-events: none;
+  z-index: 0;
 }
 
 .logo {
@@ -32,6 +39,8 @@
 
 .content {
   animation: fadeUp 0.6s ease 0.1s both;
+  position: relative;
+  z-index: 1;
 }
 
 .title {
@@ -64,6 +73,8 @@
   flex-direction: column;
   gap: 12px;
   animation: fadeUp 0.6s ease 0.2s both;
+  position: relative;
+  z-index: 1;
 }
 
 .btnPrimary {
