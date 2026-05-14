@@ -4,6 +4,7 @@ import { getAccessToken } from '@/lib/axios'
 import { LandingPage } from '@/features/auth/pages/LandingPage'
 import { LoginPage } from '@/features/auth/pages/LoginPage'
 import { RegisterPage } from '@/features/auth/pages/RegisterPage'
+import { HomeClassesPage } from '@/features/classes/pages/HomeClassesPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuth()
@@ -22,14 +23,15 @@ const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
   { path: '/login', element: <LoginPage /> },
   { path: '/register', element: <RegisterPage /> },
-  {
-    path: '/home',
-    element: (
-      <ProtectedRoute>
-        <div>Home — em breve</div>
-      </ProtectedRoute>
-    ),
-  },
+  { path: '/home', element: <HomeClassesPage /> },
+  // {
+  //   path: '/home',
+  //   element: (
+  //     <ProtectedRoute>
+  //       <HomeClassesPage />
+  //     </ProtectedRoute>
+  //   ),
+  // },
 ])
 
 export function Router() {
