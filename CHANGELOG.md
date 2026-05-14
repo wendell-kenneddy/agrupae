@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - (frontend) Add protected routes
 - (backend) Endpoint `PUT /users/me` to allow users to update their profile data (name and email). 
 - (backend) Strict Regex validation for email format in the User's domain entity.
+- (frontend) Added getMe API call to fetch authenticated user data after login and session restore
+- (frontend) Updated auth flow to store access token in memory only, following API security contract
+- (frontend) Added automatic token refresh interceptor to axios instance
+- (frontend) Added session restore on app load via refresh token cookie
+- (frontend) Added useLogout hook to handle logout flow
 
 ## [0.8.0] 2026-05-08
 
