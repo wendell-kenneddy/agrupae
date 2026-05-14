@@ -1,0 +1,139 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  letter-spacing: 0.01em;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  color: #00100f66;
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 14px 14px 42px;
+  background: #00100f0d;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  color: var(--color-text-dark);
+  outline: none;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.input:focus {
+  border-color: var(--color-blue-primary);
+  background: #2a7eff0d;
+}
+
+.input.error {
+  border-color: #ff4444;
+  background: #ff44440d;
+}
+
+.toggleBtn {
+  position: absolute;
+  right: 14px;
+  color: #00100f66;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.2s;
+  font-size: 20px;
+}
+
+.toggleBtn:hover {
+  color: var(--color-text-dark);
+}
+
+.errorMsg {
+  font-size: 0.78rem;
+  color: #ff4444;
+  font-weight: 500;
+}
+
+.forgotLink {
+  font-size: 0.82rem;
+  color: var(--color-blue-primary);
+  font-weight: 600;
+  text-align: right;
+  margin-top: 0px;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 16px;
+  background: var(--color-blue-dark);
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  color: var(--color-text-light);
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  margin-top: 30px;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+}
+
+.submitBtn:active {
+  transform: scale(0.98);
+}
+
+.submitBtn:disabled {
+  background: #00100f33;
+  cursor: not-allowed;
+}
+
+.footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #00100f99;
+  margin-top: 4px;
+}
+
+.footerLink {
+  color: var(--color-blue-dark);
+  font-weight: 600;
+}
+
+.footerLink:hover {
+  color: var(--color-blue-primary);
+}
+
+.globalError {
+  font-size: 0.85rem;
+  color: #ff4444;
+  background: #ff44440d;
+  border: 1px solid #ff444433;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-weight: 500;
+}

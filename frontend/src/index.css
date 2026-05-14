@@ -1,0 +1,63 @@
+@import '@fontsource-variable/funnel-sans';
+
+:root {
+  --color-bg-light: #efefef;
+  --color-blue-primary: #2a7eff;
+  --color-blue-dark: #00477f;
+  --color-blue-light: #9fccff;
+  --color-yellow: #d7f927;
+  --color-text-dark: #00100f;
+  --color-text-light: #efefef;
+  --font-main: 'Funnel Sans Variable', sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+  min-height: 100dvh;
+}
+
+#root > * {
+  width: 100%;
+  max-width: 480px;
+}
+
+html,
+body,
+#root {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-main);
+  background: var(--color-bg-light);
+  color: var(--color-text-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-main);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+input {
+  font-family: var(--font-main);
+}

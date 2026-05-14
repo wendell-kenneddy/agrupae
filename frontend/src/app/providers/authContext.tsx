@@ -1,24 +1,41 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import type { User } from '@/features/auth/types/auth.types'
+import api, { setAccessToken } from '@/lib/axios'
+
+import { getMe } from '@/features/auth/api/authApi'
 
 interface AuthContextType {
   user: User | null
-  accessToken: string | null
   setUser: (user: User | null) => void
-  setAccessToken: (token: string | null) => void
+  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function restoreSession() {
+      try {
+        const response = await api.post<string>('/auth/refresh')
+        setAccessToken(response.data)
+        const user = await getMe()
+        setUser(user)
+      } catch {
+        setAccessToken(null)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    restoreSession()
+  }, [])
 
   return (
-    <AuthContext.Provider value={{ user, accessToken, setUser, setAccessToken }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user, setUser, isLoading }}>{children}</AuthContext.Provider>
   )
 }
 

@@ -1,26 +1,28 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { login } from '@/features/auth/api/authApi'
+import { login, getMe } from '@/features/auth/api/authApi'
+import { setAccessToken } from '@/lib/axios'
 import { useAuth } from '@/app/providers/AuthContext'
 import type { LoginRequest } from '@/features/auth/types/auth.types'
 
 export function useLogin() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { setAccessToken } = useAuth()
   const navigate = useNavigate()
+  const { setUser } = useAuth()
 
   async function handleLogin(data: LoginRequest) {
     setIsLoading(true)
     setError(null)
 
     try {
-      const response = await login(data)
-      sessionStorage.setItem('accessToken', response.accessToken)
-      setAccessToken(response.accessToken)
+      const token = await login(data)
+      setAccessToken(token)
+      const user = await getMe()
+      setUser(user)
       navigate('/home')
     } catch {
-      setError('Invalid email or password.')
+      setError('Email ou senha inválidos.')
     } finally {
       setIsLoading(false)
     }

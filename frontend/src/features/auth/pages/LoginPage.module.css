@@ -1,0 +1,62 @@
+.page {
+  min-height: 100dvh;
+  background: var(--color-bg-light);
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 40px;
+  animation: fadeIn 0.3s ease both;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 50px 24px;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+}
+
+.backIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-dark);
+}
+
+.logo {
+  width: 90px;
+  margin: 0 auto;
+}
+
+.body {
+  flex: 1;
+  padding: 32px 28px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 24px 20vh;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  letter-spacing: -0.02em;
+  margin-bottom: 80px;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
