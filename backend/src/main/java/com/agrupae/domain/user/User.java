@@ -33,7 +33,7 @@ public class User {
         if (name.isBlank())
             throw new DomainException("User name cannot be blank.");
         if (email.isBlank())
-            throw new DomainException("Email  cannot be blank.");
+            throw new DomainException("Email cannot be blank.");
         if (!email.matches("[A-Za-z0-9+_.-]+@(.+)$")) {
             throw new DomainException("Invalid email format.");
         }
