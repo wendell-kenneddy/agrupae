@@ -11,7 +11,7 @@ export function getAccessToken() {
 }
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: '',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -29,7 +29,11 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      originalRequest.url !== '/auth/refresh'
+    ) {
       originalRequest._retry = true
 
       try {
@@ -38,9 +42,8 @@ api.interceptors.response.use(
         setAccessToken(newToken)
         originalRequest.headers.Authorization = `Bearer ${newToken}`
         return api(originalRequest)
-      } catch {
-        setAccessToken(null)
-        window.location.href = '/login'
+      } catch (refreshError) {
+        return Promise.reject(refreshError)
       }
     }
 
