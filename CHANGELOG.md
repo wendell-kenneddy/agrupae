@@ -9,21 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added tests to course creation domain and application layers;
+- (backend) Added course creation endpoint, covering domain, application and infra layers;
 - (backend) Unit tests for `User` domain entity;
 - (backend) Unit tests for `RefreshToken` domain entity;
 - (backend) Unit tests for `LoginService`, `LogoutService`, `RefreshService`, and `SignupService` application services;
-- (backend) Unit tests for `GetUserProfileService` and `UpdateProfileService` application services.
-- (frontend) Add landing, login and register pages
-- (frontend) Add auth context with token management
-- (frontend) Add login and register forms with validation
-- (frontend) Add protected routes
-- (backend) Endpoint `PUT /users/me` to allow users to update their profile data (name and email). 
-- (backend) Strict Regex validation for email format in the User's domain entity.
-- (frontend) Added getMe API call to fetch authenticated user data after login and session restore
-- (frontend) Updated auth flow to store access token in memory only, following API security contract
-- (frontend) Added automatic token refresh interceptor to axios instance
-- (frontend) Added session restore on app load via refresh token cookie
-- (frontend) Added useLogout hook to handle logout flow
+- (backend) Unit tests for `GetUserProfileService` and `UpdateProfileService` application services;
+- (frontend) Add landing, login and register pages;
+- (frontend) Add auth context with token management;
+- (frontend) Add login and register forms with validation;
+- (frontend) Add protected routes;
+- (backend) Endpoint `PUT /users/me` to allow users to update their profile data (name and email); 
+- (backend) Strict Regex validation for email format in the User's domain entity;
+- (frontend) Added getMe API call to fetch authenticated user data after login and session restore;
+- (frontend) Updated auth flow to store access token in memory only, following API security contract;
+- (frontend) Added automatic token refresh interceptor to axios instance;
+- (frontend) Added session restore on app load via refresh token cookie;
+- (frontend) Added useLogout hook to handle logout flow.
 
 ### Fixed
 

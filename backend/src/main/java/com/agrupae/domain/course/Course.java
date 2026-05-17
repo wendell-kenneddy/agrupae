@@ -24,7 +24,7 @@ public class Course {
     @Builder(access = AccessLevel.PRIVATE)
     private Course(
             @NonNull final UUID id,
-            final UUID leaderId,
+            @NonNull final UUID leaderId,
             @NonNull final String name,
             final String description,
             @NonNull final String inviteCode,
@@ -63,6 +63,27 @@ public class Course {
                 .archived(false)
                 .createdAt(now)
                 .updatedAt(now)
+                .build();
+    }
+
+    public static Course reconstruct(
+            UUID id,
+            UUID leaderId,
+            String name,
+            String description,
+            String inviteCode,
+            boolean archived,
+            Instant createdAt,
+            Instant updatedAt) {
+        return Course.builder()
+                .id(id)
+                .leaderId(leaderId)
+                .name(name)
+                .description(description)
+                .inviteCode(inviteCode)
+                .archived(archived)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
                 .build();
     }
 }
