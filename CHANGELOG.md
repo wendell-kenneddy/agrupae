@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Unit tests for `User` domain entity;
+- (backend) Unit tests for `RefreshToken` domain entity;
+- (backend) Unit tests for `LoginService`, `LogoutService`, `RefreshService`, and `SignupService` application services;
+- (backend) Unit tests for `GetUserProfileService` and `UpdateProfileService` application services.
 - (frontend) Add landing, login and register pages
 - (frontend) Add auth context with token management
 - (frontend) Add login and register forms with validation
