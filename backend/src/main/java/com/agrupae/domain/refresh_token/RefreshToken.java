@@ -36,7 +36,7 @@ public class RefreshToken {
         if (updatedAt.isBefore(createdAt)) throw new DomainException("Update timestamp cannot be before creation timestamp.");
         if (tokenHash.isBlank()) throw new DomainException("Token hash cannot be blank.");
         Instant expiresAt = createdAt.plus(duration);
-        if (expiresAt.isBefore(createdAt)) throw new DomainException("Refresh token must expire after creation timestamp.");
+        if (!expiresAt.isAfter(createdAt)) throw new DomainException("Refresh token must expire after creation timestamp.");
 
         this.id = id;
         this.userId = userId;
