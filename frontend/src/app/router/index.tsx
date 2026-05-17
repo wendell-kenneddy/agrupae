@@ -5,6 +5,8 @@ import { LandingPage } from '@/features/auth/pages/LandingPage'
 import { LoginPage } from '@/features/auth/pages/LoginPage'
 import { RegisterPage } from '@/features/auth/pages/RegisterPage'
 import { HomeClassesPage } from '@/features/classes/pages/HomeClassesPage'
+import { CreateClassPage } from '@/features/classes/pages/CreateClassPage'
+import { JoinClassPage } from '@/features/classes/pages/JoinClassPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuth()
@@ -24,6 +26,9 @@ const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   { path: '/register', element: <RegisterPage /> },
   { path: '/home', element: <HomeClassesPage /> },
+  { path: '/classes/create', element: <CreateClassPage /> },
+  { path: '/classes/join', element: <JoinClassPage /> },
+
   // {
   //   path: '/home',
   //   element: (
