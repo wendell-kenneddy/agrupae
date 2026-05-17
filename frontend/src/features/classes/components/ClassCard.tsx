@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import type { Class } from '@/features/classes/types/classes.types'
 import styles from './ClassCard.module.css'
 
+import { FaRegClipboard } from 'react-icons/fa'
+
 interface ClassCardProps {
   class: Class
 }
@@ -37,6 +39,7 @@ export function ClassCard({ class: c }: ClassCardProps) {
           <div className={styles.avatarExtra}>+{extraMembers}</div>
         </div>
         <div className={styles.assignments}>
+          <FaRegClipboard />
           <span>{c.activeAssignments} trabalhos ativos</span>
         </div>
       </div>

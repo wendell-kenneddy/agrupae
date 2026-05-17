@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { classesMock } from '@/features/classes/mocks/classes.mock'
-import type { Class } from '@/features/classes/types/classes.types'
 import { ClassCard } from '@/features/classes/components/ClassCard'
+import styles from './HomeClassesPage.module.css'
+
+import { TiPlus } from 'react-icons/ti'
 
 export function HomeClassesPage() {
   const navigate = useNavigate()
@@ -12,36 +14,62 @@ export function HomeClassesPage() {
   const joinedClasses = classesMock.filter((c) => c.role === 'STUDENT')
 
   return (
-    <main>
-      <header>
-        <img src="/logo-completa.svg" alt="Agrupaê" />
-        <button onClick={() => navigate('/profile')}>
-          <img src="/avatar-placeholder.png" alt="Perfil" />
-        </button>
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <img src="/logo-completa.svg" alt="Agrupaê" className={styles.logo} />
+        <button className={styles.avatar} onClick={() => navigate('/profile')} />
       </header>
 
-      <section>
-        <h2>Minhas turmas</h2>
-        {myClasses.map((c) => (
-          <ClassCard key={c.id} class={c} />
-        ))}
-      </section>
+      <div className={styles.content}>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Minhas turmas</h2>
+          {myClasses.map((c) => (
+            <ClassCard key={c.id} class={c} />
+          ))}
+        </section>
 
-      <section>
-        <h2>Turmas que participo</h2>
-        {joinedClasses.map((c) => (
-          <ClassCard key={c.id} class={c} />
-        ))}
-      </section>
+        <hr className={styles.divider} />
+
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Turmas que participo</h2>
+          {joinedClasses.map((c) => (
+            <ClassCard key={c.id} class={c} />
+          ))}
+        </section>
+      </div>
 
       {menuOpen && (
-        <div>
-          <button onClick={() => navigate('/classes/create')}>+ Criar turma</button>
-          <button onClick={() => navigate('/classes/join')}>→ Entrar com código</button>
-        </div>
+        <>
+          <div className={styles.overlay} onClick={() => setMenuOpen(false)} />
+          <div className={styles.menu}>
+            <button className={styles.menuItem} onClick={() => navigate('/classes/create')}>
+              <TiPlus />
+              Criar turma
+            </button>
+            <button className={styles.menuItem} onClick={() => navigate('/classes/join')}>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path
+                  d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Entrar com código
+            </button>
+          </div>
+        </>
       )}
 
-      <button onClick={() => setMenuOpen(!menuOpen)}>+</button>
+      <button className={styles.fab} onClick={() => setMenuOpen(!menuOpen)}>
+        +
+      </button>
     </main>
   )
 }
