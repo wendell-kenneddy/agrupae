@@ -38,7 +38,7 @@ public class User {
             throw new DomainException("Invalid email format.");
         }
         if (passwordHash.isBlank())
-            throw new DomainException("Password name cannot be blank.");
+            throw new DomainException("Password hash cannot be blank.");
         if (updatedAt.isBefore(createdAt))
             throw new DomainException("Update timestamp cannot be before creation timestamp.");
 
@@ -89,11 +89,11 @@ public class User {
                 .build();
     }
 
-    public void updateProfile(String name, String email) {
+    public void updateProfile(@NonNull String name, @NonNull String email) {
         if (name.isBlank())
             throw new DomainException("User name cannot be blank.");
         if (email.isBlank())
-            throw new DomainException("Email  cannot be blank.");
+            throw new DomainException("Email cannot be blank.");
         if (!email.matches("[A-Za-z0-9+_.-]+@(.+)$")) {
             throw new DomainException("Invalid email format.");
         }
