@@ -4,8 +4,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.agrupae.application.port.out.authentication.*;
+import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.application.port.out.user.UserRepository;
 import com.agrupae.application.service.authentication.*;
+import com.agrupae.application.service.course.CreateCourseService;
 
 @Configuration
 public class ApplicationServiceConfig {
@@ -50,5 +52,10 @@ public class ApplicationServiceConfig {
             RefreshTokenRepository refreshTokenRepository,
             TokenHasher tokenHasher) {
         return new LogoutService(refreshTokenRepository, tokenHasher);
+    }
+
+    @Bean
+    public CreateCourseService createCourseService(CourseRepository courseRepository) {
+        return new CreateCourseService(courseRepository);
     }
 }
