@@ -10,6 +10,9 @@ import com.agrupae.application.exception.auth.InvalidCredentialsException;
 import com.agrupae.application.exception.auth.InvalidTokenException;
 import com.agrupae.application.exception.auth.TokenExpiredException;
 import com.agrupae.application.exception.auth.TokenRevokedException;
+import com.agrupae.application.exception.course.AlreadyJoinedCourseException;
+import com.agrupae.application.exception.course.InvalidInviteCodeException;
+import com.agrupae.application.exception.course.LeaderCannotJoinOwnCourseException;
 import com.agrupae.application.exception.user.UserAlreadyExistsException;
 import com.agrupae.application.exception.user.UserNotFoundException;
 import com.agrupae.domain.exception.DomainException;
@@ -41,6 +44,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMissingCookie(MissingRequestCookieException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("Required cookie missing: " + ex.getCookieName());
+    }
+
+    @ExceptionHandler(InvalidInviteCodeException.class)
+    public ResponseEntity<String> handleInvalidInviteCode(InvalidInviteCodeException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler({ AlreadyJoinedCourseException.class, LeaderCannotJoinOwnCourseException.class })
+    public ResponseEntity<String> handleCourseJoinConflicts(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
     @ExceptionHandler(DomainException.class)

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agrupae.application.port.in.course.CourseView;
 import com.agrupae.application.port.in.course.CreateCourseUseCase;
+import com.agrupae.application.port.in.course.JoinCourseUseCase;
 import com.agrupae.infrastructure.controller.course.dto.CreateCourseRequest;
+import com.agrupae.infrastructure.controller.course.dto.JoinCourseRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CourseController {
     private final CreateCourseUseCase createCourseUseCase;
+    private final JoinCourseUseCase joinCourseUseCase;
 
     @PostMapping
     public ResponseEntity<CourseView> create(
@@ -31,5 +34,15 @@ public class CourseController {
         CourseView view = this.createCourseUseCase.handle(leaderId, request.name(), request.description());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(view);
+    }
+
+    @PostMapping("/join")
+    public ResponseEntity<CourseView> join(
+            @AuthenticationPrincipal Jwt jwt,
+            @RequestBody JoinCourseRequest request) {
+        UUID studentId = UUID.fromString(jwt.getSubject());
+        CourseView view = this.joinCourseUseCase.handle(studentId, request.inviteCode());
+
+        return ResponseEntity.ok(view);
     }
 }

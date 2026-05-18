@@ -25,6 +25,13 @@ public class CourseRepositoryJpaAdapter implements CourseRepository {
     }
 
     @Override
+    public Course findByInviteCode(String inviteCode) {
+        return this.courseJpaRepository.findByInviteCode(inviteCode)
+                .map(this.mapper::toDomain)
+                .orElse(null);
+    }
+
+    @Override
     public Course save(Course course) {
         CourseJpaEntity entity = this.mapper.toJpaEntity(course);
         CourseJpaEntity saved = this.courseJpaRepository.save(entity);
