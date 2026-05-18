@@ -9,18 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added new course join related exceptions into `GlobalExceptionHandler`;
+- (backend) Added course join service wiring into `ApplicationServiceConfig`;
+- (backend) Added course join tests;
+- (backend) Added course join endpoint;
+- (backend) Added course join domain and application logic;
 - (backend) Added tests to course creation domain and application layers;
 - (backend) Added course creation endpoint, covering domain, application and infra layers;
-- (backend) Unit tests for `User` domain entity;
-- (backend) Unit tests for `RefreshToken` domain entity;
-- (backend) Unit tests for `LoginService`, `LogoutService`, `RefreshService`, and `SignupService` application services;
-- (backend) Unit tests for `GetUserProfileService` and `UpdateProfileService` application services;
-- (frontend) Add landing, login and register pages;
-- (frontend) Add auth context with token management;
-- (frontend) Add login and register forms with validation;
-- (frontend) Add protected routes;
-- (backend) Endpoint `PUT /users/me` to allow users to update their profile data (name and email); 
-- (backend) Strict Regex validation for email format in the User's domain entity;
+- (backend) Added unit tests for `User` domain entity;
+- (backend) Added unit tests for `RefreshToken` domain entity;
+- (backend) Added unit tests for `LoginService`, `LogoutService`, `RefreshService`, and `SignupService` application services;
+- (backend) Added unit tests for `GetUserProfileService` and `UpdateProfileService` application services;
+- (frontend) Added landing, login and register pages;
+- (frontend) Added auth context with token management;
+- (frontend) Added login and register forms with validation;
+- (frontend) Added protected routes;
+- (backend) Added Endpoint `PUT /users/me` to allow users to update their profile data (name and email); 
+- (backend) Added strict Regex validation for email format in the User's domain entity;
 - (frontend) Added getMe API call to fetch authenticated user data after login and session restore;
 - (frontend) Updated auth flow to store access token in memory only, following API security contract;
 - (frontend) Added automatic token refresh interceptor to axios instance;
@@ -29,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- (backend) Fixed user profile related services not being injected;
 - (backend) Fix extra whitespace in user email blank validation error message.
 
 ## [0.8.0] 2026-05-08

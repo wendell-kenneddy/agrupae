@@ -4,10 +4,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.agrupae.application.port.out.authentication.*;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.application.port.out.user.UserRepository;
 import com.agrupae.application.service.authentication.*;
 import com.agrupae.application.service.course.CreateCourseService;
+import com.agrupae.application.service.course.JoinCourseService;
+import com.agrupae.application.service.user.GetUserProfileService;
+import com.agrupae.application.service.user.UpdateProfileService;
 
 @Configuration
 public class ApplicationServiceConfig {
@@ -55,7 +59,24 @@ public class ApplicationServiceConfig {
     }
 
     @Bean
+    public GetUserProfileService getUserProfileService(UserRepository userRepository) {
+        return new GetUserProfileService(userRepository);
+    }
+
+    @Bean
+    public UpdateProfileService updateProfileService(UserRepository userRepository) {
+        return new UpdateProfileService(userRepository);
+    }
+
+    @Bean
     public CreateCourseService createCourseService(CourseRepository courseRepository) {
         return new CreateCourseService(courseRepository);
+    }
+
+    @Bean
+    public JoinCourseService joinCourseService(
+            CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository) {
+        return new JoinCourseService(courseRepository, courseMembershipRepository);
     }
 }
