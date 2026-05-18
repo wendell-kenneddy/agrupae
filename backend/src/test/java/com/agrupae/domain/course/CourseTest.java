@@ -167,4 +167,34 @@ class CourseTest {
             assertThatThrownBy(call).isInstanceOf(NullPointerException.class);
         }
     }
+
+    @Nested
+    class Archive {
+
+        @Test
+        void onActiveCourse_setsArchivedTrueAndBumpsUpdatedAt() throws InterruptedException {
+            Course course = Course.create(UUID.randomUUID(), "Algorithms", null);
+            Instant before = course.getUpdatedAt();
+            Thread.sleep(1);
+
+            course.archive();
+
+            assertThat(course.isArchived()).isTrue();
+            assertThat(course.getUpdatedAt()).isAfter(before);
+        }
+
+        @Test
+        void onAlreadyArchivedCourse_throwsDomainException() {
+            UUID id = UUID.randomUUID();
+            UUID leaderId = UUID.randomUUID();
+            String inviteCode = UUID.randomUUID().toString();
+            Instant now = Instant.now();
+            Course course = Course.reconstruct(id, leaderId, "Algorithms", null,
+                    inviteCode, true, now, now);
+
+            assertThatThrownBy(course::archive)
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Course is already archived.");
+        }
+    }
 }

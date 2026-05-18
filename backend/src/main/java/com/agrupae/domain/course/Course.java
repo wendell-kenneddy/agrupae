@@ -66,6 +66,14 @@ public class Course {
                 .build();
     }
 
+    public void archive() {
+        if (this.archived)
+            throw new DomainException("Course is already archived.");
+
+        this.archived = true;
+        this.updatedAt = Instant.now();
+    }
+
     public static Course reconstruct(
             UUID id,
             UUID leaderId,
