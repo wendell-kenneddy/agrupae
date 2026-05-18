@@ -3,14 +3,18 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import styles from './CreateClassPage.module.css'
+import { createClass } from '@/features/classes/api/classesApi'
+import { useCreateClass } from '../hooks/useCreateClass'
 
 const createClassSchema = z.object({
   name: z.string().min(1, 'Nome da turma é obrigatório'),
+  description: z.string().optional(),
 })
 
 type CreateClassFormData = z.infer<typeof createClassSchema>
 
 export function CreateClassPage() {
+  const { handleCreateClass, isLoading, error } = useCreateClass()
   const navigate = useNavigate()
   const {
     register,
@@ -21,9 +25,13 @@ export function CreateClassPage() {
 
   const nameValue = watch('name')
 
-  function onSubmit(data: CreateClassFormData) {
-    console.log(data)
-    // integrar com API depois
+  async function onSubmit(data: CreateClassFormData) {
+    try {
+      await createClass(data)
+      navigate('/home')
+    } catch {
+      // tratar erro depois
+    }
   }
 
   return (
@@ -44,7 +52,7 @@ export function CreateClassPage() {
         <h1 className={styles.title}>Criar turma</h1>
       </header>
 
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+      <form className={styles.form} onSubmit={handleSubmit(handleCreateClass)}>
         <div className={styles.field}>
           <label className={styles.label}>Nome da turma</label>
           <input
@@ -62,9 +70,11 @@ export function CreateClassPage() {
           )}
         </div>
 
-        <button className={styles.submitBtn} type="submit">
-          Criar turma
+        <button className={styles.submitBtn} type="submit" disabled={!nameValue || isLoading}>
+          {isLoading ? 'Criando...' : 'Criar turma'}
         </button>
+
+        {error && <span className={styles.errorMsg}>{error}</span>}
       </form>
     </main>
   )

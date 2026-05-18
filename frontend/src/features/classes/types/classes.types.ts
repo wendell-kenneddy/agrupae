@@ -1,32 +1,31 @@
 export type ClassRole = 'OWNER' | 'STUDENT'
 
-export interface Class {
-  id: string
-  name: string
-  memberCount: number
-  activeAssignments: number
-  role: ClassRole
-  inviteCode: string
-  previewMembers: ClassMemberPreview[]
-}
-
 export interface ClassMemberPreview {
   id: string
   name: string
   avatarUrl?: string
 }
 
-export interface Member {
+export interface Class {
   id: string
+  leaderId: string
   name: string
-  email: string
-  avatarUrl?: string
+  description?: string
+  inviteCode: string
+  archived: boolean
+  createdAt: string
+  updatedAt: string
+  memberCount: number
+  activeAssignments: number
+  role: ClassRole
+  previewMembers: ClassMemberPreview[]
 }
 
-export interface Assignment {
-  id: string
+export interface CreateClassRequest {
   name: string
-  deadline: string
-  groupsFormed: number
-  totalGroups: number
+  description?: string
+}
+
+export interface JoinClassRequest {
+  inviteCode: string
 }
