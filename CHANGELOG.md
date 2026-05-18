@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added archive method to the Course domain entity, with already-archived guard;
+- (backend) Added course archival application service, restricted to course leaders and admins;
+- (backend) Added POST /courses/{id}/archive endpoint, with wiring and exception handlers for course-not-found and unauthorized archival;
 - (backend) Added new course join related exceptions into `GlobalExceptionHandler`;
 - (backend) Added course join service wiring into `ApplicationServiceConfig`;
 - (backend) Added course join tests;
@@ -34,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- (backend) Fixed invalid Spring placeholder default syntax for JWT TTL properties;
 - (backend) Fixed user profile related services not being injected;
 - (backend) Fix extra whitespace in user email blank validation error message.
 
