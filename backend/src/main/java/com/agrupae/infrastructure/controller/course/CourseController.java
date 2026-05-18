@@ -6,14 +6,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agrupae.application.port.in.course.ArchiveCourseUseCase;
 import com.agrupae.application.port.in.course.CourseView;
 import com.agrupae.application.port.in.course.CreateCourseUseCase;
 import com.agrupae.application.port.in.course.JoinCourseUseCase;
+import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.course.dto.CreateCourseRequest;
 import com.agrupae.infrastructure.controller.course.dto.JoinCourseRequest;
 
@@ -25,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class CourseController {
     private final CreateCourseUseCase createCourseUseCase;
     private final JoinCourseUseCase joinCourseUseCase;
+    private final ArchiveCourseUseCase archiveCourseUseCase;
 
     @PostMapping
     public ResponseEntity<CourseView> create(
@@ -44,5 +48,16 @@ public class CourseController {
         CourseView view = this.joinCourseUseCase.handle(studentId, request.inviteCode());
 
         return ResponseEntity.ok(view);
+    }
+
+    @PostMapping("/{id}/archive")
+    public ResponseEntity<Void> archive(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID id) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        Role actorRole = Role.valueOf(jwt.getClaimAsString("role"));
+        this.archiveCourseUseCase.handle(actorId, actorRole, id);
+
+        return ResponseEntity.noContent().build();
     }
 }

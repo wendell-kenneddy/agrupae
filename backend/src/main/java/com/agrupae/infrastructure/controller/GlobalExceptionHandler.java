@@ -11,8 +11,10 @@ import com.agrupae.application.exception.auth.InvalidTokenException;
 import com.agrupae.application.exception.auth.TokenExpiredException;
 import com.agrupae.application.exception.auth.TokenRevokedException;
 import com.agrupae.application.exception.course.AlreadyJoinedCourseException;
+import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.exception.course.InvalidInviteCodeException;
 import com.agrupae.application.exception.course.LeaderCannotJoinOwnCourseException;
+import com.agrupae.application.exception.course.NotAuthorizedToArchiveCourseException;
 import com.agrupae.application.exception.user.UserAlreadyExistsException;
 import com.agrupae.application.exception.user.UserNotFoundException;
 import com.agrupae.domain.exception.DomainException;
@@ -49,6 +51,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidInviteCodeException.class)
     public ResponseEntity<String> handleInvalidInviteCode(InvalidInviteCodeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(CourseNotFoundException.class)
+    public ResponseEntity<String> handleCourseNotFound(CourseNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NotAuthorizedToArchiveCourseException.class)
+    public ResponseEntity<String> handleNotAuthorizedToArchiveCourse(NotAuthorizedToArchiveCourseException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 
     @ExceptionHandler({ AlreadyJoinedCourseException.class, LeaderCannotJoinOwnCourseException.class })
