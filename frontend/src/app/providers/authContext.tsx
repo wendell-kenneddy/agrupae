@@ -19,7 +19,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function restoreSession() {
-      /*try {
+      try {
         const response = await api.post<string>('/auth/refresh')
         setAccessToken(response.data)
         const user = await getMe()
@@ -29,8 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } finally {
         setIsLoading(false)
       }
-      */
-      setIsLoading(false)
     }
 
     restoreSession()

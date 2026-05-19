@@ -27,36 +27,32 @@ const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
   { path: '/login', element: <LoginPage /> },
   { path: '/register', element: <RegisterPage /> },
-  { path: '/home', element: <HomeClassesPage /> },
   { path: '/classes/create', element: <CreateClassPage /> },
   { path: '/classes/join', element: <JoinClassPage /> },
-  { path: '/classes/:id', element: <ClassPage /> },
-  { path: '/classes/:id/transfer', element: <TransferOwnershipPage /> },
-
-  // {
-  //   path: '/home',
-  //   element: (
-  //     <ProtectedRoute>
-  //       <HomeClassesPage />
-  //     </ProtectedRoute>
-  //   ),
-  // },
-  //   {
-  //   path: '/classes/:id',
-  //   element: (
-  //     <ProtectedRoute>
-  //       <ClassPage />
-  //     </ProtectedRoute>
-  //   ),
-  // },
-  // {
-  //   path: '/classes/:id/transfer',
-  //   element: (
-  //     <ProtectedRoute>
-  //       <div>Transfer — em breve</div>
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: '/home',
+    element: (
+      <ProtectedRoute>
+        <HomeClassesPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/classes/:id',
+    element: (
+      <ProtectedRoute>
+        <ClassPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/classes/:id/transfer',
+    element: (
+      <ProtectedRoute>
+        <TransferOwnershipPage />
+      </ProtectedRoute>
+    ),
+  },
 ])
 
 export function Router() {

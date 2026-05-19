@@ -2,12 +2,17 @@ import type { Class } from '@/features/classes/types/classes.types'
 
 export const classesMock: Class[] = [
   {
-    id: '1',
+    id: 'd232af2b-8f73-48c7-9110-bd6b1541d0b1',
     name: 'Engenharia de Software - Turma A - 2026.1',
+    leaderId: 'user-1',
+    description: 'Turma de Engenharia de Software 2026.1',
     memberCount: 36,
     activeAssignments: 4,
     role: 'OWNER',
     inviteCode: 'ES-2026-A1B2C',
+    archived: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
     previewMembers: [
       { id: '1', name: 'Ana Beatriz Souza' },
       { id: '2', name: 'Fernanda Lima' },
@@ -17,10 +22,15 @@ export const classesMock: Class[] = [
   {
     id: '2',
     name: 'Banco de dados - 2026.1',
+    leaderId: 'user-1',
+    description: 'Turma de Banco de Dados 2026.1',
     memberCount: 31,
     activeAssignments: 2,
     role: 'OWNER',
     inviteCode: 'BD-2026-K7X9M',
+    archived: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
     previewMembers: [
       { id: '4', name: 'Gabriel Oliveira' },
       { id: '5', name: 'João Pedro Alves' },
@@ -30,10 +40,15 @@ export const classesMock: Class[] = [
   {
     id: '3',
     name: 'Interação Humano Computador - 2026.1',
+    leaderId: 'user-2',
+    description: 'Turma de IHC 2026.1',
     memberCount: 40,
     activeAssignments: 6,
     role: 'STUDENT',
     inviteCode: 'IHC-2026-X3Y4Z',
+    archived: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
     previewMembers: [
       { id: '7', name: 'Larissa Ferreira' },
       { id: '8', name: 'Matheus Costa' },
@@ -43,10 +58,15 @@ export const classesMock: Class[] = [
   {
     id: '4',
     name: 'Teoria da Computação - 2026.1',
+    leaderId: 'user-2',
+    description: 'Turma de Teoria da Computação 2026.1',
     memberCount: 22,
     activeAssignments: 1,
     role: 'STUDENT',
     inviteCode: 'TC-2026-M5N6O',
+    archived: false,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
     previewMembers: [
       { id: '10', name: 'Victor Hugo Santos' },
       { id: '11', name: 'Thaís Monteiro' },
