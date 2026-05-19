@@ -7,6 +7,8 @@ import { RegisterPage } from '@/features/auth/pages/RegisterPage'
 import { HomeClassesPage } from '@/features/classes/pages/HomeClassesPage'
 import { CreateClassPage } from '@/features/classes/pages/CreateClassPage'
 import { JoinClassPage } from '@/features/classes/pages/JoinClassPage'
+import { ClassPage } from '@/features/classes/pages/ClassPage'
+import { TransferOwnershipPage } from '@/features/classes/pages/TransferOwnershipPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuth()
@@ -28,12 +30,30 @@ const router = createBrowserRouter([
   { path: '/home', element: <HomeClassesPage /> },
   { path: '/classes/create', element: <CreateClassPage /> },
   { path: '/classes/join', element: <JoinClassPage /> },
+  { path: '/classes/:id', element: <ClassPage /> },
+  { path: '/classes/:id/transfer', element: <TransferOwnershipPage /> },
 
   // {
   //   path: '/home',
   //   element: (
   //     <ProtectedRoute>
   //       <HomeClassesPage />
+  //     </ProtectedRoute>
+  //   ),
+  // },
+  //   {
+  //   path: '/classes/:id',
+  //   element: (
+  //     <ProtectedRoute>
+  //       <ClassPage />
+  //     </ProtectedRoute>
+  //   ),
+  // },
+  // {
+  //   path: '/classes/:id/transfer',
+  //   element: (
+  //     <ProtectedRoute>
+  //       <div>Transfer — em breve</div>
   //     </ProtectedRoute>
   //   ),
   // },

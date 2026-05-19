@@ -14,3 +14,7 @@ export async function joinClass(data: JoinClassRequest): Promise<Class> {
   const response = await api.post<Class>('/courses/join', data)
   return response.data
 }
+
+export async function archiveClass(id: string): Promise<void> {
+  await api.post(`/courses/${id}/archive`)
+}
