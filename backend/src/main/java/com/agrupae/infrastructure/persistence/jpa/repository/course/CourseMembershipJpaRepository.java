@@ -1,6 +1,7 @@
 package com.agrupae.infrastructure.persistence.jpa.repository.course;
 
 import java.util.UUID;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,4 +12,6 @@ public interface CourseMembershipJpaRepository
         extends JpaRepository<CourseMembershipJpaEntity, CourseMembershipId> {
 
     boolean existsByStudentIdAndCourseId(UUID studentId, UUID courseId);
+
+    List<CourseMembershipJpaEntity> findByStudentId(UUID studentId);
 }

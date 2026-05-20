@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
+import java.util.List;
 import com.agrupae.domain.course.CourseMembership;
 import com.agrupae.infrastructure.persistence.jpa.mapper.CourseMembershipJpaEntityMapper;
 import com.agrupae.infrastructure.persistence.jpa.model.course.CourseMembershipJpaEntity;
@@ -27,5 +28,12 @@ public class CourseMembershipRepositoryJpaAdapter implements CourseMembershipRep
         CourseMembershipJpaEntity entity = this.mapper.toJpaEntity(membership);
         CourseMembershipJpaEntity saved = this.jpaRepository.save(entity);
         return this.mapper.toDomain(saved);
+    }
+
+    @Override
+    public List<CourseMembership> findByStudentId(UUID studentId) {
+        return this.jpaRepository.findByStudentId(studentId).stream()
+                .map(jpaEntity -> this.mapper.toDomain(jpaEntity))
+                .toList();
     }
 }

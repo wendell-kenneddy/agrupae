@@ -13,6 +13,7 @@ import com.agrupae.application.service.course.CreateCourseService;
 import com.agrupae.application.service.course.JoinCourseService;
 import com.agrupae.application.service.user.GetUserProfileService;
 import com.agrupae.application.service.user.UpdateProfileService;
+import com.agrupae.application.service.course.GetCoursesService;
 
 @Configuration
 public class ApplicationServiceConfig {
@@ -70,8 +71,8 @@ public class ApplicationServiceConfig {
     }
 
     @Bean
-    public CreateCourseService createCourseService(CourseRepository courseRepository) {
-        return new CreateCourseService(courseRepository);
+    public CreateCourseService createCourseService(CourseRepository courseRepository, CourseMembershipRepository courseMembershipRepository) {
+        return new CreateCourseService(courseRepository, courseMembershipRepository);
     }
 
     @Bean
@@ -84,5 +85,12 @@ public class ApplicationServiceConfig {
     @Bean
     public ArchiveCourseService archiveCourseService(CourseRepository courseRepository) {
         return new ArchiveCourseService(courseRepository);
+    }
+
+    @Bean 
+    public GetCoursesService getCoursesService(
+            CourseMembershipRepository courseMembershipRepository,
+            CourseRepository courseRepository) {
+        return new GetCoursesService(courseMembershipRepository, courseRepository);
     }
 }

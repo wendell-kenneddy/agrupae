@@ -1,8 +1,11 @@
 package com.agrupae.infrastructure.persistence.jpa.repository.course;
 
 import java.util.UUID;
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.domain.course.Course;
@@ -36,5 +39,11 @@ public class CourseRepositoryJpaAdapter implements CourseRepository {
         CourseJpaEntity entity = this.mapper.toJpaEntity(course);
         CourseJpaEntity saved = this.courseJpaRepository.save(entity);
         return this.mapper.toDomain(saved);
+    }
+
+    @Override
+    public Page<Course> findAllByIdIn(List<UUID> courseIds, Pageable pageable) {
+        return this.courseJpaRepository.findAllByIdIn(courseIds, pageable)
+                .map(this.mapper::toDomain);
     }
 }
