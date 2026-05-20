@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added a view method to get courses related to users;
+- (backend) Added `GET /courses` endpoint returning a pageable JSON;
 - (backend) Added archive method to the Course domain entity, with already-archived guard;
 - (backend) Added course archival application service, restricted to course leaders and admins;
 - (backend) Added POST /courses/{id}/archive endpoint, with wiring and exception handlers for course-not-found and unauthorized archival;
@@ -40,6 +42,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - (backend) Fixed invalid Spring placeholder default syntax for JWT TTL properties;
 - (backend) Fixed user profile related services not being injected;
 - (backend) Fix extra whitespace in user email blank validation error message.
+
+### Changed
+
+- (backend) Changed "CreateCourse" method allowing leaders to be interpreted as members of their courses in CourseMembership table;
+- (backend) Changed tests related to Course methods.
 
 ## [0.8.0] 2026-05-08
 

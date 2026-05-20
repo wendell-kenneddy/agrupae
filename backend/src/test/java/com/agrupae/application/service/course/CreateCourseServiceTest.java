@@ -7,6 +7,7 @@ import com.agrupae.application.port.in.course.CourseView;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.domain.course.Course;
 import com.agrupae.domain.exception.DomainException;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -24,11 +25,13 @@ class CreateCourseServiceTest {
 
     private CourseRepository courseRepository;
     private CreateCourseService service;
+    private CourseMembershipRepository courseMembershipRepository;
 
     @BeforeEach
     void setUp() {
         courseRepository = mock(CourseRepository.class);
-        service = new CreateCourseService(courseRepository);
+        courseMembershipRepository = mock(CourseMembershipRepository.class);
+        service = new CreateCourseService(courseRepository, courseMembershipRepository);
     }
 
     @Nested
