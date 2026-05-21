@@ -36,7 +36,7 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
                 <p className={styles.cardName}>{a.name}</p>
                 <p className={styles.cardDeadline}>Prazo: {a.deadline}</p>
               </div>
-              <button className={styles.menuBtn}>⋮</button>
+              {/* <button className={styles.menuBtn}>⋮</button> */}
             </div>
             <hr className={styles.divider} />
             <div className={styles.cardBottom}>

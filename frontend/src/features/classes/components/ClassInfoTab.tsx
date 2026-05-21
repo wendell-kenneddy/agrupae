@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useArchiveClass } from '@/features/classes/hooks/useArchiveClass.ts'
 import type { Class } from '@/features/classes/types/classes.types'
@@ -11,9 +12,15 @@ export function ClassInfoTab({ course }: ClassInfoTabProps) {
   const navigate = useNavigate()
   const { handleArchive, isLoading } = useArchiveClass(course.id)
   const isOwner = course.role === 'OWNER'
+  const [showArchiveModal, setShowArchiveModal] = useState(false)
 
   function handleCopyCode() {
     navigator.clipboard.writeText(course.inviteCode)
+  }
+
+  function handleConfirmArchive() {
+    setShowArchiveModal(false)
+    handleArchive()
   }
 
   return (
@@ -54,10 +61,51 @@ export function ClassInfoTab({ course }: ClassInfoTabProps) {
           >
             Transferir responsabilidade
           </button>
-          <button className={styles.archiveBtn} onClick={handleArchive} disabled={isLoading}>
+          <button
+            className={styles.archiveBtn}
+            onClick={() => setShowArchiveModal(true)}
+            disabled={isLoading}
+          >
             {isLoading ? 'Arquivando...' : 'Arquivar turma'}
           </button>
         </div>
+      )}
+
+      {showArchiveModal && (
+        <>
+          <div className={styles.overlay} onClick={() => setShowArchiveModal(false)} />
+          <div className={styles.modal}>
+            <button className={styles.closeBtn} onClick={() => setShowArchiveModal(false)}>
+              <svg
+                width="34"
+                height="34"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+            <p className={styles.modalTitle}>
+              Arquivar a turma <strong>{course.name}</strong>?
+            </p>
+            <p className={styles.modalWarning}>A turma ficará inacessível para todos os membros.</p>
+            <div className={styles.modalActions}>
+              <button className={styles.cancelBtn} onClick={() => setShowArchiveModal(false)}>
+                Cancelar
+              </button>
+              <button
+                className={styles.confirmBtn}
+                onClick={handleConfirmArchive}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Arquivando...' : 'Arquivar'}
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   )

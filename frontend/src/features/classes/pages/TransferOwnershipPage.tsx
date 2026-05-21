@@ -111,7 +111,17 @@ export function TransferOwnershipPage() {
           <div className={styles.overlay} onClick={() => setSelected(null)} />
           <div className={styles.modal}>
             <button className={styles.closeBtn} onClick={() => setSelected(null)}>
-              ✕
+              <svg
+                width="34"
+                height="34"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
             </button>
             <p className={styles.modalTitle}>
               Transferir responsabilidade da turma <strong>Banco de dados - 2026.1</strong> para
