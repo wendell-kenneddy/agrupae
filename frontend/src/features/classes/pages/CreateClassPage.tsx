@@ -54,7 +54,7 @@ export function CreateClassPage() {
 
       <form className={styles.form} onSubmit={handleSubmit(handleCreateClass)}>
         <div className={styles.field}>
-          <label className={styles.label}>Nome da turma</label>
+          <label className={styles.label}>Nome da turma*</label>
           <input
             className={`${styles.input} ${errors.name ? styles.error : ''}`}
             type="text"
@@ -68,6 +68,16 @@ export function CreateClassPage() {
               Este nome será visível para todos os membros da turma.
             </span>
           )}
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label}>Descrição</label>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Ex: Turma do período 2026.1"
+            {...register('description')}
+          />
         </div>
 
         <button className={styles.submitBtn} type="submit" disabled={!nameValue || isLoading}>
