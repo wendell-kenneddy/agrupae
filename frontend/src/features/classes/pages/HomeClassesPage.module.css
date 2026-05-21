@@ -22,15 +22,6 @@
   width: 100px;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--color-blue-light);
-  border: 2px solid var(--color-blue-primary);
-  cursor: pointer;
-}
-
 .content {
   flex: 1;
   padding: 8px 24px 100px;

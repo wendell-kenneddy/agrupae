@@ -1,0 +1,43 @@
+.avatarBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-blue-light);
+  border: 2px solid var(--color-blue-primary);
+  flex-shrink: 0;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+.menu {
+  position: fixed;
+  top: 68px;
+  right: calc(50% - 228px);
+  background: var(--color-text-light);
+  border: 2px solid #000;
+  border-radius: var(--radius-md);
+  box-shadow: 4px 4px 0px #000;
+  z-index: 11;
+  min-width: 140px;
+  overflow: hidden;
+}
+
+.logoutBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  transition: background 0.15s;
+}
+
+.logoutBtn:active {
+  background: #00100f0d;
+}

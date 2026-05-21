@@ -40,15 +40,6 @@
   text-align: center;
 }
 
-.avatarBtn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--color-blue-light);
-  border: 2px solid var(--color-blue-primary);
-  flex-shrink: 0;
-}
-
 .content {
   flex: 1;
   overflow-y: auto;

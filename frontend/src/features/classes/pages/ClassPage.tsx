@@ -4,6 +4,7 @@ import { classesMock } from '@/features/classes/mocks/classes.mock'
 import { ClassAssignmentsTab } from '@/features/classes/components/ClassAssignmentsTab.tsx'
 import { ClassMembersTab } from '@/features/classes/components/ClassMembersTab'
 import { ClassInfoTab } from '@/features/classes/components/ClassInfoTab'
+import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import styles from './ClassPage.module.css'
 
 type Tab = 'assignments' | 'members' | 'info'
@@ -33,7 +34,7 @@ export function ClassPage() {
           </svg>
         </button>
         <span className={styles.headerTitle}>{course.name}</span>
-        <button className={styles.avatarBtn} onClick={() => navigate('/profile')} />
+        <AvatarMenu />
       </header>
 
       <div className={styles.content}>

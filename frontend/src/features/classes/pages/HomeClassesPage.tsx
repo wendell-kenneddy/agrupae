@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { classesMock } from '@/features/classes/mocks/classes.mock'
 import { ClassCard } from '@/features/classes/components/ClassCard'
-import styles from './HomeClassesPage.module.css'
-
+import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import { TiPlus } from 'react-icons/ti'
+import styles from './HomeClassesPage.module.css'
 
 export function HomeClassesPage() {
   const navigate = useNavigate()
@@ -17,7 +17,7 @@ export function HomeClassesPage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <img src="/logo-completa.svg" alt="Agrupaê" className={styles.logo} />
-        <button className={styles.avatar} onClick={() => navigate('/profile')} />
+        <AvatarMenu />
       </header>
 
       <div className={styles.content}>
