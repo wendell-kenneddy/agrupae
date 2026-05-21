@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -18,8 +19,11 @@ public class GetCoursesService implements GetCoursesUseCase {
     private final CourseRepository courseRepository;
 
     @Override
-    public Page<CourseView> handle(UUID studentId, Pageable pageable) {
+    public Page<CourseView> handle(@NonNull UUID studentId, @NonNull Pageable pageable) {
         List<CourseMembership> memberships = courseMembershipRepository.findByStudentId(studentId);
+
+        if (memberships.isEmpty())
+            return Page.empty(pageable);
 
         List<UUID> courseIds = memberships.stream()
                 .map(CourseMembership::getCourseId)
