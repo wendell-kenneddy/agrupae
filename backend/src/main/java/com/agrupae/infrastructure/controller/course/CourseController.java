@@ -78,8 +78,8 @@ public class CourseController {
         return ResponseEntity.ok(courses);
     }
 
-    @PostMapping("{id}/transfer")
-    public ResponseEntity<CourseView> transferLeadership(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, TransferLeadershipRequest request) {
+    @PostMapping("/{id}/transfer")
+    public ResponseEntity<CourseView> transferLeadership(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody TransferLeadershipRequest request) {
         UUID actorId = UUID.fromString(jwt.getSubject());
         Role actorRole = Role.valueOf(jwt.getClaimAsString("role"));
         UUID newLeaderId = request.newLeaderId();
