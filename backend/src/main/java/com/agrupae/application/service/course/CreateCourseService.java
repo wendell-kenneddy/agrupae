@@ -21,7 +21,7 @@ public class CreateCourseService implements CreateCourseUseCase {
         Course course = Course.create(leaderId, name, description);
         Course saved = courseRepository.save(course);
 
-        courseMembershipRepository.save(CourseMembership.create(saved.getId(), leaderId));
+        courseMembershipRepository.save(CourseMembership.create(leaderId,saved.getId()));
 
         return new CourseView(
                 saved.getId(),
