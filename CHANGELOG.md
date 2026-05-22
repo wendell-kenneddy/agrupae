@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added tests to `GetCoursesService`;
+- (backend) Added a guard on `GetCoursesService` to return an empty page without querying the db when users has no memberships;
 - (backend) Added a view method to get courses related to users;
 - (backend) Added `GET /courses` endpoint returning a pageable JSON;
 - (backend) Added archive method to the Course domain entity, with already-archived guard;
