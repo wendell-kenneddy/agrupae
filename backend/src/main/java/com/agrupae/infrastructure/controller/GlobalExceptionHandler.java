@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(ex.getMessage());
     }
 
-    @ExceptionHandler(NotAuthorizedToArchiveCourseException.class)
+    @ExceptionHandler(NotAuthorizedToTransferLeadershipException.class)
     public ResponseEntity<String> handleNotAuthorizedToTransferLeadershipCourse(NotAuthorizedToTransferLeadershipException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
