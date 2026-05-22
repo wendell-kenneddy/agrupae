@@ -1,7 +1,6 @@
 package com.agrupae.infrastructure.controller.course;
 
 import java.util.UUID;
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +20,11 @@ import com.agrupae.application.port.in.course.CourseView;
 import com.agrupae.application.port.in.course.CreateCourseUseCase;
 import com.agrupae.application.port.in.course.JoinCourseUseCase;
 import com.agrupae.application.port.in.course.GetCoursesUseCase;
+import com.agrupae.application.port.in.course.TransferLeadershipUseCase;
 import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.course.dto.CreateCourseRequest;
 import com.agrupae.infrastructure.controller.course.dto.JoinCourseRequest;
+import com.agrupae.infrastructure.controller.course.dto.TransferLeadershipRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +36,7 @@ public class CourseController {
     private final JoinCourseUseCase joinCourseUseCase;
     private final ArchiveCourseUseCase archiveCourseUseCase;
     private final GetCoursesUseCase getCoursesUseCase;
+    private final TransferLeadershipUseCase transferLeadershipUseCase;
 
     @PostMapping
     public ResponseEntity<CourseView> create(
@@ -75,4 +77,15 @@ public class CourseController {
 
         return ResponseEntity.ok(courses);
     }
+
+    @PostMapping("{id}/transfer")
+    public ResponseEntity<CourseView> transferLeadership(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, TransferLeadershipRequest request) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        Role actorRole = Role.valueOf(jwt.getClaimAsString("role"));
+        UUID newLeaderId = request.newLeaderId();
+        CourseView view = this.transferLeadershipUseCase.handle(actorId, actorRole, id,newLeaderId);
+
+        return ResponseEntity.ok(view);
+    }
+
 }
