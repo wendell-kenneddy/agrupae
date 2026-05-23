@@ -169,6 +169,39 @@ class CourseTest {
     }
 
     @Nested
+    class TransferLeadership {
+
+        @Test
+        void onActiveCourse_updatesLeaderIdAndBumpsUpdatedAt() throws InterruptedException {
+            UUID leaderId = UUID.randomUUID();
+            UUID newLeaderId = UUID.randomUUID();
+            Course course = Course.create(leaderId, "Algorithms", null);
+            Instant before = course.getUpdatedAt();
+            Thread.sleep(1);
+
+            course.transferLeadership(newLeaderId);
+
+            assertThat(course.getLeaderId()).isEqualTo(newLeaderId);
+            assertThat(course.getUpdatedAt()).isAfter(before);
+        }
+
+        @Test
+        void onArchivedCourse_throwsDomainException() {
+            UUID id = UUID.randomUUID();
+            UUID leaderId = UUID.randomUUID();
+            UUID newLeaderId = UUID.randomUUID();
+            String inviteCode = UUID.randomUUID().toString();
+            Instant now = Instant.now();
+            Course course = Course.reconstruct(id, leaderId, "Algorithms", null,
+                    inviteCode, true, now, now);
+
+            assertThatThrownBy(() -> course.transferLeadership(newLeaderId))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Cannot transfer leadership of an archived course.");
+        }
+    }
+
+    @Nested
     class Archive {
 
         @Test
