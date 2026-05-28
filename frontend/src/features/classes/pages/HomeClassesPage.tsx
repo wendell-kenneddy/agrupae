@@ -1,17 +1,26 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { classesMock } from '@/features/classes/mocks/classes.mock'
+import { useGetCourses } from '@/features/classes/hooks/useGetCourses'
 import { ClassCard } from '@/features/classes/components/ClassCard'
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import { TiPlus } from 'react-icons/ti'
 import styles from './HomeClassesPage.module.css'
+import { classesMock } from '@/features/classes/mocks/classes.mock.ts'
 
 export function HomeClassesPage() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  // const { courses, isLoading, isError } = useGetCourses()
+  const courses = classesMock
+  // const myClasses = courses.filter((c) => c.role === 'OWNER')
+  // const joinedClasses = courses.filter((c) => c.role === 'STUDENT')
 
-  const myClasses = classesMock.filter((c) => c.role === 'OWNER')
-  const joinedClasses = classesMock.filter((c) => c.role === 'STUDENT')
+  // TODO: filtrar por role quando backend retornar esse campo
+  const myClasses = courses
+  const joinedClasses: typeof courses = []
+
+  // if (isLoading) return <div className={styles.feedback}>Carregando turmas...</div>
+  // if (isError) return <div className={styles.feedback}>Erro ao carregar turmas.</div>
 
   return (
     <main className={styles.page}>

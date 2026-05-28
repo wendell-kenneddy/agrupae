@@ -5,6 +5,15 @@
   flex-direction: column;
 }
 
+.feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  font-size: 0.9rem;
+  color: #00100f66;
+}
+
 .header {
   display: flex;
   align-items: center;

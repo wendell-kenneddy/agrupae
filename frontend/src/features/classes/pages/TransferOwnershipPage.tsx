@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useTransferOwnership } from '@/features/classes/hooks/useTransferOwnership'
 import styles from './TransferOwnershipPage.module.css'
 
 const membersMock = [
@@ -31,6 +32,8 @@ function MemberAvatar({ name, large }: { name: string; large?: boolean }) {
 
 export function TransferOwnershipPage() {
   const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>()
+  const { transfer, isLoading } = useTransferOwnership(id!)
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Member | null>(null)
 
@@ -40,8 +43,9 @@ export function TransferOwnershipPage() {
       m.email.toLowerCase().includes(search.toLowerCase())
   )
 
-  function handleConfirm() {
-    // integrar com API depois
+  async function handleConfirm() {
+    if (!selected) return
+    await transfer(selected.id)
     setSelected(null)
     navigate(-1)
   }
@@ -136,8 +140,8 @@ export function TransferOwnershipPage() {
               <button className={styles.cancelBtn} onClick={() => setSelected(null)}>
                 Cancelar
               </button>
-              <button className={styles.confirmBtn} onClick={handleConfirm}>
-                Confirmar
+              <button className={styles.confirmBtn} onClick={handleConfirm} disabled={isLoading}>
+                {isLoading ? 'Transferindo...' : 'Confirmar'}
               </button>
             </div>
           </div>

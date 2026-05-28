@@ -11,12 +11,12 @@ type Tab = 'assignments' | 'members' | 'info'
 
 export function ClassPage() {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { id } = useParams<{ id: string }>()
   const [activeTab, setActiveTab] = useState<Tab>('assignments')
 
   const course = classesMock.find((c) => c.id === id)
 
-  if (!course) return <div>Turma não encontrada</div>
+  if (!course) return <div className={styles.feedback}>Turma não encontrada.</div>
 
   return (
     <main className={styles.page}>
