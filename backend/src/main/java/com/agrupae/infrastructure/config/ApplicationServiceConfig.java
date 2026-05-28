@@ -11,6 +11,7 @@ import com.agrupae.application.service.authentication.*;
 import com.agrupae.application.service.course.ArchiveCourseService;
 import com.agrupae.application.service.course.CreateCourseService;
 import com.agrupae.application.service.course.JoinCourseService;
+import com.agrupae.application.service.course.TransferLeadershipService;
 import com.agrupae.application.service.user.GetUserProfileService;
 import com.agrupae.application.service.user.UpdateProfileService;
 import com.agrupae.application.service.course.GetCoursesService;
@@ -92,5 +93,11 @@ public class ApplicationServiceConfig {
             CourseMembershipRepository courseMembershipRepository,
             CourseRepository courseRepository) {
         return new GetCoursesService(courseMembershipRepository, courseRepository);
+    }
+
+    @Bean 
+    public TransferLeadershipService transferLeadershipService(CourseRepository courseRepository,
+    CourseMembershipRepository courseMembershipRepository) {
+        return new TransferLeadershipService(courseRepository, courseMembershipRepository);
     }
 }

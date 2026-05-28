@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added unit tests for `Course` domain entity;
+- (backend) Added unit tests for `transferLeadership` service;
+- (backend) Added unit tests for `transferLeadership` application service;
+- (backend) Added transfer leadership service and related exceptions;
+- (backend) Added `POST /courses/{id}/transfer` endpoint returning the CourseView with the new leader;
 - (backend) Added tests to `GetCoursesService`;
 - (backend) Added a guard on `GetCoursesService` to return an empty page without querying the db when users has no memberships;
 - (backend) Added a view method to get courses related to users;
@@ -41,6 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- (backend) Fixed tests related to Course methods.
+- (backend) Fixed invalid parameters in CreateCourse calling of CourseMembership create method;
 - (backend) Fixed invalid Spring placeholder default syntax for JWT TTL properties;
 - (backend) Fixed user profile related services not being injected;
 - (backend) Fix extra whitespace in user email blank validation error message.

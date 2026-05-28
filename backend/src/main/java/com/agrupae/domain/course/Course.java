@@ -74,6 +74,14 @@ public class Course {
         this.updatedAt = Instant.now();
     }
 
+    public void transferLeadership(UUID newLeaderId) {
+        if (this.archived)
+            throw new DomainException("Cannot transfer leadership of an archived course.");
+
+        this.leaderId = newLeaderId;
+        this.updatedAt = Instant.now();
+    }
+
     public static Course reconstruct(
             UUID id,
             UUID leaderId,
