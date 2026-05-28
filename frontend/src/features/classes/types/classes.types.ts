@@ -15,10 +15,10 @@ export interface Class {
   archived: boolean
   createdAt: string
   updatedAt: string
-  memberCount: number
-  activeAssignments: number
-  role: ClassRole
-  previewMembers: ClassMemberPreview[]
+  // memberCount: number
+  // activeAssignments: number
+  // role: ClassRole
+  // previewMembers: ClassMemberPreview[]
 }
 
 export interface CreateClassRequest {
