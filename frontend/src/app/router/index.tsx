@@ -9,6 +9,7 @@ import { CreateClassPage } from '@/features/classes/pages/CreateClassPage'
 import { JoinClassPage } from '@/features/classes/pages/JoinClassPage'
 import { ClassPage } from '@/features/classes/pages/ClassPage'
 import { TransferOwnershipPage } from '@/features/classes/pages/TransferOwnershipPage'
+import { CreateAssignmentPage } from '@/features/assignments/pages/CreateAssignmentPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuth()
@@ -50,6 +51,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <TransferOwnershipPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/classes/:id/assignments/create',
+    element: (
+      <ProtectedRoute>
+        <CreateAssignmentPage />
       </ProtectedRoute>
     ),
   },

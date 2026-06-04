@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import type { Class } from '@/features/classes/types/classes.types'
 import styles from './ClassAssignmentsTab.module.css'
 
@@ -23,11 +24,19 @@ const assignmentsMock = [
 ]
 
 export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
+  const navigate = useNavigate()
   const isOwner = course.role === 'OWNER'
 
   return (
     <div className={styles.container}>
-      {isOwner && <button className={styles.createBtn}>Criar trabalho</button>}
+      {isOwner && (
+        <button
+          className={styles.createBtn}
+          onClick={() => navigate(`/classes/${course.id}/assignments/create`)}
+        >
+          Criar trabalho
+        </button>
+      )}
       <div className={styles.list}>
         {assignmentsMock.map((a) => (
           <div key={a.id} className={styles.card}>
@@ -36,7 +45,6 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
                 <p className={styles.cardName}>{a.name}</p>
                 <p className={styles.cardDeadline}>Prazo: {a.deadline}</p>
               </div>
-              {/* <button className={styles.menuBtn}>⋮</button> */}
             </div>
             <hr className={styles.divider} />
             <div className={styles.cardBottom}>
