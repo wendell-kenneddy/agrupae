@@ -4,7 +4,6 @@ import com.agrupae.application.port.in.course.GetACourseUseCase;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.domain.course.Course;
-import com.agrupae.domain.course.CourseMembership;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.port.in.course.CourseView;
 
