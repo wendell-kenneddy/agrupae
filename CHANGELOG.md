@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added `GET /courses/{id}` returning a single course;
+- (backend) Added a view method to get info about a single course related to user. 
+
+### Fixed 
+
+- (backend) Typing mistake in application.properties at "ACESS_TOKEN".
+ 
+## [0.9.0] 2026-06-04
+
+### Added
+
 - (backend) Added unit tests for `Course` domain entity;
 - (backend) Added unit tests for `transferLeadership` service;
 - (backend) Added unit tests for `transferLeadership` application service;
