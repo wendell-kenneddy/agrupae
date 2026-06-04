@@ -29,3 +29,8 @@ export async function transferOwnership(courseId: string, newLeaderId: string): 
   const response = await api.post<Class>(`/courses/${courseId}/transfer`, { newLeaderId })
   return response.data
 }
+
+export async function getClass(id: string): Promise<Class> {
+  const response = await api.get<Class>(`/courses/${id}`)
+  return response.data
+}

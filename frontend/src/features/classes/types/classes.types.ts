@@ -17,7 +17,7 @@ export interface Class {
   updatedAt: string
   // memberCount: number
   // activeAssignments: number
-  // role: ClassRole
+  role: ClassRole
   // previewMembers: ClassMemberPreview[]
 }
 

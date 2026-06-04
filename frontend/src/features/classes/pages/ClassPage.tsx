@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { classesMock } from '@/features/classes/mocks/classes.mock'
+import { useGetClass } from '@/features/classes/hooks/useGetClass'
 import { ClassAssignmentsTab } from '@/features/classes/components/ClassAssignmentsTab.tsx'
 import { ClassMembersTab } from '@/features/classes/components/ClassMembersTab'
 import { ClassInfoTab } from '@/features/classes/components/ClassInfoTab'
@@ -13,10 +13,10 @@ export function ClassPage() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const [activeTab, setActiveTab] = useState<Tab>('assignments')
+  const { course, isLoading, isError } = useGetClass(id!)
 
-  const course = classesMock.find((c) => c.id === id)
-
-  if (!course) return <div className={styles.feedback}>Turma não encontrada.</div>
+  if (isLoading) return <div className={styles.feedback}>Carregando...</div>
+  if (isError || !course) return <div className={styles.feedback}>Turma não encontrada.</div>
 
   return (
     <main className={styles.page}>
