@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added a reconstruct factory method to the Assignment domain entity, and positive-value invariants for maxGroupMembers and maxGroups in AssignmentFlags;
+- (backend) Added assignment creation application service, restricted to course leaders;
+- (backend) Added JPA persistence adapters for the Assignment domain entity, covering entity, embeddable flags, repository and mappers;
+- (backend) Added POST /courses/{courseId}/assignments endpoint, with service wiring and exception handlers for not-course-leader and request validation errors;
 - (backend) Added unit tests for `Course` domain entity;
 - (backend) Added unit tests for `transferLeadership` service;
 - (backend) Added unit tests for `transferLeadership` application service;
