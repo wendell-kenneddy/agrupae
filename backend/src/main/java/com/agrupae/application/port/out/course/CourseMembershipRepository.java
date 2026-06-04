@@ -11,4 +11,6 @@ public interface CourseMembershipRepository {
     CourseMembership save(CourseMembership membership);
 
     List<CourseMembership> findByStudentId(UUID studentId);
+
+    List<CourseMembership> findByCourseId(UUID courseId);
 }

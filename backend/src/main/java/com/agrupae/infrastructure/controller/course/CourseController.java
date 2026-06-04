@@ -26,6 +26,8 @@ import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.course.dto.CreateCourseRequest;
 import com.agrupae.infrastructure.controller.course.dto.JoinCourseRequest;
 import com.agrupae.infrastructure.controller.course.dto.TransferLeadershipRequest;
+import com.agrupae.application.port.in.user.UserProfileView;
+import com.agrupae.application.port.in.course.GetMembersUseCase;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +41,7 @@ public class CourseController {
     private final GetCoursesUseCase getCoursesUseCase;
     private final TransferLeadershipUseCase transferLeadershipUseCase;
     private final GetACourseUseCase getACourseUseCase;
+    private final GetMembersUseCase getMembersUseCase;
 
     @PostMapping
     public ResponseEntity<CourseView> create(
@@ -95,6 +98,12 @@ public class CourseController {
         CourseView view = this.transferLeadershipUseCase.handle(actorId, actorRole, id,newLeaderId);
 
         return ResponseEntity.ok(view);
+    }
+
+    @GetMapping("/{id}/members")
+    public ResponseEntity<Page<UserProfileView>> getMembers(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, Pageable pageable) {
+        Page<UserProfileView> members = this.getMembersUseCase.handle(id, pageable);
+        return ResponseEntity.ok(members);
     }
 
 }
