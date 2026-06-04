@@ -10,6 +10,9 @@ import com.agrupae.infrastructure.persistence.jpa.mapper.UserJpaEntityMapper;
 import com.agrupae.infrastructure.persistence.jpa.model.user.UserJpaEntity;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -41,5 +44,11 @@ public class UserRepositoryJpaAdapter implements UserRepository {
     @Override
     public void deleteById(UUID id) {
         this.userJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<User> findAllByIdIn(java.util.List<UUID> ids, Pageable pageable) {
+        return this.userJpaRepository.findAllByIdIn(ids, pageable)
+            .map(this.mapper::toDomain);
     }
 }

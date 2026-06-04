@@ -14,4 +14,6 @@ public interface CourseMembershipJpaRepository
     boolean existsByStudentIdAndCourseId(UUID studentId, UUID courseId);
 
     List<CourseMembershipJpaEntity> findByStudentId(UUID studentId);
+
+    List<CourseMembershipJpaEntity> findByCourseId(UUID courseId);
 }

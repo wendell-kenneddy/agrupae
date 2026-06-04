@@ -36,4 +36,11 @@ public class CourseMembershipRepositoryJpaAdapter implements CourseMembershipRep
                 .map(jpaEntity -> this.mapper.toDomain(jpaEntity))
                 .toList();
     }
+
+    @Override
+    public List<CourseMembership> findByCourseId(UUID courseId) {
+        return this.jpaRepository.findByCourseId(courseId).stream()
+                .map(jpaEntity -> this.mapper.toDomain(jpaEntity))
+                .toList();
+    }
 }
