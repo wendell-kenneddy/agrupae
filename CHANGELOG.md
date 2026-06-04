@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 - (backend) Added `GET /courses/{id}` returning a single course;
 - (backend) Added a view method to get info about a single course related to user. 
+- (frontend) Integrated classes feature with backend endpoints (`GET /courses`, `GET /courses/{id}`, `GET /courses/{id}/members`, `POST /courses/{id}/transfer`);
+- (frontend) Added archive confirmation modal and AvatarMenu component with logout;
+- (frontend) Updated UI to match prototype (bottom nav, transfer ownership modal);
 
 ### Fixed 
 

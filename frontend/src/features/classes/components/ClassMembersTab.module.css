@@ -1,0 +1,58 @@
+.container {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.feedback {
+  padding: 24px;
+  font-size: 0.9rem;
+  color: #00100f66;
+  text-align: center;
+}
+
+.memberItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #00100f11;
+}
+
+.memberItem:last-child {
+  border-bottom: none;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-blue-primary);
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  flex-shrink: 0;
+}
+
+.memberInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.memberName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.memberEmail {
+  font-size: 0.78rem;
+  color: #00100f66;
+  margin: 0;
+}

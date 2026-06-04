@@ -1,0 +1,221 @@
+.container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.value {
+  font-size: 0.9rem;
+  color: #00100f99;
+  margin: 0;
+}
+
+.inviteSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.inviteLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0;
+  align-self: center;
+}
+
+.inviteCode {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: transparent;
+  border: 2px solid var(--color-blue-primary);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  letter-spacing: 0.05em;
+  box-shadow: 3px 3px 0px var(--color-blue-primary);
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
+}
+
+.inviteCode:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.transferBtn {
+  width: 100%;
+  padding: 16px;
+  background: var(--color-blue-dark);
+  color: var(--color-text-light);
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
+}
+
+.transferBtn:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.archiveBtn {
+  width: 100%;
+  padding: 16px;
+  background: var(--color-blue-light);
+  color: var(--color-blue-dark);
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
+}
+
+.archiveBtn:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.archiveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #00000055;
+  z-index: 10;
+}
+
+.modal {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-text-light);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 32px 24px 36px;
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  animation: slideUp 0.2s ease;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: var(--color-text-dark);
+}
+
+.modalTitle {
+  font-size: 1rem;
+  color: var(--color-text-dark);
+  text-align: center;
+  max-width: 80%;
+  margin: 8px 0 0;
+}
+
+.modalWarning {
+  font-size: 0.82rem;
+  color: var(--color-warning-orange);
+  text-align: center;
+  max-width: 90%;
+  margin: 4px 0;
+}
+.modalActions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+  box-sizing: border-box;
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 14px;
+  background: transparent;
+  border: 2px solid #000;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  box-shadow: 3px 3px 0px #000;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
+}
+
+.cancelBtn:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+
+.confirmBtn {
+  flex: 1;
+  padding: 14px;
+  background: var(--color-blue-dark);
+  border: 2px solid #000;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  box-shadow: 3px 3px 0px #000;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
+}
+
+.confirmBtn:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateX(-50%) translateY(100%);
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+  }
+}

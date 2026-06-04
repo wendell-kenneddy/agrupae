@@ -8,6 +8,8 @@
   --color-yellow: #d7f927;
   --color-text-dark: #00100f;
   --color-text-light: #efefef;
+  --color-bg-gray: #cfcfcf;
+  --color-warning-orange: #cf7230;
   --font-main: 'Funnel Sans Variable', sans-serif;
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -32,8 +34,7 @@ body,
   height: 100%;
   width: 100%;
 }
-
-html {
+i html {
   height: 100%;
 }
 

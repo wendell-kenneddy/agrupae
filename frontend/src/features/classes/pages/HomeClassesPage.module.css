@@ -1,0 +1,157 @@
+.page {
+  min-height: 100dvh;
+  background: var(--color-bg-light);
+  display: flex;
+  flex-direction: column;
+}
+
+.feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  font-size: 0.9rem;
+  color: #00100f66;
+}
+
+.divider {
+  border: none;
+  border-top: 1.5px solid var(--color-text-dark);
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+}
+
+.logo {
+  width: 100px;
+}
+
+.content {
+  flex: 1;
+  padding: 8px 24px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  overflow-y: auto;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionTitle {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  letter-spacing: -0.02em;
+  margin: 10px 0;
+}
+
+.fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 56px;
+  height: 56px;
+  border-radius: 30%;
+  background: var(--color-blue-primary);
+  color: var(--color-text-light);
+  font-size: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
+  cursor: pointer;
+}
+
+.fab:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-text-light);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 -4px 24px #00000022;
+  animation: slideUp 0.2s ease;
+}
+
+.menuItem {
+  padding: 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  text-align: left;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-gray);
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
+}
+
+.menuItem:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #00000044;
+  z-index: 10;
+}
+
+.menu {
+  z-index: 11;
+}
+
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: var(--color-bg-gray);
+  border-radius: 2px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: var(--color-blue-primary);
+  border-radius: 2px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-blue-dark);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
