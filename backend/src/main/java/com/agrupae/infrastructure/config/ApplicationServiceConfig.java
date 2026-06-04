@@ -118,5 +118,9 @@ public class ApplicationServiceConfig {
     @Bean
     public CreateAssignmentService createAssignmentService(AssignmentRepository assignmentRepository, CourseRepository courseRepository) {
         return new CreateAssignmentService(assignmentRepository, courseRepository);
+
+    @Bean 
+    public GetMembersService getMembersService(CourseMembershipRepository courseMembershipRepository, UserRepository userRepository, CourseRepository courseRepository) {
+        return new GetMembersService(courseMembershipRepository, userRepository, courseRepository);
     }
 }
