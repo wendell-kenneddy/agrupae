@@ -3,10 +3,12 @@ package com.agrupae.infrastructure.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.agrupae.application.port.out.assignment.AssignmentRepository;
 import com.agrupae.application.port.out.authentication.*;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.application.port.out.user.UserRepository;
+import com.agrupae.application.service.assignment.CreateAssignmentService;
 import com.agrupae.application.service.authentication.*;
 import com.agrupae.application.service.course.ArchiveCourseService;
 import com.agrupae.application.service.course.CreateCourseService;
@@ -111,5 +113,10 @@ public class ApplicationServiceConfig {
     @Bean 
     public GetMembersService getMembersService(CourseMembershipRepository courseMembershipRepository, UserRepository userRepository, CourseRepository courseRepository) {
         return new GetMembersService(courseMembershipRepository, userRepository, courseRepository);
+    }
+    
+    @Bean
+    public CreateAssignmentService createAssignmentService(AssignmentRepository assignmentRepository, CourseRepository courseRepository) {
+        return new CreateAssignmentService(assignmentRepository, courseRepository);
     }
 }

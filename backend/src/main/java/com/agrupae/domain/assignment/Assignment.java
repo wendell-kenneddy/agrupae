@@ -27,7 +27,7 @@ public class Assignment {
             @NonNull final UUID id,
             @NonNull final UUID courseId,
             @NonNull final String name,
-            final String description,
+            @NonNull final String description,
             @NonNull final AssignmentFlags assignmentFlags,
             final boolean archived,
             @NonNull final Instant dueDate,
@@ -70,6 +70,30 @@ public class Assignment {
                 .archived(false)
                 .createdAt(now)
                 .updatedAt(now)
+                .build();
+    }
+
+    public static Assignment reconstruct(
+         UUID id,
+         UUID courseId,
+         String name,
+         String description,
+         AssignmentFlags assignmentFlags,
+         boolean archived,
+         Instant dueDate,
+         Instant createdAt,
+         Instant updatedAt
+    ) {
+        return Assignment.builder()
+                .id(id)
+                .courseId(courseId)
+                .name(name)
+                .description(description)
+                .assignmentFlags(assignmentFlags)
+                .archived(archived)
+                .dueDate(dueDate)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
                 .build();
     }
 }
