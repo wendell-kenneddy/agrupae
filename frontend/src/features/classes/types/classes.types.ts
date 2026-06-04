@@ -29,3 +29,12 @@ export interface CreateClassRequest {
 export interface JoinClassRequest {
   inviteCode: string
 }
+
+export interface Member {
+  id: string
+  name: string
+  email: string
+  role: 'TEACHER' | 'STUDENT'
+  createdAt: string
+  updatedAt: string
+}

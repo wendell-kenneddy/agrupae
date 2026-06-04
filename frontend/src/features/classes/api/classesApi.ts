@@ -34,3 +34,8 @@ export async function getClass(id: string): Promise<Class> {
   const response = await api.get<Class>(`/courses/${id}`)
   return response.data
 }
+
+export async function getClassMembers(courseId: string): Promise<Member[]> {
+  const response = await api.get<{ content: Member[] }>(`/courses/${courseId}/members`)
+  return response.data.content
+}

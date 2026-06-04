@@ -4,6 +4,13 @@
   flex-direction: column;
 }
 
+.feedback {
+  padding: 24px;
+  font-size: 0.9rem;
+  color: #00100f66;
+  text-align: center;
+}
+
 .memberItem {
   display: flex;
   align-items: center;
