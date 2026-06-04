@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import com.agrupae.application.port.in.course.ArchiveCourseUseCase;
 import com.agrupae.application.port.in.course.CourseView;
 import com.agrupae.application.port.in.course.CreateCourseUseCase;
+import com.agrupae.application.port.in.course.GetACourseUseCase;
 import com.agrupae.application.port.in.course.JoinCourseUseCase;
 import com.agrupae.application.port.in.course.GetCoursesUseCase;
 import com.agrupae.application.port.in.course.TransferLeadershipUseCase;
@@ -37,6 +38,7 @@ public class CourseController {
     private final ArchiveCourseUseCase archiveCourseUseCase;
     private final GetCoursesUseCase getCoursesUseCase;
     private final TransferLeadershipUseCase transferLeadershipUseCase;
+    private final GetACourseUseCase getACourseUseCase;
 
     @PostMapping
     public ResponseEntity<CourseView> create(
@@ -76,6 +78,13 @@ public class CourseController {
         Page<CourseView> courses = this.getCoursesUseCase.handle(studentId, pageable);
 
         return ResponseEntity.ok(courses);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CourseView> getCourse(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        CourseView course = this.getACourseUseCase.handle(actorId,id);
+        return ResponseEntity.ok(course);
     }
 
     @PostMapping("/{id}/transfer")
