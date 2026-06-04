@@ -1,24 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useGetClassMembers } from '@/features/classes/hooks/useGetClassMembers'
 import { useTransferOwnership } from '@/features/classes/hooks/useTransferOwnership'
+import { useAuth } from '@/app/providers/AuthContext'
+import { useGetClass } from '@/features/classes/hooks/useGetClass'
 import styles from './TransferOwnershipPage.module.css'
-
-const membersMock = [
-  { id: '1', name: 'Ana Beatriz Souza', email: 'anabeatriz@universidade.br' },
-  { id: '2', name: 'Fernanda Lima', email: 'fernandalima@universidade.br' },
-  { id: '3', name: 'Carlos Eduardo Mendes', email: 'carlosmendes@universidade.br' },
-  { id: '4', name: 'Gabriel Oliveira', email: 'gabrieloliveira@universidade.br' },
-  { id: '5', name: 'João Pedro Alves', email: 'joaoalves@universidade.br' },
-  { id: '6', name: 'Isabela Rocha', email: 'isabelarocha@universidade.br' },
-  { id: '7', name: 'Larissa Ferreira', email: 'larissaferreira@universidade.br' },
-  { id: '8', name: 'Matheus Costa', email: 'matheuscosta@universidade.br' },
-]
-
-interface Member {
-  id: string
-  name: string
-  email: string
-}
+import type { Member } from '@/features/classes/types/classes.types'
 
 function MemberAvatar({ name, large }: { name: string; large?: boolean }) {
   const initials = name
@@ -33,15 +20,21 @@ function MemberAvatar({ name, large }: { name: string; large?: boolean }) {
 export function TransferOwnershipPage() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
-  const { transfer, isLoading } = useTransferOwnership(id!)
+  const { user } = useAuth()
+  const { members, isLoading, isError } = useGetClassMembers(id!)
+  const { transfer, isLoading: isTransferring } = useTransferOwnership(id!)
+  const { course } = useGetClass(id!)
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Member | null>(null)
 
-  const filtered = membersMock.filter(
-    (m) =>
-      m.name.toLowerCase().includes(search.toLowerCase()) ||
-      m.email.toLowerCase().includes(search.toLowerCase())
-  )
+  // exclui o próprio usuário da lista
+  const filtered = members
+    .filter((m) => m.id !== user?.id)
+    .filter(
+      (m) =>
+        m.name.toLowerCase().includes(search.toLowerCase()) ||
+        m.email.toLowerCase().includes(search.toLowerCase())
+    )
 
   async function handleConfirm() {
     if (!selected) return
@@ -98,6 +91,8 @@ export function TransferOwnershipPage() {
         </div>
 
         <div className={styles.list}>
+          {isLoading && <p className={styles.feedback}>Carregando membros...</p>}
+          {isError && <p className={styles.feedback}>Erro ao carregar membros.</p>}
           {filtered.map((m) => (
             <button key={m.id} className={styles.memberItem} onClick={() => setSelected(m)}>
               <MemberAvatar name={m.name} />
@@ -128,7 +123,7 @@ export function TransferOwnershipPage() {
               </svg>
             </button>
             <p className={styles.modalTitle}>
-              Transferir responsabilidade da turma <strong>Banco de dados - 2026.1</strong> para
+              Transferir responsabilidade da turma <strong>{course?.name ?? '...'}</strong> para
             </p>
             <MemberAvatar name={selected.name} large />
             <p className={styles.modalName}>{selected.name}</p>
@@ -140,8 +135,12 @@ export function TransferOwnershipPage() {
               <button className={styles.cancelBtn} onClick={() => setSelected(null)}>
                 Cancelar
               </button>
-              <button className={styles.confirmBtn} onClick={handleConfirm} disabled={isLoading}>
-                {isLoading ? 'Transferindo...' : 'Confirmar'}
+              <button
+                className={styles.confirmBtn}
+                onClick={handleConfirm}
+                disabled={isTransferring}
+              >
+                {isTransferring ? 'Transferindo...' : 'Confirmar'}
               </button>
             </div>
           </div>
