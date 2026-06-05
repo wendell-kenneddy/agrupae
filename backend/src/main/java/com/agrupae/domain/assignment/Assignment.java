@@ -96,4 +96,44 @@ public class Assignment {
                 .updatedAt(updatedAt)
                 .build();
     }
+
+    public void archive() {
+        if (this.archived) {
+            throw new DomainException("Assignment is already archived.");
+        }
+        
+        this.archived = true;
+        this.updatedAt = Instant.now();
+    }
+
+    public void update(
+            final String name,
+            final String description,
+            final Instant dueDate,
+            final AssignmentFlags assignmentFlags) {
+        if (this.archived) {
+            throw new DomainException("Cannot edit an archived assignment.");
+        }
+        if (name == null || name.isBlank()) {
+            throw new DomainException("Assignment name cannot be blank.");
+        }
+        if (description == null) {
+            throw new DomainException("Assignment description cannot be null.");
+        }
+        if (dueDate == null) {
+            throw new DomainException("Due date cannot be null.");
+        }
+        if (assignmentFlags == null) {
+            throw new DomainException("Assignment flags cannot be null.");
+        }
+        if (dueDate.isBefore(Instant.now())) {
+            throw new DomainException("Due date must be in the future.");
+        }
+
+        this.name = name;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.assignmentFlags = assignmentFlags;
+        this.updatedAt = Instant.now();
+    }
 }

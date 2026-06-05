@@ -10,17 +10,22 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agrupae.application.port.in.assignment.AddReferenceArtifactUseCase;
 import com.agrupae.application.port.in.assignment.AssignmentArtifactView;
+import com.agrupae.application.port.in.assignment.ArchiveAssignmentUseCase;
 import com.agrupae.application.port.in.assignment.AssignmentView;
 import com.agrupae.application.port.in.assignment.CreateAssignmentUseCase;
 import com.agrupae.application.port.in.assignment.GetAssignmentArtifactsUseCase;
 import com.agrupae.infrastructure.controller.assignment.dto.AddReferenceArtifactRequest;
+import com.agrupae.application.port.in.assignment.EditAssignmentUseCase;
+import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.assignment.dto.CreateAssignmentRequest;
+import com.agrupae.infrastructure.controller.assignment.dto.EditAssignmentRequest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +37,8 @@ public class AssignmentController {
     private final CreateAssignmentUseCase createAssignmentUseCase;
     private final AddReferenceArtifactUseCase addReferenceArtifactUseCase;
     private final GetAssignmentArtifactsUseCase getAssignmentArtifactsUseCase;
+    private final ArchiveAssignmentUseCase archiveAssignmentUseCase;
+    private final EditAssignmentUseCase editAssignmentUseCase;
 
     @PostMapping
     public ResponseEntity<AssignmentView> create(
@@ -48,6 +55,37 @@ public class AssignmentController {
                 request.assignmentFlags());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(view);
+    }
+
+    @PutMapping("/{assignmentId}")
+    public ResponseEntity<AssignmentView> edit(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @Valid @RequestBody EditAssignmentRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        Role actorRole = Role.valueOf(jwt.getClaimAsString("role"));
+        AssignmentView view = this.editAssignmentUseCase.handle(
+                actorId,
+                actorRole,
+                courseId,
+                assignmentId,
+                request.name(),
+                request.description(),
+                request.dueDate(),
+                request.assignmentFlags());
+        return ResponseEntity.ok(view);
+    }
+
+    @PostMapping("/{assignmentId}/archive")
+    public ResponseEntity<Void> archive(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        Role actorRole = Role.valueOf(jwt.getClaimAsString("role"));
+        this.archiveAssignmentUseCase.handle(actorId, actorRole, courseId, assignmentId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{assignmentId}/artifacts")
