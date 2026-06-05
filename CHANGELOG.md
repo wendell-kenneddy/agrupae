@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 - (backend) Added `GET /courses/{id}` returning a single course;
 - (backend) Added a view method to get info about a single course related to user. 
+- (backend) Added `GET /courses/{id}/assignments` endpoint to retrieve a list of artifacts for a specific course;
+- (backend) Added `assignmentArtifactsView` DTO to represent assignment artifacts in the response;
+- (backend) Implemented security validation to ensure that users requesting assignment artifacts are members of the course;
+- (backend) Implemented unit tests for the `GetAssignmentArtifactsService` to validate functionality and security;
+- (backend) Added `GET /courses/{courseId}/assignments/{assignmentId}/artifacts` endpoint to AssignmentController;
+- (backend) Added `AddReferenceArtifactsService` to handle the addition of reference artifacts to an assignment;
+- (backend) Added `POST /courses/{courseId}/assignments/{assignmentId}/artifacts` endpoint to AssignmentController;
+- (backend) Added unit tests for the `AddReferenceArtifactsService` to validate functionality and security;
 
 ### Fixed 
 
