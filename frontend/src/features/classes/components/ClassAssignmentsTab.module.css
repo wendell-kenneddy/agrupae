@@ -39,6 +39,29 @@
   box-shadow: 3px 3px 0px #000;
 }
 
+.cardInfo {
+  flex: 1;
+}
+
+.editBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: #00100f66;
+  flex-shrink: 0;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.editBtn:active {
+  background: #00100f11;
+  color: var(--color-text-dark);
+}
+
 .cardTop {
   display: flex;
   justify-content: space-between;
