@@ -1,11 +1,13 @@
 package com.agrupae.infrastructure.controller.assignment;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +18,7 @@ import com.agrupae.application.port.in.assignment.AddReferenceArtifactUseCase;
 import com.agrupae.application.port.in.assignment.AssignmentArtifactView;
 import com.agrupae.application.port.in.assignment.AssignmentView;
 import com.agrupae.application.port.in.assignment.CreateAssignmentUseCase;
+import com.agrupae.application.port.in.assignment.GetAssignmentArtifactsUseCase;
 import com.agrupae.infrastructure.controller.assignment.dto.AddReferenceArtifactRequest;
 import com.agrupae.infrastructure.controller.assignment.dto.CreateAssignmentRequest;
 
@@ -28,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class AssignmentController {
     private final CreateAssignmentUseCase createAssignmentUseCase;
     private final AddReferenceArtifactUseCase addReferenceArtifactUseCase;
+    private final GetAssignmentArtifactsUseCase getAssignmentArtifactsUseCase;
 
     @PostMapping
     public ResponseEntity<AssignmentView> create(
@@ -60,6 +64,18 @@ public class AssignmentController {
                 request.description(),
                 request.resourceLink());
         return ResponseEntity.status(HttpStatus.CREATED).body(view);
+    }
+
+    @GetMapping("/{assignmentId}/artifacts")
+    public ResponseEntity<List<AssignmentArtifactView>> getArtifacts(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        List<AssignmentArtifactView> view = this.getAssignmentArtifactsUseCase.handle(
+                userId,
+                assignmentId);
+        return ResponseEntity.status(HttpStatus.OK).body(view);
     }
 
 }

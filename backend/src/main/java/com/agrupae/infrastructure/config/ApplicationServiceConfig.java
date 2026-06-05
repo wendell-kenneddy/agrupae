@@ -21,6 +21,7 @@ import com.agrupae.application.service.user.GetUserProfileService;
 import com.agrupae.application.service.user.UpdateProfileService;
 import com.agrupae.application.service.course.GetCoursesService;
 import com.agrupae.application.service.course.GetMembersService;
+import com.agrupae.application.service.assignment.GetAssignmentArtifactsService;
 
 @Configuration
 public class ApplicationServiceConfig {
@@ -78,7 +79,8 @@ public class ApplicationServiceConfig {
     }
 
     @Bean
-    public CreateCourseService createCourseService(CourseRepository courseRepository, CourseMembershipRepository courseMembershipRepository) {
+    public CreateCourseService createCourseService(CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository) {
         return new CreateCourseService(courseRepository, courseMembershipRepository);
     }
 
@@ -94,31 +96,34 @@ public class ApplicationServiceConfig {
         return new ArchiveCourseService(courseRepository);
     }
 
-    @Bean 
+    @Bean
     public GetCoursesService getCoursesService(
             CourseMembershipRepository courseMembershipRepository,
             CourseRepository courseRepository) {
         return new GetCoursesService(courseMembershipRepository, courseRepository);
     }
 
-    @Bean 
+    @Bean
     public TransferLeadershipService transferLeadershipService(CourseRepository courseRepository,
-    CourseMembershipRepository courseMembershipRepository) {
+            CourseMembershipRepository courseMembershipRepository) {
         return new TransferLeadershipService(courseRepository, courseMembershipRepository);
     }
 
-    @Bean 
-    public GetACourseService getACourseService(CourseRepository courseRepository, CourseMembershipRepository courseMembershipRepository) {
+    @Bean
+    public GetACourseService getACourseService(CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository) {
         return new GetACourseService(courseRepository, courseMembershipRepository);
     }
 
-    @Bean 
-    public GetMembersService getMembersService(CourseMembershipRepository courseMembershipRepository, UserRepository userRepository, CourseRepository courseRepository) {
+    @Bean
+    public GetMembersService getMembersService(CourseMembershipRepository courseMembershipRepository,
+            UserRepository userRepository, CourseRepository courseRepository) {
         return new GetMembersService(courseMembershipRepository, userRepository, courseRepository);
     }
 
     @Bean
-    public CreateAssignmentService createAssignmentService(AssignmentRepository assignmentRepository, CourseRepository courseRepository) {
+    public CreateAssignmentService createAssignmentService(AssignmentRepository assignmentRepository,
+            CourseRepository courseRepository) {
         return new CreateAssignmentService(assignmentRepository, courseRepository);
     }
 
@@ -129,4 +134,13 @@ public class ApplicationServiceConfig {
             CourseRepository courseRepository) {
         return new AddReferenceArtifactService(assignmentArtifactRepository, assignmentRepository, courseRepository);
     }
-}
+
+    @Bean
+    public GetAssignmentArtifactsService getAssignmentArtifactsService(
+            AssignmentArtifactRepository assignmentArtifactRepository,
+            AssignmentRepository assignmentRepository,
+            CourseMembershipRepository courseMembershipRepository) {
+        return new GetAssignmentArtifactsService(assignmentRepository,
+                courseMembershipRepository, assignmentArtifactRepository);
+    }
+}
