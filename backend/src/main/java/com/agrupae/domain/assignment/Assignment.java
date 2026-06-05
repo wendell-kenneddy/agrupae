@@ -96,4 +96,13 @@ public class Assignment {
                 .updatedAt(updatedAt)
                 .build();
     }
+
+    public void archive() {
+        if (this.archived) {
+            throw new DomainException("Assignment is already archived.");
+        }
+        
+        this.archived = true;
+        this.updatedAt = Instant.now();
+    }
 }
