@@ -9,6 +9,8 @@ import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
+import com.agrupae.application.exception.assignment.NotAuthorizedToArchiveAssignmentException;
 import com.agrupae.application.exception.assignment.NotCourseLeaderException;
 import com.agrupae.application.exception.auth.InvalidCredentialsException;
 import com.agrupae.application.exception.auth.InvalidTokenException;
@@ -101,4 +103,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleTargetUserNotEnrolled(TargetUserNotEnrolled ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     } 
+
+    @ExceptionHandler(AssignmentNotFoundException.class)
+    public ResponseEntity<String> handleAssignmentNotFound(AssignmentNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NotAuthorizedToArchiveAssignmentException.class)
+    public ResponseEntity<String> handleNotAuthorizedToArchiveAssignment(NotAuthorizedToArchiveAssignmentException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
 }
