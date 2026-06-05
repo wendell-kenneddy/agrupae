@@ -182,4 +182,95 @@ class AssignmentTest {
                     .hasMessage("Assignment is already archived.");
         }
     }
+
+    @Nested
+    class Update {
+
+        @Test
+        void withValidInputs_updatesFieldsAndBumpsUpdatedAt() {
+            UUID courseId = UUID.randomUUID();
+            Instant dueDate = Instant.now().plusSeconds(86_400);
+            Assignment assignment = Assignment.create(courseId, "Old Name", "Old Desc", dueDate, validFlags());
+            Instant originalUpdatedAt = assignment.getUpdatedAt();
+
+            String newName = "New Name";
+            String newDesc = "New Desc";
+            Instant newDueDate = Instant.now().plusSeconds(172_800);
+            AssignmentFlags newFlags = new AssignmentFlags(3, 5, true, false, false, false, false, false, true);
+
+            assignment.update(newName, newDesc, newDueDate, newFlags);
+
+            assertThat(assignment.getName()).isEqualTo(newName);
+            assertThat(assignment.getDescription()).isEqualTo(newDesc);
+            assertThat(assignment.getDueDate()).isEqualTo(newDueDate);
+            assertThat(assignment.getAssignmentFlags()).isEqualTo(newFlags);
+            assertThat(assignment.getUpdatedAt()).isAfterOrEqualTo(originalUpdatedAt);
+        }
+
+        @Test
+        void onArchivedAssignment_throwsDomainException() {
+            Assignment assignment = Assignment.reconstruct(
+                    UUID.randomUUID(), UUID.randomUUID(), "Name", "Desc", validFlags(), true,
+                    Instant.now().plusSeconds(86_400), Instant.now().minusSeconds(100), Instant.now().minusSeconds(100));
+
+            assertThatThrownBy(() -> assignment.update("New Name", "New Desc", Instant.now().plusSeconds(86_400), validFlags()))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Cannot edit an archived assignment.");
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"   ", ""})
+        void withBlankName_throwsDomainException(String blankName) {
+            Assignment assignment = Assignment.create(UUID.randomUUID(), "Name", "Desc", Instant.now().plusSeconds(86_400), validFlags());
+
+            assertThatThrownBy(() -> assignment.update(blankName, "New Desc", Instant.now().plusSeconds(86_400), validFlags()))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Assignment name cannot be blank.");
+        }
+
+        @Test
+        void withNullName_throwsDomainException() {
+            Assignment assignment = Assignment.create(UUID.randomUUID(), "Name", "Desc", Instant.now().plusSeconds(86_400), validFlags());
+
+            assertThatThrownBy(() -> assignment.update(null, "New Desc", Instant.now().plusSeconds(86_400), validFlags()))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Assignment name cannot be blank.");
+        }
+
+        @Test
+        void withNullDescription_throwsDomainException() {
+            Assignment assignment = Assignment.create(UUID.randomUUID(), "Name", "Desc", Instant.now().plusSeconds(86_400), validFlags());
+
+            assertThatThrownBy(() -> assignment.update("New Name", null, Instant.now().plusSeconds(86_400), validFlags()))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Assignment description cannot be null.");
+        }
+
+        @Test
+        void withNullDueDate_throwsDomainException() {
+            Assignment assignment = Assignment.create(UUID.randomUUID(), "Name", "Desc", Instant.now().plusSeconds(86_400), validFlags());
+
+            assertThatThrownBy(() -> assignment.update("New Name", "New Desc", null, validFlags()))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Due date cannot be null.");
+        }
+
+        @Test
+        void withNullAssignmentFlags_throwsDomainException() {
+            Assignment assignment = Assignment.create(UUID.randomUUID(), "Name", "Desc", Instant.now().plusSeconds(86_400), validFlags());
+
+            assertThatThrownBy(() -> assignment.update("New Name", "New Desc", Instant.now().plusSeconds(86_400), null))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Assignment flags cannot be null.");
+        }
+
+        @Test
+        void withPastDueDate_throwsDomainException() {
+            Assignment assignment = Assignment.create(UUID.randomUUID(), "Name", "Desc", Instant.now().plusSeconds(86_400), validFlags());
+
+            assertThatThrownBy(() -> assignment.update("New Name", "New Desc", Instant.now().minusSeconds(10), validFlags()))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Due date must be in the future.");
+        }
+    }
 }
