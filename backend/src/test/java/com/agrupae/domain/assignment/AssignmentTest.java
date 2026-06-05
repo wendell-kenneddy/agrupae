@@ -149,4 +149,37 @@ class AssignmentTest {
             assertThatThrownBy(call).isInstanceOf(NullPointerException.class);
         }
     }
+
+    @Nested
+    class Archive {
+
+        @Test
+        void onActiveAssignment_setsArchivedTrueAndBumpsUpdatedAt() {
+            UUID courseId = UUID.randomUUID();
+            Instant dueDate = Instant.now().plusSeconds(86_400);
+            Assignment assignment = Assignment.create(courseId, "First assignment", "Do the thing", dueDate, validFlags());
+            Instant originalUpdatedAt = assignment.getUpdatedAt();
+
+            assignment.archive();
+
+            assertThat(assignment.isArchived()).isTrue();
+            assertThat(assignment.getUpdatedAt()).isAfterOrEqualTo(originalUpdatedAt);
+        }
+
+        @Test
+        void onAlreadyArchivedAssignment_throwsDomainException() {
+            UUID id = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            Instant createdAt = Instant.parse("2024-01-01T00:00:00Z");
+            Instant updatedAt = Instant.parse("2024-06-01T00:00:00Z");
+            Instant dueDate = Instant.parse("2024-12-01T00:00:00Z");
+
+            Assignment assignment = Assignment.reconstruct(
+                    id, courseId, "First assignment", "Do the thing", validFlags(), true, dueDate, createdAt, updatedAt);
+
+            assertThatThrownBy(assignment::archive)
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Assignment is already archived.");
+        }
+    }
 }

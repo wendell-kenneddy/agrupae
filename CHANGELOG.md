@@ -9,11 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added archive method to the Assignment domain entity, with already-archived guard;
+- (backend) Added POST /courses/{courseId}/assignments/{assignmentId}/archive endpoint, restricted to course leaders and admins, with exception handlers for assignment-not-found and unauthorized archival;
+- (backend) Added a saveAll method to the assignment repository port and JPA adapter for batch persistence;
 - (backend) Added `GET /courses/{id}` returning a single course;
 - (backend) Added a view method to get info about a single course related to user. 
 - (frontend) Integrated classes feature with backend endpoints (`GET /courses`, `GET /courses/{id}`, `GET /courses/{id}/members`, `POST /courses/{id}/transfer`);
 - (frontend) Added archive confirmation modal and AvatarMenu component with logout;
 - (frontend) Updated UI to match prototype (bottom nav, transfer ownership modal);
+
+### Changed
+
+- (backend) Archiving a course now also archives its active assignments in the same transaction;
 
 ### Fixed 
 
