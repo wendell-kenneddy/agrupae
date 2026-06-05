@@ -10,6 +10,8 @@ import { JoinClassPage } from '@/features/classes/pages/JoinClassPage'
 import { ClassPage } from '@/features/classes/pages/ClassPage'
 import { TransferOwnershipPage } from '@/features/classes/pages/TransferOwnershipPage'
 import { CreateAssignmentPage } from '@/features/assignments/pages/CreateAssignmentPage'
+import { AssignmentPage } from '@/features/assignments/pages/AssignmentPage'
+import { EditAssignmentPage } from '@/features/assignments/pages/EditAssignmentPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuth()
@@ -59,6 +61,22 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <CreateAssignmentPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/classes/:id/assignments/:assignmentId',
+    element: (
+      <ProtectedRoute>
+        <AssignmentPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/classes/:id/assignments/:assignmentId/edit',
+    element: (
+      <ProtectedRoute>
+        <EditAssignmentPage />
       </ProtectedRoute>
     ),
   },

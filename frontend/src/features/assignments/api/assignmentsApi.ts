@@ -11,3 +11,15 @@ export async function createAssignment(
   const response = await api.post<Assignment>(`/courses/${courseId}/assignments`, data)
   return response.data
 }
+
+export async function editAssignment(
+  courseId: string,
+  assignmentId: string,
+  data: CreateAssignmentRequest
+): Promise<Assignment> {
+  const response = await api.put<Assignment>(
+    `/courses/${courseId}/assignments/${assignmentId}`,
+    data
+  )
+  return response.data
+}

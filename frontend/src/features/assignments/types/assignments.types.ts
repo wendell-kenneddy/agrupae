@@ -63,3 +63,19 @@ export const PRESETS: Record<
     supervisorCanEditGroups: true,
   },
 }
+
+export interface AssignmentArtifact {
+  id: string
+  assignmentId: string
+  name: string
+  description: string
+  resourceLink: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AddArtifactRequest {
+  name: string
+  description: string
+  resourceLink: string
+}
