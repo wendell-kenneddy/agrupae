@@ -12,7 +12,6 @@ import com.agrupae.infrastructure.persistence.jpa.model.user.UserJpaEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,15 +22,15 @@ public class UserRepositoryJpaAdapter implements UserRepository {
     @Override
     public User findById(UUID id) {
         return this.userJpaRepository.findById(id)
-            .map(this.mapper::toDomain)
-            .orElse(null);
+                .map(this.mapper::toDomain)
+                .orElse(null);
     }
 
     @Override
     public User findByEmail(String email) {
         return this.userJpaRepository.findByEmail(email)
-            .map(this.mapper::toDomain)
-            .orElse(null);
+                .map(this.mapper::toDomain)
+                .orElse(null);
     }
 
     @Override
@@ -49,6 +48,6 @@ public class UserRepositoryJpaAdapter implements UserRepository {
     @Override
     public Page<User> findAllByIdIn(java.util.List<UUID> ids, Pageable pageable) {
         return this.userJpaRepository.findAllByIdIn(ids, pageable)
-            .map(this.mapper::toDomain);
+                .map(this.mapper::toDomain);
     }
 }

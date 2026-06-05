@@ -13,7 +13,7 @@ import lombok.NonNull;
 @Getter
 public class AssignmentArtifact {
     private final UUID id;
-    private final UUID groupId;
+    private final UUID assignmentId;
     private String name;
     private String description;
     private String resourceLink;
@@ -23,7 +23,7 @@ public class AssignmentArtifact {
     @Builder(access = AccessLevel.PRIVATE)
     private AssignmentArtifact(
             @NonNull final UUID id,
-            @NonNull final UUID groupId,
+            @NonNull final UUID assignmentId,
             @NonNull final String name,
             @NonNull final String description,
             @NonNull String resourceLink,
@@ -37,7 +37,7 @@ public class AssignmentArtifact {
             throw new DomainException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
-        this.groupId = groupId;
+        this.assignmentId = assignmentId;
         this.name = name;
         this.description = description;
         this.resourceLink = resourceLink;
@@ -46,7 +46,7 @@ public class AssignmentArtifact {
     }
 
     public static AssignmentArtifact create(
-            final UUID groupId,
+            final UUID assignmentId,
             final String name,
             final String description,
             final String resourceLink) {
@@ -55,12 +55,31 @@ public class AssignmentArtifact {
 
         return AssignmentArtifact.builder()
                 .id(id)
-                .groupId(groupId)
+                .assignmentId(assignmentId)
                 .name(name)
                 .description(description)
                 .resourceLink(resourceLink)
                 .createdAt(now)
                 .updatedAt(now)
+                .build();
+    }
+
+    public static AssignmentArtifact reconstruct(
+            final UUID id,
+            final UUID assignmentId,
+            final String name,
+            final String description,
+            final String resourceLink,
+            final Instant createdAt,
+            final Instant updatedAt) {
+        return AssignmentArtifact.builder()
+                .id(id)
+                .assignmentId(assignmentId)
+                .name(name)
+                .description(description)
+                .resourceLink(resourceLink)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
                 .build();
     }
 }
