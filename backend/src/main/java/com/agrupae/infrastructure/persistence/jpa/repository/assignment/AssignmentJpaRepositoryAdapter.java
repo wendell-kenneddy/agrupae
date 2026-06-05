@@ -46,5 +46,15 @@ public class AssignmentJpaRepositoryAdapter implements AssignmentRepository {
     public void delete(UUID id) {
         this.assignmentJpaRepository.deleteById(id);
     }
-    
+
+    @Override
+    public List<Assignment> saveAll(List<Assignment> assignments) {
+        List<AssignmentJpaEntity> entities = assignments.stream()
+                .map(this.assignmentJpaEntityMapper::toEntity)
+                .toList();
+        List<AssignmentJpaEntity> saved = this.assignmentJpaRepository.saveAll(entities);
+        return saved.stream()
+                .map(this.assignmentJpaEntityMapper::toDomain)
+                .toList();
+    }
 }
