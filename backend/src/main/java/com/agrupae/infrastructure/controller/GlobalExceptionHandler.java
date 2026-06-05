@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.assignment.NotAuthorizedToArchiveAssignmentException;
+import com.agrupae.application.exception.assignment.NotAuthorizedToEditAssignmentException;
 import com.agrupae.application.exception.assignment.NotCourseLeaderException;
 import com.agrupae.application.exception.auth.InvalidCredentialsException;
 import com.agrupae.application.exception.auth.InvalidTokenException;
@@ -111,6 +112,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotAuthorizedToArchiveAssignmentException.class)
     public ResponseEntity<String> handleNotAuthorizedToArchiveAssignment(NotAuthorizedToArchiveAssignmentException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NotAuthorizedToEditAssignmentException.class)
+    public ResponseEntity<String> handleNotAuthorizedToEditAssignment(NotAuthorizedToEditAssignmentException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 }

@@ -10,6 +10,7 @@ import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.application.port.out.user.UserRepository;
 import com.agrupae.application.service.assignment.ArchiveAssignmentService;
 import com.agrupae.application.service.assignment.CreateAssignmentService;
+import com.agrupae.application.service.assignment.EditAssignmentService;
 import com.agrupae.application.service.authentication.*;
 import com.agrupae.application.service.course.ArchiveCourseService;
 import com.agrupae.application.service.course.CreateCourseService;
@@ -124,5 +125,10 @@ public class ApplicationServiceConfig {
     @Bean
     public CreateAssignmentService createAssignmentService(AssignmentRepository assignmentRepository, CourseRepository courseRepository) {
         return new CreateAssignmentService(assignmentRepository, courseRepository);
+    }
+
+    @Bean
+    public EditAssignmentService editAssignmentService(AssignmentRepository assignmentRepository, CourseRepository courseRepository) {
+        return new EditAssignmentService(assignmentRepository, courseRepository);
     }
 }
