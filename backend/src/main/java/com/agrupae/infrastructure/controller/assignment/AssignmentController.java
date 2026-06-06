@@ -29,6 +29,7 @@ import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.assignment.dto.CreateAssignmentRequest;
 import com.agrupae.infrastructure.controller.assignment.dto.EditAssignmentRequest;
 import com.agrupae.application.port.in.assignment.GetAssignmentsUseCase;
+import com.agrupae.application.port.in.assignment.GetAnAssignmentUseCase;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,8 @@ public class AssignmentController {
     private final GetAssignmentArtifactsUseCase getAssignmentArtifactsUseCase;
     private final ArchiveAssignmentUseCase archiveAssignmentUseCase;
     private final EditAssignmentUseCase editAssignmentUseCase;
-    private final GetAssignmentsUseCase getAssignmentUseCase;
+    private final GetAssignmentsUseCase getAssignmentsUseCase;
+    private final GetAnAssignmentUseCase getAnAssignmentUseCase;
 
     @GetMapping
     public ResponseEntity<Page<AssignmentView>> getAssignments(
@@ -51,7 +53,7 @@ public class AssignmentController {
             @AuthenticationPrincipal Jwt jwt,
             Pageable pageable) {
         UUID userId = UUID.fromString(jwt.getSubject());
-        Page<AssignmentView> view = this.getAssignmentUseCase.handle(userId, courseId, pageable);
+        Page<AssignmentView> view = this.getAssignmentsUseCase.handle(userId, courseId, pageable);
         return ResponseEntity.ok(view);
     }
 
@@ -70,6 +72,16 @@ public class AssignmentController {
                 request.assignmentFlags());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(view);
+    }
+
+    @GetMapping("/{assignmentId}")
+    public ResponseEntity<AssignmentView> getAssignment(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        AssignmentView view = this.getAnAssignmentUseCase.handle(userId, courseId, assignmentId);
+        return ResponseEntity.ok(view);
     }
 
     @PutMapping("/{assignmentId}")
@@ -127,6 +139,7 @@ public class AssignmentController {
         UUID userId = UUID.fromString(jwt.getSubject());
         List<AssignmentArtifactView> view = this.getAssignmentArtifactsUseCase.handle(
                 userId,
+                courseId,
                 assignmentId);
         return ResponseEntity.status(HttpStatus.OK).body(view);
     }

@@ -148,9 +148,10 @@ public class ApplicationServiceConfig {
     public GetAssignmentArtifactsService getAssignmentArtifactsService(
             AssignmentArtifactRepository assignmentArtifactRepository,
             AssignmentRepository assignmentRepository,
-            CourseMembershipRepository courseMembershipRepository) {
+            CourseMembershipRepository courseMembershipRepository,
+            CourseRepository courseRepository) {
         return new GetAssignmentArtifactsService(assignmentRepository,
-                courseMembershipRepository, assignmentArtifactRepository);
+                courseMembershipRepository, assignmentArtifactRepository, courseRepository);
     }
 
     public EditAssignmentService editAssignmentService(AssignmentRepository assignmentRepository,
