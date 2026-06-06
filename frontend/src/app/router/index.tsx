@@ -3,6 +3,7 @@ import { useAuth } from '@/app/providers/AuthContext'
 import { getAccessToken } from '@/lib/axios'
 import { LandingPage } from '@/features/auth/pages/LandingPage'
 import { LoginPage } from '@/features/auth/pages/LoginPage'
+import { ProfilePage } from '@/features/auth/pages/ProfilePage'
 import { RegisterPage } from '@/features/auth/pages/RegisterPage'
 import { HomeClassesPage } from '@/features/classes/pages/HomeClassesPage'
 import { CreateClassPage } from '@/features/classes/pages/CreateClassPage'
@@ -37,6 +38,15 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <HomeClassesPage />
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: '/profile',
+    element: (
+      <ProtectedRoute>
+        <ProfilePage />
       </ProtectedRoute>
     ),
   },
