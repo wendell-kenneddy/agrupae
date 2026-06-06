@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added `GET /courses/{courseId}/assignments/{assignmentId}` endpoint to retrieve info about a single assignment;
+- (backend) Added tests to `GetAnAssignment`;
 - (backend) Added `GET /courses/{courseId}/assignments` endpoint to AssignmentController;
 - (backend) Added tests to `GetAssignments`;
 - (backend) Added tests to `EditAssignmentService`;
@@ -34,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 
 - (backend) Archiving a course now also archives its active assignments in the same transaction;
+- (backend) Added a course validation to `GetAssignmentArtifacts`. 
 
 ### Fixed 
 
