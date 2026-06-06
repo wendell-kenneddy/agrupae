@@ -1,17 +1,23 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { assignmentsMock } from '@/features/assignments/mocks/assignments.mock'
+import { useQueryClient } from '@tanstack/react-query'
+// import { assignmentsMock } from '@/features/assignments/mocks/assignments.mock'
 import { useGetArtifacts } from '@/features/assignments/hooks/useGetArtifacts'
 import { useAddArtifact } from '@/features/assignments/hooks/useAddArtifact'
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import type { AssignmentArtifact } from '@/features/assignments/types/assignments.types'
+import type { Assignment } from '@/features/assignments/types/assignments.types'
+
 import styles from './AssignmentPage.module.css'
 
 export function AssignmentPage() {
   const navigate = useNavigate()
   const { id: courseId, assignmentId } = useParams<{ id: string; assignmentId: string }>()
 
-  const assignment = assignmentsMock.find((a) => a.id === assignmentId)
+  const queryClient = useQueryClient()
+  const assignment = queryClient
+    .getQueryData<Assignment[]>(['assignments', courseId])
+    ?.find((a) => a.id === assignmentId)
   const { artifacts, isLoading: isLoadingArtifacts } = useGetArtifacts(courseId!, assignmentId!)
   const { add, isLoading: isAdding } = useAddArtifact(courseId!, assignmentId!)
 
@@ -57,7 +63,6 @@ export function AssignmentPage() {
         resourceLink: formLink.trim(),
       })
     }
-    // edição: aguarda endpoint PUT de artefato
     setModalArtifact(null)
   }
 

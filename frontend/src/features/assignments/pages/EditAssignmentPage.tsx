@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEditAssignment } from '@/features/assignments/hooks/useEditAssignment'
-import { assignmentsMock } from '@/features/assignments/mocks/assignments.mock'
+// import { assignmentsMock } from '@/features/assignments/mocks/assignments.mock'
 import { PRESETS } from '@/features/assignments/types/assignments.types'
 import type {
+  Assignment,
   AssignmentFlags,
   AssignmentMode,
 } from '@/features/assignments/types/assignments.types'
+
 import styles from './CreateAssignmentPage.module.css'
 
 const FLAG_LABELS: Record<
@@ -105,7 +108,10 @@ export function EditAssignmentPage() {
   const { id: courseId, assignmentId } = useParams<{ id: string; assignmentId: string }>()
   const { edit, isLoading } = useEditAssignment(courseId!, assignmentId!)
 
-  const assignment = assignmentsMock.find((a) => a.id === assignmentId)
+  const queryClient = useQueryClient()
+  const assignment = queryClient
+    .getQueryData<Assignment[]>(['assignments', courseId])
+    ?.find((a) => a.id === assignmentId)
 
   if (!assignment) return <div>Trabalho não encontrado.</div>
 
