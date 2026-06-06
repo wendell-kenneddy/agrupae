@@ -7,9 +7,7 @@ import com.agrupae.application.port.in.assignment.AssignmentView;
 import com.agrupae.domain.course.Course;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.port.out.course.CourseRepository;
-import com.agrupae.domain.course.CourseMembership;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
-import com.agrupae.domain.assignment.Assignment;
 import com.agrupae.application.port.out.assignment.AssignmentRepository;
 
 import org.springframework.data.domain.Page;
