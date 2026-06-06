@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 import com.agrupae.application.port.in.assignment.AddReferenceArtifactUseCase;
 import com.agrupae.application.port.in.assignment.AssignmentArtifactView;
@@ -26,9 +28,11 @@ import com.agrupae.application.port.in.assignment.EditAssignmentUseCase;
 import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.assignment.dto.CreateAssignmentRequest;
 import com.agrupae.infrastructure.controller.assignment.dto.EditAssignmentRequest;
+import com.agrupae.application.port.in.assignment.GetAssignmentsUseCase;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -39,6 +43,17 @@ public class AssignmentController {
     private final GetAssignmentArtifactsUseCase getAssignmentArtifactsUseCase;
     private final ArchiveAssignmentUseCase archiveAssignmentUseCase;
     private final EditAssignmentUseCase editAssignmentUseCase;
+    private final GetAssignmentsUseCase getAssignmentUseCase;
+
+    @GetMapping
+    public ResponseEntity<Page<AssignmentView>> getAssignments(
+            @PathVariable UUID courseId,
+            @AuthenticationPrincipal Jwt jwt,
+            Pageable pageable) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        Page<AssignmentView> view = this.getAssignmentUseCase.handle(userId, courseId, pageable);
+        return ResponseEntity.ok(view);
+    }
 
     @PostMapping
     public ResponseEntity<AssignmentView> create(
