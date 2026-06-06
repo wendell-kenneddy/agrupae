@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { assignmentsMock, artifactsMock } from '@/features/assignments/mocks/assignments.mock'
+import { assignmentsMock } from '@/features/assignments/mocks/assignments.mock'
+import { useGetArtifacts } from '@/features/assignments/hooks/useGetArtifacts'
+import { useAddArtifact } from '@/features/assignments/hooks/useAddArtifact'
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import type { AssignmentArtifact } from '@/features/assignments/types/assignments.types'
 import styles from './AssignmentPage.module.css'
@@ -10,9 +12,9 @@ export function AssignmentPage() {
   const { id: courseId, assignmentId } = useParams<{ id: string; assignmentId: string }>()
 
   const assignment = assignmentsMock.find((a) => a.id === assignmentId)
-  const [artifacts, setArtifacts] = useState(
-    artifactsMock.filter((a) => a.assignmentId === assignmentId)
-  )
+  const { artifacts, isLoading: isLoadingArtifacts } = useGetArtifacts(courseId!, assignmentId!)
+  const { add, isLoading: isAdding } = useAddArtifact(courseId!, assignmentId!)
+
   const [modalArtifact, setModalArtifact] = useState<AssignmentArtifact | null | 'new'>(null)
   const [formName, setFormName] = useState('')
   const [formDescription, setFormDescription] = useState('')
@@ -46,35 +48,16 @@ export function AssignmentPage() {
     setModalArtifact(artifact)
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!formName.trim() || !formLink.trim()) return
     if (modalArtifact === 'new') {
-      setArtifacts((prev) => [
-        ...prev,
-        {
-          id: String(Date.now()),
-          assignmentId: assignmentId!,
-          name: formName.trim(),
-          description: formDescription.trim(),
-          resourceLink: formLink.trim(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ])
-    } else if (modalArtifact) {
-      setArtifacts((prev) =>
-        prev.map((a) =>
-          a.id === modalArtifact.id
-            ? {
-                ...a,
-                name: formName.trim(),
-                description: formDescription.trim(),
-                resourceLink: formLink.trim(),
-              }
-            : a
-        )
-      )
+      await add({
+        name: formName.trim(),
+        description: formDescription.trim(),
+        resourceLink: formLink.trim(),
+      })
     }
+    // edição: aguarda endpoint PUT de artefato
     setModalArtifact(null)
   }
 
@@ -117,7 +100,9 @@ export function AssignmentPage() {
 
           {assignment.description && <p className={styles.description}>{assignment.description}</p>}
 
-          {artifacts.length > 0 && (
+          {isLoadingArtifacts && <p className={styles.feedbackSmall}>Carregando artefatos...</p>}
+
+          {!isLoadingArtifacts && artifacts.length > 0 && (
             <div className={styles.artifacts}>
               {artifacts.map((a) => (
                 <div key={a.id} className={styles.artifactRow}>
@@ -282,9 +267,9 @@ export function AssignmentPage() {
               <button
                 className={styles.confirmBtn}
                 onClick={handleSave}
-                disabled={!formName.trim() || !formLink.trim()}
+                disabled={!formName.trim() || !formLink.trim() || isAdding}
               >
-                {modalArtifact === 'new' ? 'Adicionar' : 'Salvar'}
+                {isAdding ? 'Salvando...' : modalArtifact === 'new' ? 'Adicionar' : 'Salvar'}
               </button>
             </div>
           </div>

@@ -238,6 +238,12 @@
   justify-content: center;
 }
 
+.feedbackSmall {
+  font-size: 0.82rem;
+  color: #00100f66;
+  margin: 0;
+}
+
 .overlay {
   position: fixed;
   inset: 0;

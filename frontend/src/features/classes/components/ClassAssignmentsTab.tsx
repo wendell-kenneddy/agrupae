@@ -1,42 +1,35 @@
 import { useState } from 'react'
 import type { MouseEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useGetAssignments } from '@/features/assignments/hooks/useGetAssignments'
 import type { Class } from '@/features/classes/types/classes.types'
+import type { Assignment } from '@/features/assignments/types/assignments.types'
+import { useArchiveAssignment } from '@/features/assignments/hooks/useArchiveAssignment'
+
 import styles from './ClassAssignmentsTab.module.css'
 
 interface ClassAssignmentsTabProps {
   course: Class
 }
 
-const assignmentsMock = [
-  {
-    id: '1',
-    name: 'Modelagem Relacional - Sistema de Biblioteca',
-    deadline: '15/05/2026',
-    groupsFormed: 4,
-    totalGroups: 8,
-  },
-  {
-    id: '2',
-    name: 'Implementação de Consultas SQL Avançadas',
-    deadline: '28/05/2026',
-    groupsFormed: 2,
-    totalGroups: 8,
-  },
-]
-
 export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
   const navigate = useNavigate()
   const isOwner = course.role === 'OWNER'
+  const { assignments, isLoading, isError } = useGetAssignments(course.id)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [menuPos, setMenuPos] = useState({ top: 0, right: 0 })
   const [archivingId, setArchivingId] = useState<string | null>(null)
+  const { archive, isLoading: isArchiving } = useArchiveAssignment(course.id)
 
   function handleMenuOpen(e: MouseEvent<HTMLButtonElement>, id: string) {
     e.stopPropagation()
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
     setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right })
     setOpenMenu(id)
+  }
+
+  function formatDate(iso: string) {
+    return new Date(iso).toLocaleDateString('pt-BR')
   }
 
   return (
@@ -51,8 +44,11 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
           </button>
         )}
 
+        {isLoading && <p className={styles.feedback}>Carregando trabalhos...</p>}
+        {isError && <p className={styles.feedback}>Erro ao carregar trabalhos.</p>}
+
         <div className={styles.list}>
-          {assignmentsMock.map((a) => (
+          {assignments.map((a: Assignment) => (
             <div
               key={a.id}
               className={styles.card}
@@ -61,7 +57,9 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
               <div className={styles.cardTop}>
                 <div className={styles.cardInfo}>
                   <p className={styles.cardName}>{a.name}</p>
-                  <p className={styles.cardDeadline}>Prazo: {a.deadline}</p>
+                  {a.dueDate && (
+                    <p className={styles.cardDeadline}>Prazo: {formatDate(a.dueDate)}</p>
+                  )}
                 </div>
                 {isOwner && (
                   <button className={styles.menuBtn} onClick={(e) => handleMenuOpen(e, a.id)}>
@@ -86,14 +84,11 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
                   </svg>
                   <span>Grupos formados</span>
                   <span className={styles.groupsCount}>
-                    {a.groupsFormed}/{a.totalGroups}
+                    0/{a.assignmentFlags.maxGroups === 999 ? '∞' : a.assignmentFlags.maxGroups}
                   </span>
                 </div>
                 <div className={styles.progressBar}>
-                  <div
-                    className={styles.progressFill}
-                    style={{ width: `${(a.groupsFormed / a.totalGroups) * 100}%` }}
-                  />
+                  <div className={styles.progressFill} style={{ width: '0%' }} />
                 </div>
               </div>
             </div>
@@ -127,11 +122,10 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
                 Editar
               </button>
               <button
-                className={`${styles.menuItem}`}
+                className={styles.menuItem}
                 onClick={() => {
                   setOpenMenu(null)
                   setArchivingId(openMenu)
-                  // integrar com API depois
                 }}
               >
                 <svg
@@ -173,7 +167,7 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
               </svg>
             </button>
             <p className={styles.archiveTitle}>
-              Arquivar <strong>{assignmentsMock.find((a) => a.id === archivingId)?.name}</strong>?
+              Arquivar <strong>{assignments.find((a) => a.id === archivingId)?.name}</strong>?
             </p>
             <p className={styles.archiveWarning}>
               O trabalho ficará inacessível para todos os membros. Esta ação não pode ser desfeita.
@@ -184,12 +178,15 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
               </button>
               <button
                 className={styles.confirmBtn}
-                onClick={() => {
-                  // integrar com API depois
-                  setArchivingId(null)
+                onClick={async () => {
+                  if (archivingId) {
+                    await archive(archivingId)
+                    setArchivingId(null)
+                  }
                 }}
+                disabled={isArchiving}
               >
-                Arquivar
+                {isArchiving ? 'Arquivando...' : 'Arquivar'}
               </button>
             </div>
           </div>
