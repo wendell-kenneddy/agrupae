@@ -44,8 +44,11 @@ const FLAG_LABELS: Record<
 }
 
 function getValidationError(
-  flags: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'>
+  flags: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'>,
+  mode: AssignmentMode
 ): { type: 'error' | 'warning'; message: string } | null {
+  if (mode !== 'advanced') return null
+
   if (!flags.studentsCanCreateGroups && !flags.supervisorCanEditGroups) {
     return {
       type: 'error',
@@ -122,7 +125,7 @@ export function EditAssignmentPage() {
   const [forcedAdvanced, setForcedAdvanced] = useState(detectMode(flagsOnly) === 'advanced')
 
   const mode = forcedAdvanced ? 'advanced' : detectMode(flags)
-  const validation = getValidationError(flags)
+  const validation = getValidationError(flags, mode)
   const isInvalid = validation?.type === 'error'
 
   function applyPreset(preset: Exclude<AssignmentMode, 'advanced'>) {

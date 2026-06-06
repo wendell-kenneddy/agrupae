@@ -43,8 +43,11 @@ const FLAG_LABELS: Record<
 }
 
 function getValidationError(
-  flags: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'>
+  flags: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'>,
+  mode: AssignmentMode
 ): { type: 'error' | 'warning'; message: string } | null {
+  if (mode !== 'advanced') return null
+
   if (!flags.studentsCanCreateGroups && !flags.supervisorCanEditGroups) {
     return {
       type: 'error',
@@ -56,7 +59,7 @@ function getValidationError(
     return {
       type: 'error',
       message:
-        "Autoridade sobre composição compartilhada com saída bloqueada. Verifique se 'Estudantes podem sair' deve permanecer desativado.",
+        'Dissolução é uma saída forçada coletiva. Contradiz a restrição de saída voluntária.',
     }
   }
   if (
@@ -110,11 +113,10 @@ export function CreateAssignmentPage() {
     PRESETS.moderate
   )
 
-  const validation = getValidationError(flags)
-  const isInvalid = validation?.type === 'error'
-
   const [forcedAdvanced, setForcedAdvanced] = useState(false)
   const mode = forcedAdvanced ? 'advanced' : detectMode(flags)
+  const validation = getValidationError(flags, mode)
+  const isInvalid = validation?.type === 'error'
 
   function applyPreset(preset: Exclude<AssignmentMode, 'advanced'>) {
     setFlags(PRESETS[preset])
