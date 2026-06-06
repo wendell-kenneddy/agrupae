@@ -9,19 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added `GET /courses/{courseId}/assignments` endpoint to AssignmentController;
+- (backend) Added tests to `GetAssignments`;
 - (backend) Added tests to `EditAssignmentService`;
 - (backend) Added assignment edit endpoint covering usecase, service and controller endpoint, while also wiring the service on ApplicationServiceConfig and adding exception handlers for assignment-not-found and unauthorized archival;
 - (backend) Added update mthod to Assignment domain entity, whith updated tests;
 - (backend) Added archive method to the Assignment domain entity, with already-archived guard;
 - (backend) Added POST /courses/{courseId}/assignments/{assignmentId}/archive endpoint, restricted to course leaders and admins, with exception handlers for assignment-not-found and unauthorized archival;
 - (backend) Added a saveAll method to the assignment repository port and JPA adapter for batch persistence;
-- (backend) Added `GET /courses/{id}` returning a single course;
-- (backend) Added a view method to get info about a single course related to user. 
-- (backend) Added `GET /courses/{id}/assignments` endpoint to retrieve a list of artifacts for a specific course;
+- (backend) Added `GET /courses/{courseId}` returning a single course;
+- (backend) Added a view method to get info about a single course related to user;
+- (backend) Added `GET /courses/{courseId}/assignments/{assignmentId}/artifacts` endpoint to retrieve a list of artifacts for a specific assignment;
+- (backend) Added `GET /courses/{courseId}/assignments/{assignmentId}/artifacts` endpoint to AssignmentController;
 - (backend) Added `assignmentArtifactsView` DTO to represent assignment artifacts in the response;
 - (backend) Implemented security validation to ensure that users requesting assignment artifacts are members of the course;
 - (backend) Implemented unit tests for the `GetAssignmentArtifactsService` to validate functionality and security;
-- (backend) Added `GET /courses/{courseId}/assignments/{assignmentId}/artifacts` endpoint to AssignmentController;
 - (backend) Added `AddReferenceArtifactsService` to handle the addition of reference artifacts to an assignment;
 - (backend) Added `POST /courses/{courseId}/assignments/{assignmentId}/artifacts` endpoint to AssignmentController;
 - (backend) Added unit tests for the `AddReferenceArtifactsService` to validate functionality and security;
