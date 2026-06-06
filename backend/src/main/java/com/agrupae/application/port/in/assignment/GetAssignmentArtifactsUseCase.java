@@ -8,5 +8,6 @@ import lombok.NonNull;
 public interface GetAssignmentArtifactsUseCase {
     List<AssignmentArtifactView> handle(
             @NonNull UUID userId,
+            @NonNull UUID courseId,
             @NonNull UUID assignmentId);
 }

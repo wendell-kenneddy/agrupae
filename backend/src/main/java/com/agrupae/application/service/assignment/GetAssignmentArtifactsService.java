@@ -13,6 +13,8 @@ import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.domain.assignment.Assignment;
+import com.agrupae.domain.course.Course;
+import com.agrupae.application.port.out.course.CourseRepository;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +24,18 @@ public class GetAssignmentArtifactsService implements GetAssignmentArtifactsUseC
     private final AssignmentRepository assignmentRepository;
     private final CourseMembershipRepository courseMembershipRepository;
     private final AssignmentArtifactRepository assignmentArtifactRepository;
+    private final CourseRepository courseRepository;
 
     @Override
-    public List<AssignmentArtifactView> handle(@NonNull UUID userId, @NonNull UUID assignmentId) {
+    public List<AssignmentArtifactView> handle(@NonNull UUID userId, @NonNull UUID courseId, @NonNull UUID assignmentId) {
+        Course course = this.courseRepository.findById(courseId);
         Assignment assignment = this.assignmentRepository.findById(assignmentId);
-        if (assignment == null)
-            throw new AssignmentNotFoundException();
-
-        UUID courseId = assignment.getCourseId();
-        if (!this.courseMembershipRepository.exists(courseId, userId))
+        
+        if (course == null || !courseMembershipRepository.exists(userId, courseId)) 
             throw new CourseNotFoundException();
+
+        if (assignment == null || !assignment.getCourseId().equals(courseId))
+            throw new AssignmentNotFoundException();
 
         List<AssignmentArtifact> artifacts = this.assignmentArtifactRepository.findByAssignmentId(assignmentId);
 
