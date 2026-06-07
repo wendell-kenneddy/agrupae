@@ -11,6 +11,7 @@ import type {
 } from '@/features/assignments/types/assignments.types'
 
 import styles from './CreateAssignmentPage.module.css'
+import { useGetAssignment } from '../hooks/useGetAssignment'
 
 const FLAG_LABELS: Record<
   keyof Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'>,
@@ -106,12 +107,11 @@ function detectMode(flags: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'
 export function EditAssignmentPage() {
   const navigate = useNavigate()
   const { id: courseId, assignmentId } = useParams<{ id: string; assignmentId: string }>()
-  const { edit, isLoading } = useEditAssignment(courseId!, assignmentId!)
+  const { edit } = useEditAssignment(courseId!, assignmentId!)
 
-  const queryClient = useQueryClient()
-  const assignment = queryClient
-    .getQueryData<Assignment[]>(['assignments', courseId])
-    ?.find((a) => a.id === assignmentId)
+  const { assignment, isLoading } = useGetAssignment(courseId!, assignmentId!)
+
+  if (isLoading || !assignment) return <div>Carregando...</div>
 
   if (!assignment) return <div>Trabalho não encontrado.</div>
 

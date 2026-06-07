@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useQueryClient } from '@tanstack/react-query'
-// import { assignmentsMock } from '@/features/assignments/mocks/assignments.mock'
 import { useGetArtifacts } from '@/features/assignments/hooks/useGetArtifacts'
 import { useAddArtifact } from '@/features/assignments/hooks/useAddArtifact'
+import { useGetAssignment } from '@/features/assignments/hooks/useGetAssignment'
+
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import type { AssignmentArtifact } from '@/features/assignments/types/assignments.types'
 import type { Assignment } from '@/features/assignments/types/assignments.types'
@@ -14,13 +14,10 @@ export function AssignmentPage() {
   const navigate = useNavigate()
   const { id: courseId, assignmentId } = useParams<{ id: string; assignmentId: string }>()
 
-  const queryClient = useQueryClient()
-  const assignment = queryClient
-    .getQueryData<Assignment[]>(['assignments', courseId])
-    ?.find((a) => a.id === assignmentId)
+  const { assignment, isLoading, isError } = useGetAssignment(courseId!, assignmentId!)
+
   const { artifacts, isLoading: isLoadingArtifacts } = useGetArtifacts(courseId!, assignmentId!)
   const { add, isLoading: isAdding } = useAddArtifact(courseId!, assignmentId!)
-
   const [modalArtifact, setModalArtifact] = useState<AssignmentArtifact | null | 'new'>(null)
   const [formName, setFormName] = useState('')
   const [formDescription, setFormDescription] = useState('')
@@ -28,7 +25,8 @@ export function AssignmentPage() {
 
   const isOwner = true
 
-  if (!assignment) return <div className={styles.feedback}>Trabalho não encontrado.</div>
+  if (isLoading) return <div className={styles.feedback}>Carregando...</div>
+  if (isError || !assignment) return <div className={styles.feedback}>Trabalho não encontrado.</div>
 
   const dueDate = assignment.dueDate
     ? new Date(assignment.dueDate).toLocaleDateString('pt-BR')

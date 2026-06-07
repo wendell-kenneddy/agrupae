@@ -31,6 +31,11 @@ export async function getAssignments(courseId: string): Promise<Assignment[]> {
   return response.data.content
 }
 
+export async function getAssignment(courseId: string, assignmentId: string): Promise<Assignment> {
+  const response = await api.get<Assignment>(`/courses/${courseId}/assignments/${assignmentId}`)
+  return response.data
+}
+
 export async function archiveAssignment(courseId: string, assignmentId: string): Promise<void> {
   await api.post(`/courses/${courseId}/assignments/${assignmentId}/archive`)
 }
