@@ -63,4 +63,25 @@ public class Group {
                 .updatedAt(now)
                 .build();
     }
+
+    public static Group reconstruct(
+            UUID id,
+            UUID assignmentId,
+            UUID leaderId,
+            String name,
+            boolean open,
+            boolean membersCanEditArtifacts,
+            Instant createdAt,
+            Instant updatedAt) {
+        return Group.builder()
+                .id(id)
+                .assignmentId(assignmentId)
+                .leaderId(leaderId)
+                .name(name)
+                .open(open)
+                .membersCanEditArtifacts(membersCanEditArtifacts)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .build();
+    }
 }

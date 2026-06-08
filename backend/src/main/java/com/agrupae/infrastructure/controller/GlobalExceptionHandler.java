@@ -13,6 +13,10 @@ import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.assignment.NotAuthorizedToArchiveAssignmentException;
 import com.agrupae.application.exception.assignment.NotAuthorizedToEditAssignmentException;
 import com.agrupae.application.exception.assignment.NotCourseLeaderException;
+import com.agrupae.application.exception.group.AssignmentArchivedException;
+import com.agrupae.application.exception.group.GroupCreationNotAllowedException;
+import com.agrupae.application.exception.group.MaxGroupsReachedException;
+import com.agrupae.application.exception.group.StudentAlreadyInGroupException;
 import com.agrupae.application.exception.auth.InvalidCredentialsException;
 import com.agrupae.application.exception.auth.InvalidTokenException;
 import com.agrupae.application.exception.auth.TokenExpiredException;
@@ -118,5 +122,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotAuthorizedToEditAssignmentException.class)
     public ResponseEntity<String> handleNotAuthorizedToEditAssignment(NotAuthorizedToEditAssignmentException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(GroupCreationNotAllowedException.class)
+    public ResponseEntity<String> handleGroupCreationNotAllowed(GroupCreationNotAllowedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(StudentAlreadyInGroupException.class)
+    public ResponseEntity<String> handleStudentAlreadyInGroup(StudentAlreadyInGroupException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler({ MaxGroupsReachedException.class, AssignmentArchivedException.class })
+    public ResponseEntity<String> handleGroupDomainViolations(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(ex.getMessage());
     }
 }

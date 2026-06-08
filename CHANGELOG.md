@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added `POST /courses/{courseId}/assignments/{assignmentId}/groups` endpoint for group creation, with service wiring and exception handlers;
+- (backend) Added JPA persistence adapters for Group and GroupMember domain entities, covering entities, mappers, and repositories;
+- (backend) Added group creation application service with inbound/outbound ports, exceptions, and unit tests;
+- (backend) Added `reconstruct` factory method to `Group` domain entity, with unit tests;
+- (database) Added composite primary key to `groups_members` and dropped `updated_at` column;
 - (backend) Added `GET /courses/{courseId}/assignments/{assignmentId}` endpoint to retrieve info about a single assignment;
 - (backend) Added tests to `GetAnAssignment`;
 - (backend) Added `GET /courses/{courseId}/assignments` endpoint to AssignmentController;
@@ -40,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed 
 
+- (backend) Added missing `@Bean` annotation to `editAssignmentService` in `ApplicationServiceConfig`;
 - (backend) Typing mistake in application.properties at "ACESS_TOKEN".
  
 ## [0.9.0] 2026-06-04

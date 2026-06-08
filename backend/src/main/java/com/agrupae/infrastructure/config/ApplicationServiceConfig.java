@@ -7,6 +7,8 @@ import com.agrupae.application.port.out.assignment.AssignmentRepository;
 import com.agrupae.application.port.out.authentication.*;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
+import com.agrupae.application.port.out.group.GroupMemberRepository;
+import com.agrupae.application.port.out.group.GroupRepository;
 import com.agrupae.application.port.out.user.UserRepository;
 import com.agrupae.application.port.out.assignment.AssignmentArtifactRepository;
 import com.agrupae.application.service.assignment.AddReferenceArtifactService;
@@ -24,6 +26,7 @@ import com.agrupae.application.service.user.UpdateProfileService;
 import com.agrupae.application.service.course.GetCoursesService;
 import com.agrupae.application.service.course.GetMembersService;
 import com.agrupae.application.service.assignment.GetAssignmentArtifactsService;
+import com.agrupae.application.service.group.CreateGroupService;
 
 @Configuration
 public class ApplicationServiceConfig {
@@ -154,8 +157,19 @@ public class ApplicationServiceConfig {
                 courseMembershipRepository, assignmentArtifactRepository, courseRepository);
     }
 
+    @Bean
     public EditAssignmentService editAssignmentService(AssignmentRepository assignmentRepository,
             CourseRepository courseRepository) {
         return new EditAssignmentService(assignmentRepository, courseRepository);
+    }
+
+    @Bean
+    public CreateGroupService createGroupService(
+            AssignmentRepository assignmentRepository,
+            CourseMembershipRepository courseMembershipRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository) {
+        return new CreateGroupService(assignmentRepository, courseMembershipRepository,
+                groupRepository, groupMemberRepository);
     }
 }
