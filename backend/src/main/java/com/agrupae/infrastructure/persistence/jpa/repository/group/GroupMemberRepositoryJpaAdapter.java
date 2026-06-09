@@ -28,4 +28,9 @@ public class GroupMemberRepositoryJpaAdapter implements GroupMemberRepository {
     public boolean existsByAssignmentIdAndMemberId(UUID assignmentId, UUID memberId) {
         return this.groupMemberJpaRepository.existsByAssignmentIdAndMemberId(assignmentId, memberId);
     }
+
+    @Override
+    public int countByGroupId(UUID groupId) {
+        return this.groupMemberJpaRepository.countByGroupId(groupId);
+    }
 }

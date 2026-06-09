@@ -84,4 +84,30 @@ public class Group {
                 .updatedAt(updatedAt)
                 .build();
     }
+
+    public void editName(final String newName) {
+        if (newName == null || newName.isBlank())
+            throw new DomainException("Group name cannot be blank.");
+
+        this.name = newName;
+        this.updatedAt = Instant.now();
+    }
+
+    public void transferLeadership(@NonNull final UUID newLeaderId) {
+        if (newLeaderId.equals(this.leaderId))
+            throw new DomainException("User is already the leader of the group.");
+
+        this.leaderId = newLeaderId;
+        this.updatedAt = Instant.now();
+    }
+
+    public void toggleMode() {
+        this.open = !this.open;
+        this.updatedAt = Instant.now();
+    }
+
+    public void toggleMemberArtifactEdit() {
+        this.membersCanEditArtifacts = !this.membersCanEditArtifacts;
+        this.updatedAt = Instant.now();
+    }
 }

@@ -8,4 +8,6 @@ public interface GroupMemberRepository {
     GroupMember save(GroupMember groupMember);
 
     boolean existsByAssignmentIdAndMemberId(UUID assignmentId, UUID memberId);
+
+    int countByGroupId(UUID groupId);
 }

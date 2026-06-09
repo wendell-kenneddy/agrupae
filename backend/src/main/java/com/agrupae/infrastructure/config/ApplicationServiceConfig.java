@@ -27,6 +27,7 @@ import com.agrupae.application.service.course.GetCoursesService;
 import com.agrupae.application.service.course.GetMembersService;
 import com.agrupae.application.service.assignment.GetAssignmentArtifactsService;
 import com.agrupae.application.service.group.CreateGroupService;
+import com.agrupae.application.service.group.JoinOpenGroupService;
 
 @Configuration
 public class ApplicationServiceConfig {
@@ -170,6 +171,16 @@ public class ApplicationServiceConfig {
             GroupRepository groupRepository,
             GroupMemberRepository groupMemberRepository) {
         return new CreateGroupService(assignmentRepository, courseMembershipRepository,
+                groupRepository, groupMemberRepository);
+    }
+
+    @Bean
+    public JoinOpenGroupService joinOpenGroupService(
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository) {
+        return new JoinOpenGroupService(courseMembershipRepository, assignmentRepository,
                 groupRepository, groupMemberRepository);
     }
 }
