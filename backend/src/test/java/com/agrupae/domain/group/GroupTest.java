@@ -98,4 +98,106 @@ class GroupTest {
                     .hasMessage("Update timestamp cannot be before creation timestamp.");
         }
     }
+
+    @Nested
+    class EditName {
+
+        @Test
+        void withValidName_updatesNameAndTimestamp() {
+            Group group = Group.create(UUID.randomUUID(), UUID.randomUUID(), "Old Name", true, true);
+            Instant originalUpdatedAt = group.getUpdatedAt();
+
+            group.editName("New Name");
+
+            assertThat(group.getName()).isEqualTo("New Name");
+            assertThat(group.getUpdatedAt()).isAfterOrEqualTo(originalUpdatedAt);
+        }
+
+        @Test
+        void withBlankName_throwsDomainException() {
+            Group group = Group.create(UUID.randomUUID(), UUID.randomUUID(), "Team", true, true);
+
+            assertThatThrownBy(() -> group.editName("   "))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Group name cannot be blank.");
+        }
+
+        @Test
+        void withNullName_throwsDomainException() {
+            Group group = Group.create(UUID.randomUUID(), UUID.randomUUID(), "Team", true, true);
+
+            assertThatThrownBy(() -> group.editName(null))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Group name cannot be blank.");
+        }
+    }
+
+    @Nested
+    class TransferLeadership {
+
+        @Test
+        void withDifferentUser_updatesLeaderAndTimestamp() {
+            UUID originalLeader = UUID.randomUUID();
+            UUID newLeader = UUID.randomUUID();
+            Group group = Group.create(UUID.randomUUID(), originalLeader, "Team", true, true);
+
+            group.transferLeadership(newLeader);
+
+            assertThat(group.getLeaderId()).isEqualTo(newLeader);
+        }
+
+        @Test
+        void withSameUser_throwsDomainException() {
+            UUID leader = UUID.randomUUID();
+            Group group = Group.create(UUID.randomUUID(), leader, "Team", true, true);
+
+            assertThatThrownBy(() -> group.transferLeadership(leader))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("User is already the leader of the group.");
+        }
+    }
+
+    @Nested
+    class ToggleMode {
+
+        @Test
+        void togglesOpenToClosed() {
+            Group group = Group.create(UUID.randomUUID(), UUID.randomUUID(), "Team", true, true);
+
+            group.toggleMode();
+
+            assertThat(group.isOpen()).isFalse();
+        }
+
+        @Test
+        void togglesClosedToOpen() {
+            Group group = Group.create(UUID.randomUUID(), UUID.randomUUID(), "Team", false, true);
+
+            group.toggleMode();
+
+            assertThat(group.isOpen()).isTrue();
+        }
+    }
+
+    @Nested
+    class ToggleMemberArtifactEdit {
+
+        @Test
+        void togglesEnabledToDisabled() {
+            Group group = Group.create(UUID.randomUUID(), UUID.randomUUID(), "Team", true, true);
+
+            group.toggleMemberArtifactEdit();
+
+            assertThat(group.isMembersCanEditArtifacts()).isFalse();
+        }
+
+        @Test
+        void togglesDisabledToEnabled() {
+            Group group = Group.create(UUID.randomUUID(), UUID.randomUUID(), "Team", true, false);
+
+            group.toggleMemberArtifactEdit();
+
+            assertThat(group.isMembersCanEditArtifacts()).isTrue();
+        }
+    }
 }
