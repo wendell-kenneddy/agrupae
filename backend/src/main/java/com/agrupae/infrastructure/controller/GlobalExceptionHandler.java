@@ -15,6 +15,9 @@ import com.agrupae.application.exception.assignment.NotAuthorizedToEditAssignmen
 import com.agrupae.application.exception.assignment.NotCourseLeaderException;
 import com.agrupae.application.exception.group.AssignmentArchivedException;
 import com.agrupae.application.exception.group.GroupCreationNotAllowedException;
+import com.agrupae.application.exception.group.GroupMemberLimitReachedException;
+import com.agrupae.application.exception.group.GroupNotFoundException;
+import com.agrupae.application.exception.group.GroupNotOpenException;
 import com.agrupae.application.exception.group.MaxGroupsReachedException;
 import com.agrupae.application.exception.group.StudentAlreadyInGroupException;
 import com.agrupae.application.exception.auth.InvalidCredentialsException;
@@ -137,5 +140,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ MaxGroupsReachedException.class, AssignmentArchivedException.class })
     public ResponseEntity<String> handleGroupDomainViolations(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(GroupNotFoundException.class)
+    public ResponseEntity<String> handleGroupNotFound(GroupNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler({ GroupNotOpenException.class, GroupMemberLimitReachedException.class })
+    public ResponseEntity<String> handleGroupJoinConflicts(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }

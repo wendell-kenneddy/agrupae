@@ -20,4 +20,6 @@ public interface GroupMemberJpaRepository extends JpaRepository<GroupMemberJpaEn
     boolean existsByAssignmentIdAndMemberId(
             @Param("assignmentId") UUID assignmentId,
             @Param("memberId") UUID memberId);
+
+    int countByGroupId(UUID groupId);
 }

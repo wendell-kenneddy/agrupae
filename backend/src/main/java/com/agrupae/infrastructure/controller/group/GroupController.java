@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agrupae.application.port.in.group.CreateGroupUseCase;
 import com.agrupae.application.port.in.group.GroupView;
+import com.agrupae.application.port.in.group.JoinOpenGroupUseCase;
 import com.agrupae.infrastructure.controller.group.dto.CreateGroupRequest;
 
 import jakarta.validation.Valid;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/courses/{courseId}/assignments/{assignmentId}/groups")
 public class GroupController {
     private final CreateGroupUseCase createGroupUseCase;
+    private final JoinOpenGroupUseCase joinOpenGroupUseCase;
 
     @PostMapping
     public ResponseEntity<GroupView> create(
@@ -40,5 +42,16 @@ public class GroupController {
                 request.open());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(view);
+    }
+
+    @PostMapping("/{groupId}/join")
+    public ResponseEntity<Void> join(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        this.joinOpenGroupUseCase.handle(courseId, assignmentId, groupId, userId);
+        return ResponseEntity.noContent().build();
     }
 }
