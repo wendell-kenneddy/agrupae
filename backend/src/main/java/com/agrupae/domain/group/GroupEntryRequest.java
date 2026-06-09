@@ -28,7 +28,7 @@ public class GroupEntryRequest {
             @NonNull final Instant createdAt,
             @NonNull final Instant updatedAt) {
         if (updatedAt.isBefore(createdAt))
-            throw new IllegalArgumentException("Update timestamp cannot be before creation timestamp.");
+            throw new DomainException("Update timestamp cannot be before creation timestamp.");
 
         this.id = id;
         this.groupId = groupId;
@@ -50,7 +50,24 @@ public class GroupEntryRequest {
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
-    };
+    }
+
+    public static GroupEntryRequest reconstruct(
+            final UUID id,
+            final UUID groupId,
+            final UUID userId,
+            final GroupEntryRequestStatus status,
+            final Instant createdAt,
+            final Instant updatedAt) {
+        return GroupEntryRequest.builder()
+                .id(id)
+                .groupId(groupId)
+                .userId(userId)
+                .status(status)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .build();
+    }
 
     public void accept() {
         if (this.status != GroupEntryRequestStatus.PENDING) {
