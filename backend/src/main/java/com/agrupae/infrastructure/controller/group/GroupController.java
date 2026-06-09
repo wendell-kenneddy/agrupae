@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agrupae.application.port.in.group.CreateGroupUseCase;
 import com.agrupae.application.port.in.group.GroupView;
 import com.agrupae.application.port.in.group.JoinOpenGroupUseCase;
+import com.agrupae.application.port.in.group.RequestGroupEntryUseCase;
+import com.agrupae.application.port.in.group.CancelGroupEntryRequestUseCase;
+import com.agrupae.application.port.in.group.GroupEntryRequestView;
 import com.agrupae.infrastructure.controller.group.dto.CreateGroupRequest;
 
 import jakarta.validation.Valid;
@@ -26,6 +30,8 @@ import lombok.RequiredArgsConstructor;
 public class GroupController {
     private final CreateGroupUseCase createGroupUseCase;
     private final JoinOpenGroupUseCase joinOpenGroupUseCase;
+    private final RequestGroupEntryUseCase requestGroupEntryUseCase;
+    private final CancelGroupEntryRequestUseCase cancelGroupEntryRequestUseCase;
 
     @PostMapping
     public ResponseEntity<GroupView> create(
@@ -52,6 +58,29 @@ public class GroupController {
             @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         this.joinOpenGroupUseCase.handle(courseId, assignmentId, groupId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{groupId}/entry-requests")
+    public ResponseEntity<GroupEntryRequestView> requestEntry(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        GroupEntryRequestView view = this.requestGroupEntryUseCase.handle(courseId, assignmentId, groupId, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(view);
+    }
+
+    @DeleteMapping("/{groupId}/entry-requests/{requestId}")
+    public ResponseEntity<Void> cancelEntryRequest(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @PathVariable UUID requestId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        this.cancelGroupEntryRequestUseCase.handle(courseId, assignmentId, groupId, requestId, userId);
         return ResponseEntity.noContent().build();
     }
 }

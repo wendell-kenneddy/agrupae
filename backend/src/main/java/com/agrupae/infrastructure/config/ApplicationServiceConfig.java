@@ -26,8 +26,12 @@ import com.agrupae.application.service.user.UpdateProfileService;
 import com.agrupae.application.service.course.GetCoursesService;
 import com.agrupae.application.service.course.GetMembersService;
 import com.agrupae.application.service.assignment.GetAssignmentArtifactsService;
+import com.agrupae.application.port.out.group.GroupEntryRequestRepository;
 import com.agrupae.application.service.group.CreateGroupService;
 import com.agrupae.application.service.group.JoinOpenGroupService;
+import com.agrupae.application.service.group.RequestGroupEntryService;
+import com.agrupae.application.service.group.CancelGroupEntryRequestService;
+import com.agrupae.application.service.group.GetUserGroupEntryRequestsService;
 
 @Configuration
 public class ApplicationServiceConfig {
@@ -179,8 +183,39 @@ public class ApplicationServiceConfig {
             CourseMembershipRepository courseMembershipRepository,
             AssignmentRepository assignmentRepository,
             GroupRepository groupRepository,
-            GroupMemberRepository groupMemberRepository) {
+            GroupMemberRepository groupMemberRepository,
+            GroupEntryRequestRepository groupEntryRequestRepository) {
         return new JoinOpenGroupService(courseMembershipRepository, assignmentRepository,
-                groupRepository, groupMemberRepository);
+                groupRepository, groupMemberRepository, groupEntryRequestRepository);
+    }
+
+    @Bean
+    public RequestGroupEntryService requestGroupEntryService(
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository,
+            GroupEntryRequestRepository groupEntryRequestRepository) {
+        return new RequestGroupEntryService(courseMembershipRepository, assignmentRepository,
+                groupRepository, groupMemberRepository, groupEntryRequestRepository);
+    }
+
+    @Bean
+    public CancelGroupEntryRequestService cancelGroupEntryRequestService(
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupEntryRequestRepository groupEntryRequestRepository) {
+        return new CancelGroupEntryRequestService(courseMembershipRepository, assignmentRepository,
+                groupRepository, groupEntryRequestRepository);
+    }
+
+    @Bean
+    public GetUserGroupEntryRequestsService getUserGroupEntryRequestsService(
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupEntryRequestRepository groupEntryRequestRepository) {
+        return new GetUserGroupEntryRequestsService(courseMembershipRepository, assignmentRepository,
+                groupEntryRequestRepository);
     }
 }

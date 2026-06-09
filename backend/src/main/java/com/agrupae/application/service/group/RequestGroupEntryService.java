@@ -7,9 +7,11 @@ import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.exception.group.AssignmentArchivedException;
 import com.agrupae.application.exception.group.GroupMemberLimitReachedException;
 import com.agrupae.application.exception.group.GroupNotFoundException;
-import com.agrupae.application.exception.group.GroupNotOpenException;
+import com.agrupae.application.exception.group.GroupNotClosedException;
 import com.agrupae.application.exception.group.StudentAlreadyInGroupException;
-import com.agrupae.application.port.in.group.JoinOpenGroupUseCase;
+import com.agrupae.application.exception.group.PendingRequestAlreadyExistsException;
+import com.agrupae.application.port.in.group.RequestGroupEntryUseCase;
+import com.agrupae.application.port.in.group.GroupEntryRequestView;
 import com.agrupae.application.port.out.assignment.AssignmentRepository;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.group.GroupMemberRepository;
@@ -17,14 +19,14 @@ import com.agrupae.application.port.out.group.GroupRepository;
 import com.agrupae.application.port.out.group.GroupEntryRequestRepository;
 import com.agrupae.domain.assignment.Assignment;
 import com.agrupae.domain.group.Group;
-import com.agrupae.domain.group.GroupMember;
+import com.agrupae.domain.group.GroupEntryRequest;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class JoinOpenGroupService implements JoinOpenGroupUseCase {
+public class RequestGroupEntryService implements RequestGroupEntryUseCase {
     private final CourseMembershipRepository courseMembershipRepository;
     private final AssignmentRepository assignmentRepository;
     private final GroupRepository groupRepository;
@@ -33,13 +35,12 @@ public class JoinOpenGroupService implements JoinOpenGroupUseCase {
 
     @Override
     @Transactional
-    public void handle(UUID courseId, UUID assignmentId, UUID groupId, UUID userId) {
+    public GroupEntryRequestView handle(UUID courseId, UUID assignmentId, UUID groupId, UUID userId) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();
         }
 
         Assignment assignment = this.assignmentRepository.findById(assignmentId);
-
         if (assignment == null || !assignment.getCourseId().equals(courseId)) {
             throw new AssignmentNotFoundException();
         }
@@ -49,13 +50,12 @@ public class JoinOpenGroupService implements JoinOpenGroupUseCase {
         }
 
         Group group = this.groupRepository.findById(groupId);
-
         if (group == null || !group.getAssignmentId().equals(assignmentId)) {
             throw new GroupNotFoundException();
         }
 
-        if (!group.isOpen()) {
-            throw new GroupNotOpenException();
+        if (group.isOpen()) {
+            throw new GroupNotClosedException();
         }
 
         if (this.groupMemberRepository.existsByAssignmentIdAndMemberId(assignmentId, userId)) {
@@ -63,16 +63,24 @@ public class JoinOpenGroupService implements JoinOpenGroupUseCase {
         }
 
         int memberCount = this.groupMemberRepository.countByGroupId(groupId);
-
         if (memberCount >= assignment.getAssignmentFlags().maxGroupMembers()) {
             throw new GroupMemberLimitReachedException();
         }
 
-        this.groupMemberRepository.save(new GroupMember(groupId, userId));
-
-        int newMemberCount = memberCount + 1;
-        if (newMemberCount >= assignment.getAssignmentFlags().maxGroupMembers()) {
-            this.groupEntryRequestRepository.deleteAllPendingByGroupId(groupId);
+        if (this.groupEntryRequestRepository.existsPendingByAssignmentIdAndUserId(assignmentId, userId)) {
+            throw new PendingRequestAlreadyExistsException();
         }
+
+        GroupEntryRequest request = GroupEntryRequest.create(groupId, userId);
+        GroupEntryRequest savedRequest = this.groupEntryRequestRepository.save(request);
+
+        return new GroupEntryRequestView(
+                savedRequest.getId(),
+                savedRequest.getGroupId(),
+                savedRequest.getUserId(),
+                savedRequest.getStatus(),
+                savedRequest.getCreatedAt(),
+                savedRequest.getUpdatedAt()
+        );
     }
 }

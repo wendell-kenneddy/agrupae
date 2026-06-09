@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (database) Added UUID primary key to `groups_entry_requests` and renamed `member_id` to `user_id`
+- (backend) Added JPA persistence adapters for GroupEntryRequest domain entity, covering entity, mapper, and repositories
+- (backend) Added request group entry application service (`RequestGroupEntryService`) with validations for course membership, archived assignment, closed group, duplicate membership, member limit and existing pending request, with unit tests
+- (backend) Added cancel group entry request application service (`CancelGroupEntryRequestService`) with ownership and status validations, with unit tests
+- (backend) Added get user group entry requests application service (`GetUserGroupEntryRequestsService`) with unit tests
+- (backend) Added `POST /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/entry-requests` endpoint for requesting entry into a closed group
+- (backend) Added `DELETE /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/entry-requests/{requestId}` endpoint for cancelling an entry request
+- (backend) Added `GET /courses/{courseId}/assignments/{assignmentId}/entry-requests/me` endpoint for listing the user's entry requests in an assignment
+- (backend) Added auto-cancellation of pending entry requests when a group fills via open join
 - (backend) Added `editName`, `transferLeadership`, `toggleMode` and `toggleMemberArtifactEdit` behavior methods to `Group` domain entity, with unit tests;
 - (backend) Added join open group application service (`JoinOpenGroupService`) with validations for course membership, archived assignment, closed group, duplicate membership and member limit, with unit tests;
 - (backend) Added `POST /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/join` endpoint for joining an open group, with service wiring and exception handlers;
@@ -16,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- (backend) Added reconstruct factory method to `GroupEntryRequest` domain entity and replaced `IllegalArgumentException` with `DomainException`, with unit tests
 - (backend) Replaced generic `DomainException` with `CourseArchivedException` in `Course` domain entity's `archive` and `transferLeadership` methods.
 
 ### Fixed

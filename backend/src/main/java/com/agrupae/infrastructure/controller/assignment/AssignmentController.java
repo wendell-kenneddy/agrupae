@@ -30,6 +30,8 @@ import com.agrupae.infrastructure.controller.assignment.dto.CreateAssignmentRequ
 import com.agrupae.infrastructure.controller.assignment.dto.EditAssignmentRequest;
 import com.agrupae.application.port.in.assignment.GetAssignmentsUseCase;
 import com.agrupae.application.port.in.assignment.GetAnAssignmentUseCase;
+import com.agrupae.application.port.in.group.GetUserGroupEntryRequestsUseCase;
+import com.agrupae.application.port.in.group.GroupEntryRequestView;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +48,7 @@ public class AssignmentController {
     private final EditAssignmentUseCase editAssignmentUseCase;
     private final GetAssignmentsUseCase getAssignmentsUseCase;
     private final GetAnAssignmentUseCase getAnAssignmentUseCase;
+    private final GetUserGroupEntryRequestsUseCase getUserGroupEntryRequestsUseCase;
 
     @GetMapping
     public ResponseEntity<Page<AssignmentView>> getAssignments(
@@ -144,4 +147,16 @@ public class AssignmentController {
         return ResponseEntity.status(HttpStatus.OK).body(view);
     }
 
+    @GetMapping("/{assignmentId}/entry-requests/me")
+    public ResponseEntity<List<GroupEntryRequestView>> getMyEntryRequests(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        List<GroupEntryRequestView> view = this.getUserGroupEntryRequestsUseCase.handle(
+                courseId,
+                assignmentId,
+                userId);
+        return ResponseEntity.ok(view);
+    }
 }

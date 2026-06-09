@@ -4,75 +4,56 @@ import java.util.UUID;
 
 import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
-import com.agrupae.application.exception.group.AssignmentArchivedException;
-import com.agrupae.application.exception.group.GroupMemberLimitReachedException;
 import com.agrupae.application.exception.group.GroupNotFoundException;
-import com.agrupae.application.exception.group.GroupNotOpenException;
-import com.agrupae.application.exception.group.StudentAlreadyInGroupException;
-import com.agrupae.application.port.in.group.JoinOpenGroupUseCase;
+import com.agrupae.application.exception.group.GroupEntryRequestNotFoundException;
+import com.agrupae.application.port.in.group.CancelGroupEntryRequestUseCase;
 import com.agrupae.application.port.out.assignment.AssignmentRepository;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
-import com.agrupae.application.port.out.group.GroupMemberRepository;
 import com.agrupae.application.port.out.group.GroupRepository;
 import com.agrupae.application.port.out.group.GroupEntryRequestRepository;
 import com.agrupae.domain.assignment.Assignment;
 import com.agrupae.domain.group.Group;
-import com.agrupae.domain.group.GroupMember;
+import com.agrupae.domain.group.GroupEntryRequest;
+import com.agrupae.domain.group.GroupEntryRequestStatus;
+import com.agrupae.domain.exception.DomainException;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class JoinOpenGroupService implements JoinOpenGroupUseCase {
+public class CancelGroupEntryRequestService implements CancelGroupEntryRequestUseCase {
     private final CourseMembershipRepository courseMembershipRepository;
     private final AssignmentRepository assignmentRepository;
     private final GroupRepository groupRepository;
-    private final GroupMemberRepository groupMemberRepository;
     private final GroupEntryRequestRepository groupEntryRequestRepository;
 
     @Override
     @Transactional
-    public void handle(UUID courseId, UUID assignmentId, UUID groupId, UUID userId) {
+    public void handle(UUID courseId, UUID assignmentId, UUID groupId, UUID requestId, UUID userId) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();
         }
 
         Assignment assignment = this.assignmentRepository.findById(assignmentId);
-
         if (assignment == null || !assignment.getCourseId().equals(courseId)) {
             throw new AssignmentNotFoundException();
         }
 
-        if (assignment.isArchived()) {
-            throw new AssignmentArchivedException();
-        }
-
         Group group = this.groupRepository.findById(groupId);
-
         if (group == null || !group.getAssignmentId().equals(assignmentId)) {
             throw new GroupNotFoundException();
         }
 
-        if (!group.isOpen()) {
-            throw new GroupNotOpenException();
+        GroupEntryRequest request = this.groupEntryRequestRepository.findById(requestId);
+        if (request == null || !request.getUserId().equals(userId) || !request.getGroupId().equals(groupId)) {
+            throw new GroupEntryRequestNotFoundException();
         }
 
-        if (this.groupMemberRepository.existsByAssignmentIdAndMemberId(assignmentId, userId)) {
-            throw new StudentAlreadyInGroupException();
+        if (request.getStatus() != GroupEntryRequestStatus.PENDING) {
+            throw new DomainException("Only PENDING requests can be cancelled.");
         }
 
-        int memberCount = this.groupMemberRepository.countByGroupId(groupId);
-
-        if (memberCount >= assignment.getAssignmentFlags().maxGroupMembers()) {
-            throw new GroupMemberLimitReachedException();
-        }
-
-        this.groupMemberRepository.save(new GroupMember(groupId, userId));
-
-        int newMemberCount = memberCount + 1;
-        if (newMemberCount >= assignment.getAssignmentFlags().maxGroupMembers()) {
-            this.groupEntryRequestRepository.deleteAllPendingByGroupId(groupId);
-        }
+        this.groupEntryRequestRepository.deleteById(requestId);
     }
 }
