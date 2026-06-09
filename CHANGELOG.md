@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
+## [0.10.0] 2026-06-09
+
 ### Added
 
 - (backend) Added `POST /courses/{courseId}/assignments/{assignmentId}/groups` endpoint for group creation, with service wiring and exception handlers;
