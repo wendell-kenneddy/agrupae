@@ -20,6 +20,9 @@ import com.agrupae.application.exception.group.GroupNotFoundException;
 import com.agrupae.application.exception.group.GroupNotOpenException;
 import com.agrupae.application.exception.group.MaxGroupsReachedException;
 import com.agrupae.application.exception.group.StudentAlreadyInGroupException;
+import com.agrupae.application.exception.group.GroupNotClosedException;
+import com.agrupae.application.exception.group.PendingRequestAlreadyExistsException;
+import com.agrupae.application.exception.group.GroupEntryRequestNotFoundException;
 import com.agrupae.application.exception.auth.InvalidCredentialsException;
 import com.agrupae.application.exception.auth.InvalidTokenException;
 import com.agrupae.application.exception.auth.TokenExpiredException;
@@ -149,6 +152,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({ GroupNotOpenException.class, GroupMemberLimitReachedException.class })
     public ResponseEntity<String> handleGroupJoinConflicts(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(GroupEntryRequestNotFoundException.class)
+    public ResponseEntity<String> handleGroupEntryRequestNotFound(GroupEntryRequestNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler({ GroupNotClosedException.class, PendingRequestAlreadyExistsException.class })
+    public ResponseEntity<String> handleGroupEntryConflicts(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }
