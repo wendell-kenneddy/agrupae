@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Added
 
 - (backend) Added `editName`, `transferLeadership`, `toggleMode` and `toggleMemberArtifactEdit` behavior methods to `Group` domain entity, with unit tests;
-- (backend) Added `CourseArchivedException` domain exception and applied it to `Course` archive and transfer-leadership guards;
 - (backend) Added join open group application service (`JoinOpenGroupService`) with validations for course membership, archived assignment, closed group, duplicate membership and member limit, with unit tests;
 - (backend) Added `POST /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/join` endpoint for joining an open group, with service wiring and exception handlers;
 - (backend) Added `existsByAssignmentIdAndMemberId` and `countByGroupId` methods to `GroupMemberRepository` port and JPA adapter.
