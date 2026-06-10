@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added `DissolveGroupService` and endpoint respecting the flags defined in the assignment, with unit tests;
+- (database) Added `V09__add_group_fk_cascades.sql` migration adding the `ON CASCADE DELETE` constraint on group related tables;
 - (backend) Added change group mode service and idempotent `PUT /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/mode` endpoint, gated by the `groupLeaderCanChangeMode` assignment flag; pending entry requests are automatically cancelled when the mode changes;
 - (backend) Replaced `toggleMode` with `changeMode` behavior method on the `Group` domain entity;
 - (backend) Added accept group entry request service and endpoint;

@@ -38,6 +38,7 @@ import com.agrupae.application.service.group.AcceptGroupEntryRequestService;
 import com.agrupae.application.service.group.RejectGroupEntryRequestService;
 import com.agrupae.application.service.group.GetGroupEntryRequestsService;
 import com.agrupae.application.service.group.ChangeGroupModeService;
+import com.agrupae.application.service.group.DissolveGroupService;
 
 @Configuration
 public class ApplicationServiceConfig {
@@ -281,5 +282,15 @@ public class ApplicationServiceConfig {
             GroupEntryRequestRepository groupEntryRequestRepository) {
         return new ChangeGroupModeService(courseMembershipRepository, assignmentRepository,
                 groupRepository, groupEntryRequestRepository);
+    }
+
+    @Bean
+    public DissolveGroupService dissolveGroupService(
+            CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository) {
+        return new DissolveGroupService(courseRepository, courseMembershipRepository, assignmentRepository,
+                groupRepository);
     }
 }
