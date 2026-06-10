@@ -24,6 +24,9 @@ import com.agrupae.application.exception.group.GroupNotClosedException;
 import com.agrupae.application.exception.group.PendingRequestAlreadyExistsException;
 import com.agrupae.application.exception.group.GroupEntryRequestNotFoundException;
 import com.agrupae.application.exception.group.GroupDissolutionNotAllowedException;
+import com.agrupae.application.exception.group.GroupMemberNotFoundException;
+import com.agrupae.application.exception.group.GroupMemberRemovalNotAllowedException;
+import com.agrupae.application.exception.group.SelfRemovalNotAllowedException;
 import com.agrupae.application.exception.group.GroupModeChangeNotAllowedException;
 import com.agrupae.application.exception.group.NotGroupLeaderException;
 import com.agrupae.application.exception.auth.InvalidCredentialsException;
@@ -181,5 +184,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(GroupDissolutionNotAllowedException.class)
     public ResponseEntity<String> handleGroupDissolutionNotAllowed(GroupDissolutionNotAllowedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(GroupMemberRemovalNotAllowedException.class)
+    public ResponseEntity<String> handleGroupMemberRemovalNotAllowed(GroupMemberRemovalNotAllowedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(GroupMemberNotFoundException.class)
+    public ResponseEntity<String> handleGroupMemberNotFound(GroupMemberNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(SelfRemovalNotAllowedException.class)
+    public ResponseEntity<String> handleSelfRemovalNotAllowed(SelfRemovalNotAllowedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }

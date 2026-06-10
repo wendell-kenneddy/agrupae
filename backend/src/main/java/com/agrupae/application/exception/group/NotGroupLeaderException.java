@@ -4,6 +4,6 @@ import com.agrupae.application.exception.ApplicationException;
 
 public class NotGroupLeaderException extends ApplicationException {
     public NotGroupLeaderException() {
-        super("Only the group leader can manage entry requests.");
+        super("Only the group leader can perform this action.");
     }
 }

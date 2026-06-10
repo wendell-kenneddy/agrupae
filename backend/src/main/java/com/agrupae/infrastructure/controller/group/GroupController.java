@@ -28,6 +28,7 @@ import com.agrupae.application.port.in.group.GetGroupEntryRequestsUseCase;
 import com.agrupae.application.port.in.group.GroupEntryRequestView;
 import com.agrupae.application.port.in.group.ChangeGroupModeUseCase;
 import com.agrupae.application.port.in.group.DissolveGroupUseCase;
+import com.agrupae.application.port.in.group.RemoveGroupMemberUseCase;
 import com.agrupae.domain.group.GroupEntryRequestStatus;
 import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.group.dto.ChangeGroupModeRequest;
@@ -49,6 +50,7 @@ public class GroupController {
     private final GetGroupEntryRequestsUseCase getGroupEntryRequestsUseCase;
     private final ChangeGroupModeUseCase changeGroupModeUseCase;
     private final DissolveGroupUseCase dissolveGroupUseCase;
+    private final RemoveGroupMemberUseCase removeGroupMemberUseCase;
 
     @PostMapping
     public ResponseEntity<GroupView> create(
@@ -147,6 +149,18 @@ public class GroupController {
         UUID actorId = UUID.fromString(jwt.getSubject());
         Role actorRole = Role.valueOf(jwt.getClaimAsString("role"));
         this.dissolveGroupUseCase.handle(actorId, actorRole, courseId, assignmentId, groupId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{groupId}/members/{memberId}")
+    public ResponseEntity<Void> removeMember(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @PathVariable UUID memberId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        this.removeGroupMemberUseCase.handle(courseId, assignmentId, groupId, userId, memberId);
         return ResponseEntity.noContent().build();
     }
 
