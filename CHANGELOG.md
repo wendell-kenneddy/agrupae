@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added change group mode service and idempotent `PUT /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/mode` endpoint, gated by the `groupLeaderCanChangeMode` assignment flag; pending entry requests are automatically cancelled when the mode changes;
+- (backend) Replaced `toggleMode` with `changeMode` behavior method on the `Group` domain entity;
 - (backend) Added accept group entry request service and endpoint;
 - (backend) Added reject group entry request service and endpoint;
 - (backend) Added group entry requests listing service and endpoint;

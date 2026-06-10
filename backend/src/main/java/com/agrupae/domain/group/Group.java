@@ -101,8 +101,8 @@ public class Group {
         this.updatedAt = Instant.now();
     }
 
-    public void toggleMode() {
-        this.open = !this.open;
+    public void changeMode(final boolean open) {
+        this.open = open;
         this.updatedAt = Instant.now();
     }
 

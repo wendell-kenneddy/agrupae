@@ -158,22 +158,22 @@ class GroupTest {
     }
 
     @Nested
-    class ToggleMode {
+    class ChangeMode {
 
         @Test
-        void togglesOpenToClosed() {
+        void changesOpenToClosed() {
             Group group = Group.create(UUID.randomUUID(), UUID.randomUUID(), "Team", true, true);
 
-            group.toggleMode();
+            group.changeMode(false);
 
             assertThat(group.isOpen()).isFalse();
         }
 
         @Test
-        void togglesClosedToOpen() {
+        void changesClosedToOpen() {
             Group group = Group.create(UUID.randomUUID(), UUID.randomUUID(), "Team", false, true);
 
-            group.toggleMode();
+            group.changeMode(true);
 
             assertThat(group.isOpen()).isTrue();
         }
