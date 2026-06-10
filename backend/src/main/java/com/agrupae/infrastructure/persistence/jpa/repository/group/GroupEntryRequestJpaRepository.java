@@ -38,4 +38,8 @@ public interface GroupEntryRequestJpaRepository extends JpaRepository<GroupEntry
     void deleteByGroupIdAndStatus(
             @Param("groupId") UUID groupId,
             @Param("status") GroupEntryRequestStatus status);
+
+    List<GroupEntryRequestJpaEntity> findByGroupId(UUID groupId);
+
+    List<GroupEntryRequestJpaEntity> findByGroupIdAndStatus(UUID groupId, GroupEntryRequestStatus status);
 }

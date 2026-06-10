@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added accept group entry request service and endpoint;
+- (backend) Added reject group entry request service and endpoint;
+- (backend) Added group entry requests listing service and endpoint;
 - (database) Added UUID primary key to `groups_entry_requests` and renamed `member_id` to `user_id`
 - (backend) Added JPA persistence adapters for GroupEntryRequest domain entity, covering entity, mapper, and repositories
 - (backend) Added request group entry application service (`RequestGroupEntryService`) with validations for course membership, archived assignment, closed group, duplicate membership, member limit and existing pending request, with unit tests
@@ -30,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- (backend) Added missing service beans on `ApplicationServiceConfig` which prevented the application from running;
 - (backend) Fixed Group domain entity anemic behavior by giving it approppriate domain methods.
 
 ## [0.10.0] 2026-06-09
