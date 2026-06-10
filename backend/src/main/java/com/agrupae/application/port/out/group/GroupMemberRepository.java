@@ -9,5 +9,9 @@ public interface GroupMemberRepository {
 
     boolean existsByAssignmentIdAndMemberId(UUID assignmentId, UUID memberId);
 
+    boolean existsByGroupIdAndMemberId(UUID groupId, UUID memberId);
+
     int countByGroupId(UUID groupId);
+
+    void deleteByGroupIdAndMemberId(UUID groupId, UUID memberId);
 }

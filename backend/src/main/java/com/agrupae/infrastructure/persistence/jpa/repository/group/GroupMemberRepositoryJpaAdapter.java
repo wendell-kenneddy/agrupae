@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.agrupae.application.port.out.group.GroupMemberRepository;
 import com.agrupae.domain.group.GroupMember;
 import com.agrupae.infrastructure.persistence.jpa.mapper.GroupMemberJpaEntityMapper;
+import com.agrupae.infrastructure.persistence.jpa.model.group.GroupMemberId;
 import com.agrupae.infrastructure.persistence.jpa.model.group.GroupMemberJpaEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,17 @@ public class GroupMemberRepositoryJpaAdapter implements GroupMemberRepository {
     }
 
     @Override
+    public boolean existsByGroupIdAndMemberId(UUID groupId, UUID memberId) {
+        return this.groupMemberJpaRepository.existsById(new GroupMemberId(groupId, memberId));
+    }
+
+    @Override
     public int countByGroupId(UUID groupId) {
         return this.groupMemberJpaRepository.countByGroupId(groupId);
+    }
+
+    @Override
+    public void deleteByGroupIdAndMemberId(UUID groupId, UUID memberId) {
+        this.groupMemberJpaRepository.deleteById(new GroupMemberId(groupId, memberId));
     }
 }

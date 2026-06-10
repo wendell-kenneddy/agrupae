@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added `RemoveGroupMemberService` and `DELETE /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/members/{memberId}` endpoint gated by the `groupLeaderCanRemoveMembers` assignment flag, with unit tests; the group leader cannot remove themselves via this endpoint;
+- (backend) Added `existsByGroupIdAndMemberId` and `deleteByGroupIdAndMemberId` methods to `GroupMemberRepository` port and JPA adapter;
 - (backend) Added `DissolveGroupService` and endpoint respecting the flags defined in the assignment, with unit tests;
 - (database) Added `V09__add_group_fk_cascades.sql` migration adding the `ON CASCADE DELETE` constraint on group related tables;
 - (backend) Added change group mode service and idempotent `PUT /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/mode` endpoint, gated by the `groupLeaderCanChangeMode` assignment flag; pending entry requests are automatically cancelled when the mode changes;
@@ -32,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- (backend) Generalized `NotGroupLeaderException` message to "Only the group leader can perform this action.", since the exception is shared by entry-request management, mode change and member removal;
 - (backend) Added reconstruct factory method to `GroupEntryRequest` domain entity and replaced `IllegalArgumentException` with `DomainException`, with unit tests
 - (backend) Replaced generic `DomainException` with `CourseArchivedException` in `Course` domain entity's `archive` and `transferLeadership` methods.
 
