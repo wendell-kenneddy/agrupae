@@ -15,6 +15,7 @@ import com.agrupae.application.service.assignment.AddReferenceArtifactService;
 import com.agrupae.application.service.assignment.ArchiveAssignmentService;
 import com.agrupae.application.service.assignment.CreateAssignmentService;
 import com.agrupae.application.service.assignment.EditAssignmentService;
+import com.agrupae.application.service.assignment.GetAnAssignmentService;
 import com.agrupae.application.service.authentication.*;
 import com.agrupae.application.service.course.ArchiveCourseService;
 import com.agrupae.application.service.course.CreateCourseService;
@@ -26,6 +27,7 @@ import com.agrupae.application.service.user.UpdateProfileService;
 import com.agrupae.application.service.course.GetCoursesService;
 import com.agrupae.application.service.course.GetMembersService;
 import com.agrupae.application.service.assignment.GetAssignmentArtifactsService;
+import com.agrupae.application.service.assignment.GetAssignmentsService;
 import com.agrupae.application.port.out.group.GroupEntryRequestRepository;
 import com.agrupae.application.service.group.CreateGroupService;
 import com.agrupae.application.service.group.JoinOpenGroupService;
@@ -38,7 +40,6 @@ import com.agrupae.application.service.group.GetGroupEntryRequestsService;
 
 @Configuration
 public class ApplicationServiceConfig {
-
 
     @Bean
     public LoginService loginService(
@@ -103,6 +104,23 @@ public class ApplicationServiceConfig {
             CourseRepository courseRepository,
             CourseMembershipRepository courseMembershipRepository) {
         return new JoinCourseService(courseRepository, courseMembershipRepository);
+    }
+
+    @Bean
+    public GetAssignmentsService getAssignmentsService(
+            CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository) {
+        return new GetAssignmentsService(courseRepository, courseMembershipRepository, assignmentRepository);
+    }
+
+    @Bean
+    public GetAnAssignmentService getAnAssignmentService(
+        CourseRepository courseRepository,
+        CourseMembershipRepository courseMembershipRepository,
+        AssignmentRepository assignmentRepository
+    ) {
+        return new GetAnAssignmentService(courseRepository, courseMembershipRepository, assignmentRepository);
     }
 
     @Bean
