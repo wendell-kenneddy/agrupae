@@ -36,4 +36,9 @@ public class GroupRepositoryJpaAdapter implements GroupRepository {
     public int countByAssignmentId(UUID assignmentId) {
         return this.groupJpaRepository.countByAssignmentId(assignmentId);
     }
+
+    @Override
+    public void deleteById(UUID id) {
+        this.groupJpaRepository.deleteById(id);
+    }
 }

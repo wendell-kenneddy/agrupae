@@ -10,4 +10,6 @@ public interface GroupRepository {
     Group findById(UUID id);
 
     int countByAssignmentId(UUID assignmentId);
+
+    void deleteById(UUID id);
 }
