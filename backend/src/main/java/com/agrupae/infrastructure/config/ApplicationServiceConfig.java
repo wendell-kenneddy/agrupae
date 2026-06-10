@@ -32,9 +32,13 @@ import com.agrupae.application.service.group.JoinOpenGroupService;
 import com.agrupae.application.service.group.RequestGroupEntryService;
 import com.agrupae.application.service.group.CancelGroupEntryRequestService;
 import com.agrupae.application.service.group.GetUserGroupEntryRequestsService;
+import com.agrupae.application.service.group.AcceptGroupEntryRequestService;
+import com.agrupae.application.service.group.RejectGroupEntryRequestService;
+import com.agrupae.application.service.group.GetGroupEntryRequestsService;
 
 @Configuration
 public class ApplicationServiceConfig {
+
 
     @Bean
     public LoginService loginService(
@@ -217,5 +221,36 @@ public class ApplicationServiceConfig {
             GroupEntryRequestRepository groupEntryRequestRepository) {
         return new GetUserGroupEntryRequestsService(courseMembershipRepository, assignmentRepository,
                 groupEntryRequestRepository);
+    }
+
+    @Bean
+    public AcceptGroupEntryRequestService acceptGroupEntryRequestService(
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository,
+            GroupEntryRequestRepository groupEntryRequestRepository) {
+        return new AcceptGroupEntryRequestService(courseMembershipRepository, assignmentRepository,
+                groupRepository, groupMemberRepository, groupEntryRequestRepository);
+    }
+
+    @Bean
+    public RejectGroupEntryRequestService rejectGroupEntryRequestService(
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupEntryRequestRepository groupEntryRequestRepository) {
+        return new RejectGroupEntryRequestService(courseMembershipRepository, assignmentRepository,
+                groupRepository, groupEntryRequestRepository);
+    }
+
+    @Bean
+    public GetGroupEntryRequestsService getGroupEntryRequestsService(
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupEntryRequestRepository groupEntryRequestRepository) {
+        return new GetGroupEntryRequestsService(courseMembershipRepository, assignmentRepository,
+                groupRepository, groupEntryRequestRepository);
     }
 }
