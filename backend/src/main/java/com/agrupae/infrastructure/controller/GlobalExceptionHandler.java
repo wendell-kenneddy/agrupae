@@ -23,6 +23,7 @@ import com.agrupae.application.exception.group.StudentAlreadyInGroupException;
 import com.agrupae.application.exception.group.GroupNotClosedException;
 import com.agrupae.application.exception.group.PendingRequestAlreadyExistsException;
 import com.agrupae.application.exception.group.GroupEntryRequestNotFoundException;
+import com.agrupae.application.exception.group.GroupModeChangeNotAllowedException;
 import com.agrupae.application.exception.group.NotGroupLeaderException;
 import com.agrupae.application.exception.auth.InvalidCredentialsException;
 import com.agrupae.application.exception.auth.InvalidTokenException;
@@ -168,6 +169,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotGroupLeaderException.class)
     public ResponseEntity<String> handleNotGroupLeader(NotGroupLeaderException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(GroupModeChangeNotAllowedException.class)
+    public ResponseEntity<String> handleGroupModeChangeNotAllowed(GroupModeChangeNotAllowedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 }
