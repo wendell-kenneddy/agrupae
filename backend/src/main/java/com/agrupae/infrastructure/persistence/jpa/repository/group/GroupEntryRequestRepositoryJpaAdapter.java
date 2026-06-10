@@ -57,4 +57,20 @@ public class GroupEntryRequestRepositoryJpaAdapter implements GroupEntryRequestR
     public void deleteAllPendingByGroupId(UUID groupId) {
         this.groupEntryRequestJpaRepository.deleteByGroupIdAndStatus(groupId, GroupEntryRequestStatus.PENDING);
     }
+
+    @Override
+    public List<GroupEntryRequest> findByGroupId(UUID groupId) {
+        return this.groupEntryRequestJpaRepository.findByGroupId(groupId)
+                .stream()
+                .map(this.groupEntryRequestJpaEntityMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GroupEntryRequest> findByGroupIdAndStatus(UUID groupId, GroupEntryRequestStatus status) {
+        return this.groupEntryRequestJpaRepository.findByGroupIdAndStatus(groupId, status)
+                .stream()
+                .map(this.groupEntryRequestJpaEntityMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }
