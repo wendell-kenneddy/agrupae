@@ -44,4 +44,17 @@ public class GroupMemberRepositoryJpaAdapter implements GroupMemberRepository {
     public void deleteByGroupIdAndMemberId(UUID groupId, UUID memberId) {
         this.groupMemberJpaRepository.deleteById(new GroupMemberId(groupId, memberId));
     }
+
+    @Override
+    public UUID findOldestMemberIdExcluding(UUID groupId, UUID excludeMemberId) {
+        GroupMemberJpaEntity entity = this.groupMemberJpaRepository
+                .findFirstByGroupIdAndMemberIdNotOrderByCreatedAtAsc(groupId, excludeMemberId);
+
+        if (entity == null) {
+            return null;
+        }
+
+        return this.groupMemberJpaEntityMapper.toDomain(entity).memberId();
+    }
 }
+

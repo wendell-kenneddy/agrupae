@@ -14,4 +14,6 @@ public interface GroupMemberRepository {
     int countByGroupId(UUID groupId);
 
     void deleteByGroupIdAndMemberId(UUID groupId, UUID memberId);
+
+    UUID findOldestMemberIdExcluding(UUID groupId, UUID excludeMemberId);
 }

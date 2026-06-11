@@ -22,4 +22,6 @@ public interface GroupMemberJpaRepository extends JpaRepository<GroupMemberJpaEn
             @Param("memberId") UUID memberId);
 
     int countByGroupId(UUID groupId);
+
+    GroupMemberJpaEntity findFirstByGroupIdAndMemberIdNotOrderByCreatedAtAsc(UUID groupId, UUID memberId);
 }

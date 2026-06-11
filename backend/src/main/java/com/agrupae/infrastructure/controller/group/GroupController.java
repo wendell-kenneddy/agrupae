@@ -28,6 +28,7 @@ import com.agrupae.application.port.in.group.GetGroupEntryRequestsUseCase;
 import com.agrupae.application.port.in.group.GroupEntryRequestView;
 import com.agrupae.application.port.in.group.ChangeGroupModeUseCase;
 import com.agrupae.application.port.in.group.DissolveGroupUseCase;
+import com.agrupae.application.port.in.group.LeaveGroupUseCase;
 import com.agrupae.application.port.in.group.RemoveGroupMemberUseCase;
 import com.agrupae.domain.group.GroupEntryRequestStatus;
 import com.agrupae.domain.role.Role;
@@ -50,6 +51,7 @@ public class GroupController {
     private final GetGroupEntryRequestsUseCase getGroupEntryRequestsUseCase;
     private final ChangeGroupModeUseCase changeGroupModeUseCase;
     private final DissolveGroupUseCase dissolveGroupUseCase;
+    private final LeaveGroupUseCase leaveGroupUseCase;
     private final RemoveGroupMemberUseCase removeGroupMemberUseCase;
 
     @PostMapping
@@ -175,5 +177,16 @@ public class GroupController {
         GroupEntryRequestView view = this.rejectGroupEntryRequestUseCase.handle(
                 courseId, assignmentId, groupId, requestId, userId);
         return ResponseEntity.ok(view);
+    }
+
+    @DeleteMapping("/{groupId}/leave")
+    public ResponseEntity<Void> leave(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        this.leaveGroupUseCase.handle(userId, groupId, courseId, assignmentId);
+        return ResponseEntity.noContent().build();
     }
 }

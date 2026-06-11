@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added `LeaveGroupService` and `DELETE /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/leave` endpoint gated by the `studentsCanLeaveGroups` assignment flag, handling leadership succession to the oldest member or group dissolution if 0 members remain, with unit tests;
 - (backend) Added `RemoveGroupMemberService` and `DELETE /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/members/{memberId}` endpoint gated by the `groupLeaderCanRemoveMembers` assignment flag, with unit tests; the group leader cannot remove themselves via this endpoint;
 - (backend) Added `existsByGroupIdAndMemberId` and `deleteByGroupIdAndMemberId` methods to `GroupMemberRepository` port and JPA adapter;
 - (backend) Added `DissolveGroupService` and endpoint respecting the flags defined in the assignment, with unit tests;

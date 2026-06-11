@@ -39,6 +39,7 @@ import com.agrupae.application.service.group.RejectGroupEntryRequestService;
 import com.agrupae.application.service.group.GetGroupEntryRequestsService;
 import com.agrupae.application.service.group.ChangeGroupModeService;
 import com.agrupae.application.service.group.DissolveGroupService;
+import com.agrupae.application.service.group.LeaveGroupService;
 import com.agrupae.application.service.group.RemoveGroupMemberService;
 
 @Configuration
@@ -303,5 +304,15 @@ public class ApplicationServiceConfig {
             GroupMemberRepository groupMemberRepository) {
         return new RemoveGroupMemberService(courseMembershipRepository, assignmentRepository,
                 groupRepository, groupMemberRepository);
+    }
+
+    @Bean
+    public LeaveGroupService leaveGroupService(
+            GroupMemberRepository groupMemberRepository,
+            GroupRepository groupRepository,
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository) {
+        return new LeaveGroupService(groupMemberRepository, groupRepository,
+                courseMembershipRepository, assignmentRepository);
     }
 }
