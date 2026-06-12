@@ -10,12 +10,15 @@ export function useGetClass(id: string) {
     queryKey: ['course', id],
     queryFn: () => getClass(id),
     enabled: !!user,
+    retry: false,
   })
 
   const course = data
     ? {
         ...data,
-        role: (data.leaderId === user?.id ? 'OWNER' : 'STUDENT') as ClassRole,
+        role: (data.leaderId && user?.id && data.leaderId.toLowerCase() === user.id.toLowerCase()
+          ? 'OWNER'
+          : 'STUDENT') as ClassRole,
       }
     : undefined
 

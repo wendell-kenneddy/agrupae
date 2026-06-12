@@ -16,7 +16,28 @@ export function ClassPage() {
   const { course, isLoading, isError } = useGetClass(id!)
 
   if (isLoading) return <div className={styles.feedback}>Carregando...</div>
-  if (isError || !course) return <div className={styles.feedback}>Turma não encontrada.</div>
+  if (isError || !course) {
+    return (
+      <main className={styles.notFoundPage}>
+        <div className={styles.notFoundContent}>
+          <div className={styles.notFoundIcon}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+              <path d="M16 3v4M8 3v4" />
+              <path d="M9 12h6M9 16h4" />
+            </svg>
+          </div>
+          <h1 className={styles.notFoundTitle}>Turma não encontrada</h1>
+          <p className={styles.notFoundDesc}>
+            Você não tem acesso a esta turma ou ela não existe.
+          </p>
+          <button className={styles.notFoundBtn} onClick={() => navigate('/home')}>
+            Voltar para o início
+          </button>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className={styles.page}>
