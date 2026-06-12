@@ -1,0 +1,392 @@
+.page {
+  min-height: 100dvh;
+  background: var(--color-bg-light);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  gap: 16px;
+}
+
+.backBtn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.backBtn:active {
+  background: #00100f11;
+}
+
+.headerTitle {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  letter-spacing: -0.02em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content {
+  flex: 1;
+  padding: 8px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.infoCard {
+  background: #00100f0d;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.infoItem {
+  font-size: 0.82rem;
+  color: var(--color-text-dark);
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #00100f22;
+  margin: 0;
+}
+
+.description {
+  font-size: 0.85rem;
+  color: #00100f99;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.artifacts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.artifactRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.artifactRow .artifactLink {
+  flex: 1;
+  min-width: 0;
+}
+
+.artifactLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #00100f0d;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  color: var(--color-blue-primary);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artifactLink svg {
+  flex-shrink: 0;
+}
+
+.editBtn {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-blue-dark);
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
+}
+
+.editBtn:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progressLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+}
+
+.progressIn {
+  color: #00100f99;
+}
+
+.progressOut {
+  color: #d97706;
+}
+
+.progressBarDouble {
+  height: 8px;
+  background: #00100f11;
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+}
+
+.progressFillGreen {
+  height: 100%;
+  background: #52c41a;
+  border-radius: 999px 0 0 999px;
+  transition: width 0.3s ease;
+}
+
+.progressFillOrange {
+  height: 100%;
+  background: #ffa940;
+  transition: width 0.3s ease;
+}
+
+.groupsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.groupsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.groupsTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.groupsCount {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.groupsProgressBar {
+  height: 8px;
+  background: #00100f11;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.groupsProgressFill {
+  height: 100%;
+  background: var(--color-blue-primary);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.groupsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.emptyGroups {
+  font-size: 0.85rem;
+  color: #00100f66;
+  text-align: center;
+  padding: 24px 0;
+  margin: 0;
+}
+
+.feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedbackSmall {
+  font-size: 0.82rem;
+  color: #00100f66;
+  margin: 0;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #00000055;
+  z-index: 10;
+}
+
+.modal {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-text-light);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 32px 24px 36px;
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+  animation: slideUp 0.2s ease;
+  max-height: 80dvh;
+  overflow-y: auto;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: #00100f66;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.modalSubtitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.artifactEditBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: #00100f66;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.artifactEditBtn:active {
+  background: #00100f11;
+}
+
+.modalFields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modalInput {
+  width: 100%;
+  padding: 12px 14px;
+  background: #00100f0d;
+  border: 2px solid #000;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  color: var(--color-text-dark);
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.modalInput:focus {
+  border-color: var(--color-blue-primary);
+  box-shadow: 3px 3px 0px var(--color-blue-primary);
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 14px;
+  background: transparent;
+  border: 2px solid var(--color-blue-dark);
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-blue-dark);
+  transition: opacity 0.1s ease;
+}
+
+.cancelBtn:active {
+  opacity: 0.7;
+}
+
+.confirmBtn {
+  flex: 1;
+  padding: 14px;
+  background: var(--color-blue-dark);
+  border: none;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  transition: opacity 0.1s ease;
+}
+
+.confirmBtn:active {
+  opacity: 0.7;
+}
+
+.confirmBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateX(-50%) translateY(100%);
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+  }
+}

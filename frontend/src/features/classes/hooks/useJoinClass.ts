@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { joinClass } from '@/features/classes/api/classesApi'
+import { toast } from '@/components/ui/useToast'
 import type { JoinClassRequest } from '@/features/classes/types/classes.types'
 
 export function useJoinClass() {
@@ -14,6 +15,7 @@ export function useJoinClass() {
 
     try {
       await joinClass(data)
+      toast.success('Você entrou na turma!')
       navigate('/home')
     } catch {
       setError('Código inválido ou expirado. Verifique e tente novamente.')

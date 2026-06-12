@@ -14,7 +14,9 @@ export function useGetCourses() {
 
   const courses = (data ?? []).map((c) => ({
     ...c,
-    role: (c.leaderId === user?.id ? 'OWNER' : 'STUDENT') as ClassRole,
+    role: (c.leaderId && user?.id && c.leaderId.toLowerCase() === user.id.toLowerCase()
+      ? 'OWNER'
+      : 'STUDENT') as ClassRole,
   }))
 
   return { courses, isLoading, isError }

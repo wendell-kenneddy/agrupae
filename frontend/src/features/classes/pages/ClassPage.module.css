@@ -86,3 +86,70 @@
 .navItem.active {
   color: var(--color-blue-dark);
 }
+
+.notFoundPage {
+  min-height: 100dvh;
+  background: var(--color-bg-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.notFoundContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  max-width: 320px;
+}
+
+.notFoundIcon {
+  width: 80px;
+  height: 80px;
+  background: #00100f0d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00100f44;
+  margin-bottom: 8px;
+}
+
+.notFoundTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.notFoundDesc {
+  font-size: 0.88rem;
+  color: #00100f66;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.notFoundBtn {
+  margin-top: 8px;
+  padding: 14px 28px;
+  background: var(--color-blue-dark);
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0px #000;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
+}
+
+.notFoundBtn:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+

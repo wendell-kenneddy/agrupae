@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useArchiveClass } from '@/features/classes/hooks/useArchiveClass.ts'
+import { useGetClassMembers } from '@/features/classes/hooks/useGetClassMembers'
 import type { Class } from '@/features/classes/types/classes.types'
 import styles from './ClassInfoTab.module.css'
 
@@ -11,6 +12,7 @@ interface ClassInfoTabProps {
 export function ClassInfoTab({ course }: ClassInfoTabProps) {
   const navigate = useNavigate()
   const { handleArchive, isLoading } = useArchiveClass(course.id)
+  const { members, isLoading: isMembersLoading } = useGetClassMembers(course.id)
   const isOwner = course.role === 'OWNER'
   const [showArchiveModal, setShowArchiveModal] = useState(false)
 
@@ -32,7 +34,9 @@ export function ClassInfoTab({ course }: ClassInfoTabProps) {
 
       <div className={styles.section}>
         <p className={styles.label}>Quantidade de membros</p>
-        <p className={styles.value}>{course.memberCount} membros</p>
+        <p className={styles.value}>
+          {isMembersLoading ? 'Carregando...' : `${members.length} ${members.length === 1 ? 'membro' : 'membros'}`}
+        </p>
       </div>
 
       <div className={styles.inviteSection}>
