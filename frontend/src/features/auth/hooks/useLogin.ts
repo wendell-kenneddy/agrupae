@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { login, getMe } from '@/features/auth/api/authApi'
 import { setAccessToken } from '@/lib/axios'
 import { useAuth } from '@/app/providers/AuthContext'
+import { toast } from '@/components/ui/useToast'
 import type { LoginRequest } from '@/features/auth/types/auth.types'
 
 export function useLogin() {
@@ -20,6 +21,7 @@ export function useLogin() {
       setAccessToken(token)
       const user = await getMe()
       setUser(user)
+      toast.success('Login realizado com sucesso!')
       navigate('/home')
     } catch {
       setError('Email ou senha inválidos.')

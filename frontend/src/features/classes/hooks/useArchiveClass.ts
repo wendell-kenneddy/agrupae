@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { archiveClass } from '@/features/classes/api/classesApi'
+import { toast } from '@/components/ui/useToast'
 
 export function useArchiveClass(courseId: string) {
   const [isLoading, setIsLoading] = useState(false)
@@ -10,9 +11,10 @@ export function useArchiveClass(courseId: string) {
     setIsLoading(true)
     try {
       await archiveClass(courseId)
+      toast.success('Turma arquivada com sucesso!')
       navigate('/home')
     } catch {
-      // tratar erro depois
+      toast.error('Erro ao arquivar turma. Tente novamente.')
     } finally {
       setIsLoading(false)
     }

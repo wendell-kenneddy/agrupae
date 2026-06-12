@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/app/providers/AuthContext'
 import { useLogout } from '@/features/auth/hooks/useLogout'
+import { toast } from '@/components/ui/useToast'
 import api from '@/lib/axios'
 import styles from './ProfilePage.module.css'
 
@@ -27,6 +28,7 @@ export function ProfilePage() {
     try {
       const response = await api.put('/users/me', { name: name.trim(), email: email.trim() })
       setUser({ id: response.data.id, name: response.data.name, email: response.data.email })
+      toast.success('Alterações salvas com sucesso!')
     } finally {
       setIsLoading(false)
     }
