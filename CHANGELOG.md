@@ -31,18 +31,30 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - (backend) Added `editName`, `transferLeadership`, `toggleMode` and `toggleMemberArtifactEdit` behavior methods to `Group` domain entity, with unit tests;
 - (backend) Added join open group application service (`JoinOpenGroupService`) with validations for course membership, archived assignment, closed group, duplicate membership and member limit, with unit tests;
 - (backend) Added `POST /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/join` endpoint for joining an open group, with service wiring and exception handlers;
-- (backend) Added `existsByAssignmentIdAndMemberId` and `countByGroupId` methods to `GroupMemberRepository` port and JPA adapter.
+- (backend) Added `existsByAssignmentIdAndMemberId` and `countByGroupId` methods to `GroupMemberRepository` port and JPA adapter;
+- (frontend) Added global toast notification system;
+- (frontend) Added assignment creation, details, editing pages and API integration;
+- (frontend) Added archived assignments and archived classes accordion panels;
+- (frontend) Added user profile page and custom 404 page.
 
 ### Changed
 
 - (backend) Generalized `NotGroupLeaderException` message to "Only the group leader can perform this action.", since the exception is shared by entry-request management, mode change and member removal;
 - (backend) Added reconstruct factory method to `GroupEntryRequest` domain entity and replaced `IllegalArgumentException` with `DomainException`, with unit tests
-- (backend) Replaced generic `DomainException` with `CourseArchivedException` in `Course` domain entity's `archive` and `transferLeadership` methods.
+- (backend) Replaced generic `DomainException` with `CourseArchivedException` in `Course` domain entity's `archive` and `transferLeadership` methods;
+- (frontend) Set default assignment preset to free;
+- (frontend) Redesigned advanced mode validation to be lazy and stack multiple alerts;
+- (frontend) Updated class card styles to dim archived classes;
+- (frontend) Updated class info page to fetch member count dynamically;
+- (frontend) Updated course hooks to compare user and leader IDs case-insensitively.
 
 ### Fixed
 
 - (backend) Added missing service beans on `ApplicationServiceConfig` which prevented the application from running;
-- (backend) Fixed Group domain entity anemic behavior by giving it approppriate domain methods.
+- (backend) Fixed Group domain entity anemic behavior by giving it approppriate domain methods;
+- (frontend) Fixed infinite loading loop on course page with invalid URLs by disabling query retries;
+- (frontend) Fixed toast transition delay to allow exit animation to complete before unmounting;
+- (frontend) Fixed duplicate email registration conflict handler.
 
 ## [0.10.0] 2026-06-09
 
