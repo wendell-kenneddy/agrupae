@@ -264,3 +264,57 @@
     transform: translateX(-50%) translateY(0);
   }
 }
+
+.sectionDivider {
+  border: none;
+  border-top: 2px dashed #000;
+  margin: 24px 0 8px;
+}
+
+.noAssignments {
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  color: #00100f66;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.archivedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--color-bg-gray);
+  border: 2px solid #000;
+  border-radius: var(--radius-md);
+  box-shadow: 3px 3px 0px #000;
+  cursor: pointer;
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  margin-top: 8px;
+}
+
+.archivedHeader:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.chevronExpanded {
+  transform: rotate(180deg);
+}
+
+.archivedCard {
+  opacity: 0.65;
+  cursor: default;
+}
+
