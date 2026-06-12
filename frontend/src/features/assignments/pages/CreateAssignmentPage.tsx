@@ -42,50 +42,44 @@ const FLAG_LABELS: Record<
   },
 }
 
-function getValidationError(
+function getValidationErrors(
   flags: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'>,
   mode: AssignmentMode
-): { type: 'error' | 'warning'; message: string } | null {
-  if (mode !== 'advanced') return null
+): { type: 'error' | 'warning'; message: string }[] {
+  if (mode !== 'advanced') return []
+
+  const results: { type: 'error' | 'warning'; message: string }[] = []
 
   if (!flags.studentsCanCreateGroups && !flags.supervisorCanEditGroups) {
-    return {
+    results.push({
       type: 'error',
       message:
         "Nenhum ator pode criar grupos. Ative 'Estudantes criam grupos' ou 'Responsável edita composição' para continuar.",
-    }
+    })
   }
   if (!flags.studentsCanLeaveGroups && flags.groupLeaderCanDissolve) {
-    return {
+    results.push({
       type: 'error',
-      message:
-        'Dissolução é uma saída forçada coletiva. Contradiz a restrição de saída voluntária.',
-    }
+      message: 'Dissolução é uma saída forçada coletiva. Contradiz a restrição de saída voluntária.',
+    })
   }
-  if (
-    flags.studentsCanCreateGroups &&
-    flags.supervisorCanEditGroups &&
-    !flags.studentsCanLeaveGroups
-  ) {
-    return {
+  if (flags.studentsCanCreateGroups && flags.supervisorCanEditGroups && !flags.studentsCanLeaveGroups) {
+    results.push({
       type: 'warning',
       message:
         "Autoridade sobre composição compartilhada com saída bloqueada. Verifique se 'Estudantes podem sair' deve permanecer desativado.",
-    }
+    })
   }
-  if (
-    flags.groupLeaderCanDissolve &&
-    !flags.studentsCanCreateGroups &&
-    !flags.supervisorCanEditGroups
-  ) {
-    return {
+  if (flags.groupLeaderCanDissolve && !flags.studentsCanCreateGroups && !flags.supervisorCanEditGroups) {
+    results.push({
       type: 'warning',
       message:
         'O líder pode dissolver grupos, mas nenhum novo grupo pode ser criado. Membros dissolvidos ficarão permanentemente sem grupo.',
-    }
+    })
   }
-  return null
+  return results
 }
+
 
 function detectMode(flags: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'>): AssignmentMode {
   for (const [mode, preset] of Object.entries(PRESETS) as [
@@ -110,24 +104,28 @@ export function CreateAssignmentPage() {
   const [maxGroupMembers, setMaxGroupMembers] = useState(4)
   const [noLimit, setNoLimit] = useState(false)
   const [flags, setFlags] = useState<Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'>>(
-    PRESETS.moderate
+    PRESETS.free
   )
+  const [submitted, setSubmitted] = useState(false)
 
   const [forcedAdvanced, setForcedAdvanced] = useState(false)
   const mode = forcedAdvanced ? 'advanced' : detectMode(flags)
-  const validation = getValidationError(flags, mode)
-  const isInvalid = validation?.type === 'error'
+  const validations = getValidationErrors(flags, mode)
+  const hasErrors = validations.some((v) => v.type === 'error')
 
   function applyPreset(preset: Exclude<AssignmentMode, 'advanced'>) {
     setFlags(PRESETS[preset])
+    setSubmitted(false)
   }
 
   function toggleFlag(key: keyof Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'>) {
     setFlags((prev) => ({ ...prev, [key]: !prev[key] }))
+    setSubmitted(false)
   }
 
   async function handleSubmit() {
-    if (!name.trim() || isInvalid) return
+    setSubmitted(true)
+    if (!name.trim() || hasErrors) return
     await create({
       name: name.trim(),
       description: description.trim() || 'Sem descrição',
@@ -237,6 +235,16 @@ export function CreateAssignmentPage() {
                 onClick={() => {
                   if (m === 'advanced') {
                     setForcedAdvanced(true)
+                    setFlags({
+                      studentsCanCreateGroups: false,
+                      studentsCanLeaveGroups: false,
+                      groupLeaderCanDissolve: false,
+                      groupLeaderCanRemoveMembers: false,
+                      groupLeaderCanChangeMode: false,
+                      groupLeaderCanTransferLeadership: false,
+                      supervisorCanEditGroups: false,
+                    })
+                    setSubmitted(false)
                   } else {
                     setForcedAdvanced(false)
                     applyPreset(m as Exclude<AssignmentMode, 'advanced'>)
@@ -290,32 +298,37 @@ export function CreateAssignmentPage() {
           </div>
         )}
 
-        {validation && (
-          <div
-            className={`${styles.alert} ${validation.type === 'error' ? styles.alertError : styles.alertWarning}`}
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            >
-              {validation.type === 'error' ? (
-                <>
-                  <rect x="3" y="11" width="18" height="11" rx="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </>
-              ) : (
-                <>
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 8v4M12 16h.01" />
-                </>
-              )}
-            </svg>
-            <p>{validation.message}</p>
+        {submitted && validations.length > 0 && (
+          <div className={styles.alertStack}>
+            {validations.map((v, i) => (
+              <div
+                key={i}
+                className={`${styles.alert} ${v.type === 'error' ? styles.alertError : styles.alertWarning}`}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                >
+                  {v.type === 'error' ? (
+                    <>
+                      <rect x="3" y="11" width="18" height="11" rx="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </>
+                  ) : (
+                    <>
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M12 8v4M12 16h.01" />
+                    </>
+                  )}
+                </svg>
+                <p>{v.message}</p>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -324,7 +337,7 @@ export function CreateAssignmentPage() {
         <button
           className={styles.submitBtn}
           onClick={handleSubmit}
-          disabled={!name.trim() || isInvalid || isLoading}
+          disabled={!name.trim() || (submitted && hasErrors) || isLoading}
         >
           {isLoading ? 'Criando...' : 'Criar trabalho'}
         </button>

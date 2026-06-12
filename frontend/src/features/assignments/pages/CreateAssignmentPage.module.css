@@ -327,6 +327,12 @@
   margin: 0;
 }
 
+.alertStack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .footer {
   position: fixed;
   bottom: 0;
