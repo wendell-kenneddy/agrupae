@@ -10,7 +10,10 @@ export function ClassCard({ class: c }: ClassCardProps) {
   const navigate = useNavigate()
 
   return (
-    <div className={styles.card} onClick={() => navigate(`/classes/${c.id}`)}>
+    <div
+      className={`${styles.card} ${c.archived ? styles.archivedCard : ''}`}
+      onClick={() => navigate(`/classes/${c.id}`)}
+    >
       <div className={styles.top}>
         <span className={styles.name}>{c.name}</span>
         <span className={`${styles.badge} ${c.role === 'OWNER' ? styles.owner : styles.student}`}>

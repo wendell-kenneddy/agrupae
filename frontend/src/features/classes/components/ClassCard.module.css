@@ -114,3 +114,8 @@
   gap: 6px;
   border: 1.5px solid #ffffff33;
 }
+
+.archivedCard {
+  opacity: 0.65;
+}
+
