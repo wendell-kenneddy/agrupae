@@ -16,4 +16,6 @@ public interface GroupMemberRepository {
     void deleteByGroupIdAndMemberId(UUID groupId, UUID memberId);
 
     UUID findOldestMemberIdExcluding(UUID groupId, UUID excludeMemberId);
+
+    UUID findGroupIdByAssignmentIdAndMemberId(UUID assignmentId, UUID memberId);
 }

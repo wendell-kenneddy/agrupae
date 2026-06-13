@@ -56,5 +56,10 @@ public class GroupMemberRepositoryJpaAdapter implements GroupMemberRepository {
 
         return this.groupMemberJpaEntityMapper.toDomain(entity).memberId();
     }
+
+    @Override
+    public UUID findGroupIdByAssignmentIdAndMemberId(UUID assignmentId, UUID memberId) {
+        return this.groupMemberJpaRepository.findGroupIdByAssignmentIdAndMemberId(assignmentId, memberId);
+    }
 }
 
