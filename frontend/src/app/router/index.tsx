@@ -31,8 +31,22 @@ const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
   { path: '/login', element: <LoginPage /> },
   { path: '/register', element: <RegisterPage /> },
-  { path: '/classes/create', element: <CreateClassPage /> },
-  { path: '/classes/join', element: <JoinClassPage /> },
+  {
+    path: '/classes/create',
+    element: (
+      <ProtectedRoute>
+        <CreateClassPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/classes/join',
+    element: (
+      <ProtectedRoute>
+        <JoinClassPage />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: '/home',
     element: (
