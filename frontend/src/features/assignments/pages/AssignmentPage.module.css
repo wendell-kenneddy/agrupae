@@ -89,7 +89,12 @@
 .artifactRow {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+  background: #00100f0d;
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  min-height: 40px;
+  box-sizing: border-box;
 }
 
 .artifactRow .artifactLink {
@@ -101,15 +106,16 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  background: #00100f0d;
-  border-radius: var(--radius-sm);
   font-size: 0.78rem;
   color: var(--color-blue-primary);
   text-decoration: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.artifactLink:hover {
+  text-decoration: underline;
 }
 
 .artifactLink svg {
@@ -335,19 +341,24 @@
 }
 
 .artifactEditBtn {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-sm);
   color: #00100f66;
   flex-shrink: 0;
-  transition: background 0.15s;
+  transition: background 0.15s, color 0.15s;
+}
+
+.artifactEditBtn:hover {
+  background: #00100f0d;
+  color: var(--color-text-dark);
 }
 
 .artifactEditBtn:active {
-  background: #00100f11;
+  background: #00100f22;
 }
 
 .modalFields {
