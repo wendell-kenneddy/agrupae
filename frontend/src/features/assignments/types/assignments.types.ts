@@ -18,7 +18,7 @@ export interface Assignment {
   name: string
   description?: string
   assignmentFlags: AssignmentFlags
-  archived: boolean
+  isArchived: boolean
   dueDate?: string
   createdAt: string
   updatedAt: string

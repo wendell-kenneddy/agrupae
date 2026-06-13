@@ -39,8 +39,8 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
   const { archive, isLoading: isArchiving } = useArchiveAssignment(course.id)
   const [showArchived, setShowArchived] = useState(false)
 
-  const activeAssignments = assignments.filter((a: Assignment) => !a.archived)
-  const archivedAssignments = assignments.filter((a: Assignment) => a.archived)
+  const activeAssignments = assignments.filter((a: Assignment) => !a.isArchived)
+  const archivedAssignments = assignments.filter((a: Assignment) => a.isArchived)
 
   function handleMenuOpen(e: MouseEvent<HTMLButtonElement>, id: string) {
     e.stopPropagation()
@@ -68,76 +68,15 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
         {isLoading && <p className={styles.feedback}>Carregando trabalhos...</p>}
         {isError && <p className={styles.feedback}>Erro ao carregar trabalhos.</p>}
 
-        <div className={styles.list}>
-          {activeAssignments.map((a: Assignment) => (
-            <div
-              key={a.id}
-              className={styles.card}
-              onClick={() => navigate(`/classes/${course.id}/assignments/${a.id}`)}
-            >
-              <div className={styles.cardTop}>
-                <div className={styles.cardInfo}>
-                  <p className={styles.cardName}>{a.name}</p>
-                  {a.dueDate && (
-                    <p className={styles.cardDeadline}>Prazo: {formatDate(a.dueDate)}</p>
-                  )}
-                </div>
-                {isOwner && (
-                  <button className={styles.menuBtn} onClick={(e) => handleMenuOpen(e, a.id)}>
-                    ⋮
-                  </button>
-                )}
-              </div>
-              <hr className={styles.divider} />
-              <div className={styles.cardBottom}>
-                <div className={styles.groupsInfo}>
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                  <span>Grupos formados</span>
-                  <span className={styles.groupsCount}>
-                    0/{a.assignmentFlags.maxGroups === 999 ? '∞' : a.assignmentFlags.maxGroups}
-                  </span>
-                </div>
-                <div className={styles.progressBar}>
-                  <div className={styles.progressFill} style={{ width: '0%' }} />
-                </div>
-              </div>
-            </div>
-          ))}
-          {activeAssignments.length === 0 && !isLoading && !isError && (
-            <p className={styles.noAssignments}>Nenhum trabalho ativo criado.</p>
-          )}
-        </div>
-
-        {archivedAssignments.length > 0 && (
+        {!isLoading && !isError && (
           <>
-            <hr className={styles.sectionDivider} />
-            <button
-              className={styles.archivedHeader}
-              onClick={() => setShowArchived(!showArchived)}
-            >
-              <span>Trabalhos arquivados ({archivedAssignments.length})</span>
-              <span className={`${styles.chevron} ${showArchived ? styles.chevronExpanded : ''}`}>
-                <ChevronIcon />
-              </span>
-            </button>
-
-            {showArchived && (
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Trabalhos ativos</h2>
               <div className={styles.list}>
-                {archivedAssignments.map((a: Assignment) => (
+                {activeAssignments.map((a: Assignment) => (
                   <div
                     key={a.id}
-                    className={`${styles.card} ${styles.archivedCard}`}
+                    className={styles.card}
                     onClick={() => navigate(`/classes/${course.id}/assignments/${a.id}`)}
                   >
                     <div className={styles.cardTop}>
@@ -147,6 +86,11 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
                           <p className={styles.cardDeadline}>Prazo: {formatDate(a.dueDate)}</p>
                         )}
                       </div>
+                      {isOwner && (
+                        <button className={styles.menuBtn} onClick={(e) => handleMenuOpen(e, a.id)}>
+                          ⋮
+                        </button>
+                      )}
                     </div>
                     <hr className={styles.divider} />
                     <div className={styles.cardBottom}>
@@ -174,7 +118,72 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
                     </div>
                   </div>
                 ))}
+                {activeAssignments.length === 0 && (
+                  <p className={styles.noAssignments}>Nenhum trabalho ativo criado.</p>
+                )}
               </div>
+            </section>
+
+            {archivedAssignments.length > 0 && (
+              <>
+                <hr className={styles.sectionDivider} />
+                <section className={styles.section}>
+                  <button
+                    className={styles.archivedHeader}
+                    onClick={() => setShowArchived(!showArchived)}
+                  >
+                    <span>Trabalhos arquivados ({archivedAssignments.length})</span>
+                    <span className={`${styles.chevron} ${showArchived ? styles.chevronExpanded : ''}`}>
+                      <ChevronIcon />
+                    </span>
+                  </button>
+
+                  {showArchived && (
+                    <div className={styles.list}>
+                      {archivedAssignments.map((a: Assignment) => (
+                        <div
+                          key={a.id}
+                          className={`${styles.card} ${styles.archivedCard}`}
+                          onClick={() => navigate(`/classes/${course.id}/assignments/${a.id}`)}
+                        >
+                          <div className={styles.cardTop}>
+                            <div className={styles.cardInfo}>
+                              <p className={styles.cardName}>{a.name}</p>
+                              {a.dueDate && (
+                                <p className={styles.cardDeadline}>Prazo: {formatDate(a.dueDate)}</p>
+                              )}
+                            </div>
+                          </div>
+                          <hr className={styles.divider} />
+                          <div className={styles.cardBottom}>
+                            <div className={styles.groupsInfo}>
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                              </svg>
+                              <span>Grupos formados</span>
+                              <span className={styles.groupsCount}>
+                                0/{a.assignmentFlags.maxGroups === 999 ? '∞' : a.assignmentFlags.maxGroups}
+                              </span>
+                            </div>
+                            <div className={styles.progressBar}>
+                              <div className={styles.progressFill} style={{ width: '0%' }} />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              </>
             )}
           </>
         )}
