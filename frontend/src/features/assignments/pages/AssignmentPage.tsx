@@ -178,7 +178,7 @@ export function AssignmentPage() {
 
           {isOwner && (
             <button className={styles.editBtn} onClick={openNewArtifact}>
-              Editar artefatos
+              Adicionar artefatos
             </button>
           )}
         </div>
