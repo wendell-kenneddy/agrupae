@@ -18,7 +18,7 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  if (accessToken) {
+  if (accessToken && !config.url?.startsWith('/auth/')) {
     config.headers.Authorization = `Bearer ${accessToken}`
   }
   return config
