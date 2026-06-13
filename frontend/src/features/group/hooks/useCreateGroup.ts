@@ -1,14 +1,17 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createGroup } from '@/features/group/api/groupsApi'
 import { toast } from '@/components/ui/useToast'
 import type { CreateGroupRequest } from '@/features/group/types/groups.types'
 import type { AxiosError } from 'axios'
 
 export function useCreateGroup(courseId: string, assignmentId: string) {
+  const queryClient = useQueryClient()
+
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (data: CreateGroupRequest) => createGroup(courseId, assignmentId, data),
     onSuccess: () => {
       toast.success('Grupo criado com sucesso!')
+      queryClient.invalidateQueries({ queryKey: ['groups', courseId, assignmentId] })
     },
     onError: (error: AxiosError) => {
       const status = error.response?.status
