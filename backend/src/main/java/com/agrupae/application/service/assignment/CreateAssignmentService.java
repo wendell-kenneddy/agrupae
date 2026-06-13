@@ -27,10 +27,10 @@ public class CreateAssignmentService implements CreateAssignmentUseCase {
     @Transactional
     public AssignmentView handle(
         @NonNull UUID leaderId,
-        UUID courseId,
-        String name,
+        @NonNull UUID courseId,
+        @NonNull String name,
         String description, 
-        Instant dueDate,
+        @NonNull Instant dueDate,
         AssignmentFlags assignmentFlags) {
             Course course = this.courseRepository.findById(courseId);
 
