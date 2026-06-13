@@ -3,10 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useGetArtifacts } from '@/features/assignments/hooks/useGetArtifacts'
 import { useAddArtifact } from '@/features/assignments/hooks/useAddArtifact'
 import { useGetAssignment } from '@/features/assignments/hooks/useGetAssignment'
+import { useGetClass } from '@/features/classes/hooks/useGetClass'
+import { useCreateGroup } from '@/features/group/hooks/useCreateGroup'
 
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import type { AssignmentArtifact } from '@/features/assignments/types/assignments.types'
-import type { Assignment } from '@/features/assignments/types/assignments.types'
 
 import styles from './AssignmentPage.module.css'
 
@@ -15,6 +16,8 @@ export function AssignmentPage() {
   const { id: courseId, assignmentId } = useParams<{ id: string; assignmentId: string }>()
 
   const { assignment, isLoading, isError } = useGetAssignment(courseId!, assignmentId!)
+  const { course } = useGetClass(courseId!)
+  const { create: createGroup, isLoading: isCreatingGroup } = useCreateGroup(courseId!, assignmentId!)
 
   const { artifacts, isLoading: isLoadingArtifacts } = useGetArtifacts(courseId!, assignmentId!)
   const { add, isLoading: isAdding } = useAddArtifact(courseId!, assignmentId!)
@@ -23,7 +26,14 @@ export function AssignmentPage() {
   const [formDescription, setFormDescription] = useState('')
   const [formLink, setFormLink] = useState('')
 
-  const isOwner = true
+  const [showCreateGroup, setShowCreateGroup] = useState(false)
+  const [groupName, setGroupName] = useState('')
+  const [groupOpen, setGroupOpen] = useState(true)
+
+  const isOwner = course?.role === 'OWNER'
+  const canCreateGroup =
+    assignment?.assignmentFlags.studentsCanCreateGroups === true &&
+    !assignment?.archived
 
   if (isLoading) return <div className={styles.feedback}>Carregando...</div>
   if (isError || !assignment) return <div className={styles.feedback}>Trabalho não encontrado.</div>
@@ -32,11 +42,7 @@ export function AssignmentPage() {
     ? new Date(assignment.dueDate).toLocaleDateString('pt-BR')
     : null
 
-  const totalStudents = 31
-  const studentsInGroups = 23
-  const studentsWithoutGroup = totalStudents - studentsInGroups
-  const groupsFormed = 4
-  const totalGroups = assignment.assignmentFlags.maxGroups
+  const maxGroups = assignment.assignmentFlags.maxGroups
 
   function openNewArtifact() {
     setFormName('')
@@ -62,6 +68,22 @@ export function AssignmentPage() {
       })
     }
     setModalArtifact(null)
+  }
+
+  function openCreateGroup() {
+    setGroupName('')
+    setGroupOpen(true)
+    setShowCreateGroup(true)
+  }
+
+  async function handleCreateGroup() {
+    if (!groupName.trim()) return
+    try {
+      await createGroup({ name: groupName.trim(), open: groupOpen })
+      setShowCreateGroup(false)
+    } catch {
+      // error handled by the hook's onError
+    }
   }
 
   return (
@@ -161,27 +183,6 @@ export function AssignmentPage() {
           )}
         </div>
 
-        {isOwner && (
-          <div className={styles.progressSection}>
-            <div className={styles.progressLabels}>
-              <span className={styles.progressIn}>
-                {studentsInGroups} de {totalStudents} estudantes em grupos
-              </span>
-              <span className={styles.progressOut}>{studentsWithoutGroup} sem grupo</span>
-            </div>
-            <div className={styles.progressBarDouble}>
-              <div
-                className={styles.progressFillGreen}
-                style={{ width: `${(studentsInGroups / totalStudents) * 100}%` }}
-              />
-              <div
-                className={styles.progressFillOrange}
-                style={{ width: `${(studentsWithoutGroup / totalStudents) * 100}%` }}
-              />
-            </div>
-          </div>
-        )}
-
         <div className={styles.groupsSection}>
           <div className={styles.groupsHeader}>
             <div className={styles.groupsTitle}>
@@ -197,23 +198,22 @@ export function AssignmentPage() {
                 <circle cx="9" cy="7" r="4" />
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
-              <span>Grupos formados</span>
+              <span>Grupos</span>
             </div>
             <span className={styles.groupsCount}>
-              {groupsFormed}/{totalGroups === 999 ? '∞' : totalGroups}
+              Limite: {maxGroups === 999 ? '∞' : maxGroups}
             </span>
           </div>
-          <div className={styles.groupsProgressBar}>
-            <div
-              className={styles.groupsProgressFill}
-              style={{
-                width: totalGroups === 999 ? '0%' : `${(groupsFormed / totalGroups) * 100}%`,
-              }}
-            />
-          </div>
+
           <div className={styles.groupsList}>
             <p className={styles.emptyGroups}>Nenhum grupo formado ainda</p>
           </div>
+
+          {canCreateGroup && (
+            <button className={styles.createGroupBtn} onClick={openCreateGroup}>
+              Criar grupo
+            </button>
+          )}
         </div>
       </div>
 
@@ -273,6 +273,84 @@ export function AssignmentPage() {
                 disabled={!formName.trim() || !formLink.trim() || isAdding}
               >
                 {isAdding ? 'Salvando...' : modalArtifact === 'new' ? 'Adicionar' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {showCreateGroup && (
+        <>
+          <div className={styles.overlay} onClick={() => setShowCreateGroup(false)} />
+          <div className={styles.modal}>
+            <button className={styles.closeBtn} onClick={() => setShowCreateGroup(false)}>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <p className={styles.modalTitle}>Criar grupo</p>
+
+            <div className={styles.modalFields}>
+              <input
+                className={styles.modalInput}
+                type="text"
+                placeholder="Nome do grupo"
+                value={groupName}
+                onChange={(e) => setGroupName(e.target.value)}
+              />
+
+              <div className={styles.modeToggle}>
+                <span className={styles.modeLabel}>Modo do grupo</span>
+                <div className={styles.modeOptions}>
+                  <button
+                    className={`${styles.modeOption} ${groupOpen ? styles.modeOptionActive : ''}`}
+                    onClick={() => setGroupOpen(true)}
+                    type="button"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3" />
+                    </svg>
+                    Aberto
+                  </button>
+                  <button
+                    className={`${styles.modeOption} ${!groupOpen ? styles.modeOptionActive : ''}`}
+                    onClick={() => setGroupOpen(false)}
+                    type="button"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    Fechado
+                  </button>
+                </div>
+                <span className={styles.modeDescription}>
+                  {groupOpen
+                    ? 'Qualquer estudante da turma pode entrar diretamente.'
+                    : 'Estudantes precisam solicitar entrada. Você aprova ou rejeita.'}
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.modalActions}>
+              <button className={styles.cancelBtn} onClick={() => setShowCreateGroup(false)}>
+                Cancelar
+              </button>
+              <button
+                className={styles.confirmBtn}
+                onClick={handleCreateGroup}
+                disabled={!groupName.trim() || isCreatingGroup}
+              >
+                {isCreatingGroup ? 'Criando...' : 'Criar'}
               </button>
             </div>
           </div>
