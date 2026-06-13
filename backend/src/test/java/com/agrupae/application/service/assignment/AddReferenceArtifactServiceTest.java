@@ -10,6 +10,7 @@ import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.port.in.assignment.AssignmentArtifactView;
 import com.agrupae.application.port.out.assignment.AssignmentArtifactRepository;
 import com.agrupae.application.port.out.assignment.AssignmentRepository;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.domain.assignment.Assignment;
 import com.agrupae.domain.assignment.AssignmentArtifact;
@@ -38,6 +39,7 @@ class AddReferenceArtifactServiceTest {
         private AssignmentArtifactRepository assignmentArtifactRepository;
         private AssignmentRepository assignmentRepository;
         private CourseRepository courseRepository;
+        private CourseMembershipRepository courseMembershipRepository;
         private AddReferenceArtifactService service;
 
         @BeforeEach
@@ -45,8 +47,10 @@ class AddReferenceArtifactServiceTest {
                 assignmentArtifactRepository = mock(AssignmentArtifactRepository.class);
                 assignmentRepository = mock(AssignmentRepository.class);
                 courseRepository = mock(CourseRepository.class);
+                courseMembershipRepository = mock(CourseMembershipRepository.class);
                 service = new AddReferenceArtifactService(
-                                assignmentArtifactRepository, assignmentRepository, courseRepository);
+                                assignmentArtifactRepository, assignmentRepository, courseRepository,
+                                courseMembershipRepository);
         }
 
         private static Course buildCourse(UUID courseId, UUID leaderId) {
@@ -76,11 +80,12 @@ class AddReferenceArtifactServiceTest {
 
                         when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
                         when(courseRepository.findById(courseId)).thenReturn(course);
+                        when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
                         when(assignmentArtifactRepository.save(any(AssignmentArtifact.class)))
                                         .thenAnswer(inv -> inv.getArgument(0));
 
                         AssignmentArtifactView view = service.handle(
-                                        leaderId, assignmentId, "Ref Article", "Read this",
+                                        leaderId, courseId, assignmentId, "Ref Article", "Read this",
                                         "https://example.com/paper");
 
                         verify(assignmentArtifactRepository).save(any(AssignmentArtifact.class));
@@ -96,12 +101,14 @@ class AddReferenceArtifactServiceTest {
                 @Test
                 void whenAssignmentNotFound_throwsAssignmentNotFoundException() {
                         UUID userId = UUID.randomUUID();
+                        UUID courseId = UUID.randomUUID();
                         UUID assignmentId = UUID.randomUUID();
 
                         when(assignmentRepository.findById(assignmentId)).thenReturn(null);
 
                         assertThatThrownBy(() -> service.handle(
-                                        userId, assignmentId, "Ref Article", "Read this", "https://example.com/paper"))
+                                        userId, courseId, assignmentId, "Ref Article", "Read this",
+                                        "https://example.com/paper"))
                                         .isInstanceOf(AssignmentNotFoundException.class);
 
                         verify(courseRepository, never()).findById(any());
@@ -117,9 +124,11 @@ class AddReferenceArtifactServiceTest {
                         when(assignmentRepository.findById(assignmentId))
                                         .thenReturn(buildAssignment(assignmentId, courseId));
                         when(courseRepository.findById(courseId)).thenReturn(null);
+                        when(courseMembershipRepository.exists(userId, courseId)).thenReturn(false);
 
                         assertThatThrownBy(() -> service.handle(
-                                        userId, assignmentId, "Ref Article", "Read this", "https://example.com/paper"))
+                                        userId, courseId, assignmentId, "Ref Article", "Read this",
+                                        "https://example.com/paper"))
                                         .isInstanceOf(CourseNotFoundException.class);
 
                         verify(assignmentArtifactRepository, never()).save(any());
@@ -135,9 +144,10 @@ class AddReferenceArtifactServiceTest {
                         when(assignmentRepository.findById(assignmentId))
                                         .thenReturn(buildAssignment(assignmentId, courseId));
                         when(courseRepository.findById(courseId)).thenReturn(buildCourse(courseId, leaderId));
+                        when(courseMembershipRepository.exists(studentId, courseId)).thenReturn(true);
 
                         assertThatThrownBy(() -> service.handle(
-                                        studentId, assignmentId, "Ref Article", "Read this",
+                                        studentId, courseId, assignmentId, "Ref Article", "Read this",
                                         "https://example.com/paper"))
                                         .isInstanceOf(NotCourseLeaderException.class);
 
@@ -153,9 +163,11 @@ class AddReferenceArtifactServiceTest {
                         when(assignmentRepository.findById(assignmentId))
                                         .thenReturn(buildAssignment(assignmentId, courseId));
                         when(courseRepository.findById(courseId)).thenReturn(buildCourse(courseId, leaderId));
+                        when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
 
                         assertThatThrownBy(() -> service.handle(
-                                        leaderId, assignmentId, "   ", "Read this", "https://example.com/paper"))
+                                        leaderId, courseId, assignmentId, "   ", "Read this",
+                                        "https://example.com/paper"))
                                         .isInstanceOf(DomainException.class)
                                         .hasMessage("Assignment artifact name cannot be blank.");
 
@@ -171,9 +183,10 @@ class AddReferenceArtifactServiceTest {
                         when(assignmentRepository.findById(assignmentId))
                                         .thenReturn(buildAssignment(assignmentId, courseId));
                         when(courseRepository.findById(courseId)).thenReturn(buildCourse(courseId, leaderId));
+                        when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
 
                         assertThatThrownBy(() -> service.handle(
-                                        leaderId, assignmentId, "Ref Article", "Read this", "   "))
+                                        leaderId, courseId, assignmentId, "Ref Article", "Read this", "   "))
                                         .isInstanceOf(DomainException.class)
                                         .hasMessage("Resource link cannot be blank.");
 
@@ -184,27 +197,32 @@ class AddReferenceArtifactServiceTest {
                         AssignmentArtifactRepository artifactRepo = mock(AssignmentArtifactRepository.class);
                         AssignmentRepository assignRepo = mock(AssignmentRepository.class);
                         CourseRepository courseRepo = mock(CourseRepository.class);
+                        CourseMembershipRepository membershipRepo = mock(CourseMembershipRepository.class);
                         AddReferenceArtifactService freshService = new AddReferenceArtifactService(artifactRepo,
-                                        assignRepo, courseRepo);
+                                        assignRepo, courseRepo, membershipRepo);
 
                         UUID userId = UUID.randomUUID();
+                        UUID courseId = UUID.randomUUID();
                         UUID assignmentId = UUID.randomUUID();
 
                         return Stream.of(
                                         Arguments.of("UserId",
-                                                        (ThrowingCallable) () -> freshService.handle(null, assignmentId,
-                                                                        "Name", "Desc", "http://x.com")),
-                                        Arguments.of("AssignmentId",
+                                                        (ThrowingCallable) () -> freshService.handle(null, courseId,
+                                                                        assignmentId, "Name", "Desc", "http://x.com")),
+                                        Arguments.of("CourseId",
                                                         (ThrowingCallable) () -> freshService.handle(userId, null,
-                                                                        "Name", "Desc", "http://x.com")),
+                                                                        assignmentId, "Name", "Desc", "http://x.com")),
+                                        Arguments.of("AssignmentId",
+                                                        (ThrowingCallable) () -> freshService.handle(userId, courseId,
+                                                                        null, "Name", "Desc", "http://x.com")),
                                         Arguments.of("Name",
-                                                        (ThrowingCallable) () -> freshService.handle(userId,
+                                                        (ThrowingCallable) () -> freshService.handle(userId, courseId,
                                                                         assignmentId, null, "Desc", "http://x.com")),
                                         Arguments.of("Description",
-                                                        (ThrowingCallable) () -> freshService.handle(userId,
+                                                        (ThrowingCallable) () -> freshService.handle(userId, courseId,
                                                                         assignmentId, "Name", null, "http://x.com")),
                                         Arguments.of("ResourceLink",
-                                                        (ThrowingCallable) () -> freshService.handle(userId,
+                                                        (ThrowingCallable) () -> freshService.handle(userId, courseId,
                                                                         assignmentId, "Name", "Desc", null)));
                 }
 

@@ -8,6 +8,7 @@ import com.agrupae.application.exception.assignment.NotAuthorizedToEditAssignmen
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.port.in.assignment.AssignmentView;
 import com.agrupae.application.port.out.assignment.AssignmentRepository;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.domain.assignment.Assignment;
 import com.agrupae.domain.assignment.AssignmentFlags;
@@ -32,13 +33,15 @@ class EditAssignmentServiceTest {
 
     private AssignmentRepository assignmentRepository;
     private CourseRepository courseRepository;
+    private CourseMembershipRepository courseMembershipRepository;
     private EditAssignmentService service;
 
     @BeforeEach
     void setUp() {
         assignmentRepository = mock(AssignmentRepository.class);
         courseRepository = mock(CourseRepository.class);
-        service = new EditAssignmentService(assignmentRepository, courseRepository);
+        courseMembershipRepository = mock(CourseMembershipRepository.class);
+        service = new EditAssignmentService(assignmentRepository, courseRepository, courseMembershipRepository);
     }
 
     private static AssignmentFlags validFlags() {
@@ -72,6 +75,7 @@ class EditAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             String newName = "New Assignment Name";
             String newDesc = "New Description";
@@ -108,6 +112,7 @@ class EditAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             String newName = "New Assignment Name";
             String newDesc = "New Description";
@@ -136,6 +141,7 @@ class EditAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             String newName = "New Assignment Name";
             String newDesc = "New Description";
@@ -172,6 +178,7 @@ class EditAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(null);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             assertThatThrownBy(() -> service.handle(actorId, Role.USER, courseId, assignmentId, "Name", "Desc", Instant.now().plusSeconds(86_400), validFlags()))
                     .isInstanceOf(AssignmentNotFoundException.class);
@@ -191,6 +198,7 @@ class EditAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             assertThatThrownBy(() -> service.handle(actorId, Role.USER, courseId, assignmentId, "Name", "Desc", Instant.now().plusSeconds(86_400), validFlags()))
                     .isInstanceOf(AssignmentNotFoundException.class);
@@ -209,6 +217,7 @@ class EditAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             // Invalid because dueDate is in the past
             Instant pastDueDate = Instant.now().minusSeconds(10);

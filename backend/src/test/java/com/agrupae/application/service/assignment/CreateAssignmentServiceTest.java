@@ -145,15 +145,13 @@ class CreateAssignmentServiceTest {
         }
 
         @Test
-        void withNullCourseId_throwsCourseNotFoundException() {
+        void withNullCourseId_throwsNullPointerException() {
             UUID leaderId = UUID.randomUUID();
-
-            when(courseRepository.findById(null)).thenReturn(null);
 
             assertThatThrownBy(() -> service.handle(
                     leaderId, null, "First assignment", "Do the thing",
                     Instant.now().plusSeconds(86_400), validFlags()))
-                            .isInstanceOf(CourseNotFoundException.class);
+                            .isInstanceOf(NullPointerException.class);
 
             verify(assignmentRepository, never()).save(any());
         }
@@ -172,10 +170,10 @@ class CreateAssignmentServiceTest {
             when(courseRepository.findById(courseId)).thenReturn(leaderCourse(courseId, leaderId));
 
             return Stream.of(
+                    Arguments.of("LeaderId",        (ThrowingCallable) () -> freshService.handle(null, courseId, "Name", "Desc", dueDate, flags)),
+                    Arguments.of("CourseId",        (ThrowingCallable) () -> freshService.handle(leaderId, null, "Name", "Desc", dueDate, flags)),
                     Arguments.of("Name",            (ThrowingCallable) () -> freshService.handle(leaderId, courseId, null, "Desc", dueDate, flags)),
-                    Arguments.of("Description",     (ThrowingCallable) () -> freshService.handle(leaderId, courseId, "Name", null, dueDate, flags)),
-                    Arguments.of("DueDate",         (ThrowingCallable) () -> freshService.handle(leaderId, courseId, "Name", "Desc", null, flags)),
-                    Arguments.of("AssignmentFlags", (ThrowingCallable) () -> freshService.handle(leaderId, courseId, "Name", "Desc", dueDate, null))
+                    Arguments.of("DueDate",         (ThrowingCallable) () -> freshService.handle(leaderId, courseId, "Name", "Desc", null, flags))
             );
         }
 

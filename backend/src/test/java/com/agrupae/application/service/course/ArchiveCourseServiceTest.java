@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.exception.course.NotAuthorizedToArchiveCourseException;
 import com.agrupae.application.port.out.assignment.AssignmentRepository;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.domain.assignment.Assignment;
 import com.agrupae.domain.assignment.AssignmentFlags;
@@ -31,13 +32,15 @@ class ArchiveCourseServiceTest {
 
     private CourseRepository courseRepository;
     private AssignmentRepository assignmentRepository;
+    private CourseMembershipRepository courseMembershipRepository;
     private ArchiveCourseService service;
 
     @BeforeEach
     void setUp() {
         courseRepository = mock(CourseRepository.class);
         assignmentRepository = mock(AssignmentRepository.class);
-        service = new ArchiveCourseService(courseRepository, assignmentRepository);
+        courseMembershipRepository = mock(CourseMembershipRepository.class);
+        service = new ArchiveCourseService(courseRepository, assignmentRepository, courseMembershipRepository);
     }
 
     private Course buildCourse(UUID id, UUID leaderId, boolean archived) {
@@ -67,6 +70,7 @@ class ArchiveCourseServiceTest {
             Course course = buildCourse(courseId, leaderId, false);
 
             when(courseRepository.findById(courseId)).thenReturn(course);
+            when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
 
             service.handle(leaderId, Role.USER, courseId);
             ArgumentCaptor<Course> captor = ArgumentCaptor.forClass(Course.class);
@@ -85,6 +89,7 @@ class ArchiveCourseServiceTest {
             Course course = buildCourse(courseId, leaderId, false);
 
             when(courseRepository.findById(courseId)).thenReturn(course);
+            when(courseMembershipRepository.exists(adminId, courseId)).thenReturn(true);
 
             service.handle(adminId, Role.ADMIN, courseId);
             ArgumentCaptor<Course> captor = ArgumentCaptor.forClass(Course.class);
@@ -102,6 +107,7 @@ class ArchiveCourseServiceTest {
             Course course = buildCourse(courseId, leaderId, false);
 
             when(courseRepository.findById(courseId)).thenReturn(course);
+            when(courseMembershipRepository.exists(strangerId, courseId)).thenReturn(true);
 
             assertThatThrownBy(() -> service.handle(strangerId, Role.USER, courseId))
                     .isInstanceOf(NotAuthorizedToArchiveCourseException.class);
@@ -115,6 +121,7 @@ class ArchiveCourseServiceTest {
             UUID courseId = UUID.randomUUID();
 
             when(courseRepository.findById(courseId)).thenReturn(null);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(false);
 
             assertThatThrownBy(() -> service.handle(actorId, Role.USER, courseId))
                     .isInstanceOf(CourseNotFoundException.class);
@@ -128,6 +135,7 @@ class ArchiveCourseServiceTest {
             Course course = buildCourse(courseId, leaderId, true);
 
             when(courseRepository.findById(courseId)).thenReturn(course);
+            when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
 
             assertThatThrownBy(() -> service.handle(leaderId, Role.USER, courseId))
                     .isInstanceOf(DomainException.class)
@@ -166,6 +174,7 @@ class ArchiveCourseServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findByCourseId(courseId)).thenReturn(List.of(a1, a2));
+            when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
 
             service.handle(leaderId, Role.USER, courseId);
 
@@ -185,6 +194,7 @@ class ArchiveCourseServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findByCourseId(courseId)).thenReturn(List.of(a1, a2));
+            when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
 
             service.handle(leaderId, Role.USER, courseId);
 
@@ -202,6 +212,7 @@ class ArchiveCourseServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findByCourseId(courseId)).thenReturn(List.of());
+            when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
 
             service.handle(leaderId, Role.USER, courseId);
 
@@ -219,6 +230,7 @@ class ArchiveCourseServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findByCourseId(courseId)).thenReturn(List.of(a1, a2));
+            when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
 
             service.handle(leaderId, Role.USER, courseId);
 

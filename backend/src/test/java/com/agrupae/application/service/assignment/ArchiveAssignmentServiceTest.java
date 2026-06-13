@@ -7,6 +7,7 @@ import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.assignment.NotAuthorizedToArchiveAssignmentException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.port.out.assignment.AssignmentRepository;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.domain.assignment.Assignment;
 import com.agrupae.domain.assignment.AssignmentFlags;
@@ -31,13 +32,15 @@ class ArchiveAssignmentServiceTest {
 
     private AssignmentRepository assignmentRepository;
     private CourseRepository courseRepository;
+    private CourseMembershipRepository courseMembershipRepository;
     private ArchiveAssignmentService service;
 
     @BeforeEach
     void setUp() {
         assignmentRepository = mock(AssignmentRepository.class);
         courseRepository = mock(CourseRepository.class);
-        service = new ArchiveAssignmentService(assignmentRepository, courseRepository);
+        courseMembershipRepository = mock(CourseMembershipRepository.class);
+        service = new ArchiveAssignmentService(assignmentRepository, courseRepository, courseMembershipRepository);
     }
 
     private static AssignmentFlags validFlags() {
@@ -71,6 +74,7 @@ class ArchiveAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             service.handle(actorId, Role.USER, courseId, assignmentId);
 
@@ -93,6 +97,7 @@ class ArchiveAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             service.handle(actorId, Role.ADMIN, courseId, assignmentId);
 
@@ -115,6 +120,7 @@ class ArchiveAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             assertThatThrownBy(() -> service.handle(actorId, Role.USER, courseId, assignmentId))
                     .isInstanceOf(NotAuthorizedToArchiveAssignmentException.class);
@@ -130,6 +136,7 @@ class ArchiveAssignmentServiceTest {
             UUID assignmentId = UUID.randomUUID();
 
             when(courseRepository.findById(courseId)).thenReturn(null);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(false);
 
             assertThatThrownBy(() -> service.handle(actorId, Role.USER, courseId, assignmentId))
                     .isInstanceOf(CourseNotFoundException.class);
@@ -146,6 +153,7 @@ class ArchiveAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(null);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             assertThatThrownBy(() -> service.handle(actorId, Role.USER, courseId, assignmentId))
                     .isInstanceOf(AssignmentNotFoundException.class);
@@ -165,6 +173,7 @@ class ArchiveAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             assertThatThrownBy(() -> service.handle(actorId, Role.USER, courseId, assignmentId))
                     .isInstanceOf(AssignmentNotFoundException.class);
@@ -183,6 +192,7 @@ class ArchiveAssignmentServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+            when(courseMembershipRepository.exists(actorId, courseId)).thenReturn(true);
 
             assertThatThrownBy(() -> service.handle(actorId, Role.USER, courseId, assignmentId))
                     .isInstanceOf(DomainException.class)
