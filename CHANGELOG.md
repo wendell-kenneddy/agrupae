@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added `DeleteAssignmentService` and `DELETE /courses/{courseId}/assignments/{assignmentId}` endpoint, gated by leader or admin role, with `NotAuthorizedToDeleteAssignmentException` and unit tests;
+- (backend) Added `DeleteAssignmentUseCase` port and wired `DeleteAssignmentService` in `ApplicationServiceConfig`;
+- (backend) Added unit tests for `DeleteAssignmentService` covering leader, admin, unauthorized user, course/assignment not found, cross-course mismatch, and `@NonNull` guard scenarios;
 - (backend) Added `LeaveGroupService` and `DELETE /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/leave` endpoint gated by the `studentsCanLeaveGroups` assignment flag, handling leadership succession to the oldest member or group dissolution if 0 members remain, with unit tests;
 - (backend) Added `RemoveGroupMemberService` and `DELETE /courses/{courseId}/assignments/{assignmentId}/groups/{groupId}/members/{memberId}` endpoint gated by the `groupLeaderCanRemoveMembers` assignment flag, with unit tests; the group leader cannot remove themselves via this endpoint;
 - (backend) Added `existsByGroupIdAndMemberId` and `deleteByGroupIdAndMemberId` methods to `GroupMemberRepository` port and JPA adapter;
@@ -50,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- (backend) Standardized `@NonNull` (Lombok) annotations on all application service `handle()` method parameters across assignment, authentication, course, group and user services;
 - (backend) Added missing service beans on `ApplicationServiceConfig` which prevented the application from running;
 - (backend) Fixed Group domain entity anemic behavior by giving it approppriate domain methods;
 - (frontend) Fixed infinite loading loop on course page with invalid URLs by disabling query retries;
