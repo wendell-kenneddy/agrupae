@@ -33,7 +33,7 @@ export function AssignmentPage() {
   const isOwner = course?.role === 'OWNER'
   const canCreateGroup =
     assignment?.assignmentFlags.studentsCanCreateGroups === true &&
-    !assignment?.archived
+    !assignment?.isArchived
 
   if (isLoading) return <div className={styles.feedback}>Carregando...</div>
   if (isError || !assignment) return <div className={styles.feedback}>Trabalho não encontrado.</div>

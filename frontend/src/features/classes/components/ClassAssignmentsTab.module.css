@@ -267,8 +267,22 @@
 
 .sectionDivider {
   border: none;
-  border-top: 2px dashed #000;
-  margin: 24px 0 8px;
+  border-top: 1.5px solid var(--color-text-dark);
+  margin: 16px 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  letter-spacing: -0.02em;
+  margin: 10px 0 4px;
 }
 
 .noAssignments {
