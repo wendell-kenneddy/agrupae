@@ -93,6 +93,14 @@ function detectMode(flags: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'
   return 'advanced'
 }
 
+function getTodayString() {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 export function CreateAssignmentPage() {
   const navigate = useNavigate()
   const { id: courseId } = useParams<{ id: string }>()
@@ -111,6 +119,17 @@ export function CreateAssignmentPage() {
   const [forcedAdvanced, setForcedAdvanced] = useState(false)
   const mode = forcedAdvanced ? 'advanced' : detectMode(flags)
   const validations = getValidationErrors(flags, mode)
+  
+  if (dueDate) {
+    const todayStr = getTodayString()
+    if (dueDate < todayStr) {
+      validations.push({
+        type: 'error',
+        message: 'A data de entrega não pode ser anterior à data atual.',
+      })
+    }
+  }
+
   const hasErrors = validations.some((v) => v.type === 'error')
 
   function applyPreset(preset: Exclude<AssignmentMode, 'advanced'>) {
@@ -126,17 +145,21 @@ export function CreateAssignmentPage() {
   async function handleSubmit() {
     setSubmitted(true)
     if (!name.trim() || hasErrors) return
-    await create({
-      name: name.trim(),
-      description: description.trim() || 'Sem descrição',
-      dueDate: dueDate ? new Date(dueDate).toISOString() : new Date('2026-12-31').toISOString(),
-      assignmentFlags: {
-        ...flags,
-        maxGroupMembers: noLimit ? 999 : maxGroupMembers,
-        maxGroups: 999,
-      },
-    })
-    navigate(-1)
+    try {
+      await create({
+        name: name.trim(),
+        description: description.trim() || 'Sem descrição',
+        dueDate: dueDate ? new Date(dueDate + 'T23:59:59').toISOString() : new Date('2026-12-31T23:59:59').toISOString(),
+        assignmentFlags: {
+          ...flags,
+          maxGroupMembers: noLimit ? 999 : maxGroupMembers,
+          maxGroups: 999,
+        },
+      })
+      navigate(-1)
+    } catch (error) {
+      // Error handled in mutation hook
+    }
   }
 
   return (
@@ -191,6 +214,7 @@ export function CreateAssignmentPage() {
               className={styles.input}
               type="date"
               value={dueDate}
+              min={getTodayString()}
               onChange={(e) => setDueDate(e.target.value)}
             />
           </div>
