@@ -557,3 +557,368 @@
   font-weight: 700;
   color: var(--color-text-dark);
 }
+
+.groupMembersFull {
+  color: #dc2626;
+}
+
+/* ── Action buttons inside group cards ── */
+
+.joinBtn {
+  margin-left: 10px;
+  padding: 6px 14px;
+  background: var(--color-blue-dark);
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px #000;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease,
+    opacity 0.15s;
+}
+
+.joinBtn:active {
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+
+.joinBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.requestBtn {
+  margin-left: 10px;
+  padding: 6px 14px;
+  background: transparent;
+  color: var(--color-blue-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 2px solid var(--color-blue-dark);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+
+.requestBtn:active {
+  opacity: 0.7;
+}
+
+.requestBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancelRequestBtn {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background: transparent;
+  color: #b45309;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 2px solid #b45309;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+
+.cancelRequestBtn:active {
+  opacity: 0.7;
+}
+
+.cancelRequestBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Inline status badges on group cards ── */
+
+.badgePending {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  flex-shrink: 0;
+}
+
+.badgeRejected {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  flex-shrink: 0;
+}
+
+/* ── My Requests section ── */
+
+.myRequestsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.myRequestsTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.myRequestsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.requestCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  border: 2px solid transparent;
+  gap: 12px;
+}
+
+.requestCardPending {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.requestCardRejected {
+  background: #fff1f2;
+  border-color: #fecaca;
+}
+
+.requestCardAccepted {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.requestCardInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.requestCardGroupName {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.requestCardStatus {
+  font-size: 0.75rem;
+  color: #00100f88;
+}
+
+.requestCardPending .requestCardStatus {
+  color: #b45309;
+}
+
+.requestCardRejected .requestCardStatus {
+  color: #dc2626;
+}
+
+.requestCardAccepted .requestCardStatus {
+  color: #15803d;
+}
+
+.cancelRequestInlineBtn {
+  padding: 5px 12px;
+  background: transparent;
+  color: #b45309;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 2px solid #b45309;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+
+.cancelRequestInlineBtn:active {
+  opacity: 0.7;
+}
+
+.cancelRequestInlineBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Leader Requests section ── */
+
+.leaderRequestsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.leaderRequestsTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.leaderRequestsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leaderRequestCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  background: var(--color-bg-gray);
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0px #000;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.leaderRequestInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.leaderRequestName {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.leaderRequestEmail {
+  font-size: 0.75rem;
+  color: #00100f88;
+}
+
+.leaderRequestActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.acceptBtn {
+  padding: 6px 14px;
+  background: var(--color-blue-dark);
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px #000;
+  white-space: nowrap;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease,
+    opacity 0.15s;
+}
+
+.acceptBtn:active {
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+
+.acceptBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.rejectBtn {
+  padding: 6px 14px;
+  background: transparent;
+  color: #dc2626;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 2px solid #dc2626;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.rejectBtn:active {
+  opacity: 0.7;
+}
+
+.rejectBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-blue-primary);
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  flex-shrink: 0;
+}
+
+.leaderRequestLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.excludeRequestBtn {
+  background: transparent;
+  color: #00100f66;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.excludeRequestBtn:hover {
+  background: #00100f0d;
+  color: var(--color-text-dark);
+}
+
+.excludeRequestBtn:active {
+  background: #00100f22;
+}
+
