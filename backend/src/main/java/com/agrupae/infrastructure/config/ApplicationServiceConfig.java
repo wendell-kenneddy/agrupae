@@ -129,14 +129,14 @@ public class ApplicationServiceConfig {
 
     @Bean
     public ArchiveCourseService archiveCourseService(CourseRepository courseRepository,
-            AssignmentRepository assignmentRepository) {
-        return new ArchiveCourseService(courseRepository, assignmentRepository);
+            AssignmentRepository assignmentRepository, CourseMembershipRepository courseMembershipRepository) {
+        return new ArchiveCourseService(courseRepository, assignmentRepository, courseMembershipRepository);
     }
 
     @Bean
     public ArchiveAssignmentService archiveAssignmentService(AssignmentRepository assignmentRepository,
-            CourseRepository courseRepository) {
-        return new ArchiveAssignmentService(assignmentRepository, courseRepository);
+            CourseRepository courseRepository, CourseMembershipRepository courseMembershipRepository) {
+        return new ArchiveAssignmentService(assignmentRepository, courseRepository, courseMembershipRepository);
     }
 
     @Bean
@@ -174,8 +174,8 @@ public class ApplicationServiceConfig {
     public AddReferenceArtifactService addReferenceArtifactService(
             AssignmentArtifactRepository assignmentArtifactRepository,
             AssignmentRepository assignmentRepository,
-            CourseRepository courseRepository) {
-        return new AddReferenceArtifactService(assignmentArtifactRepository, assignmentRepository, courseRepository);
+            CourseRepository courseRepository, CourseMembershipRepository courseMembershipRepository) {
+        return new AddReferenceArtifactService(assignmentArtifactRepository, assignmentRepository, courseRepository, courseMembershipRepository);
     }
 
     @Bean
@@ -190,8 +190,8 @@ public class ApplicationServiceConfig {
 
     @Bean
     public EditAssignmentService editAssignmentService(AssignmentRepository assignmentRepository,
-            CourseRepository courseRepository) {
-        return new EditAssignmentService(assignmentRepository, courseRepository);
+            CourseRepository courseRepository, CourseMembershipRepository courseMembershipRepository) {
+        return new EditAssignmentService(assignmentRepository, courseRepository, courseMembershipRepository);
     }
 
     @Bean

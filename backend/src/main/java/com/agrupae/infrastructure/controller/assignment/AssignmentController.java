@@ -127,6 +127,7 @@ public class AssignmentController {
         UUID userId = UUID.fromString(jwt.getSubject());
         AssignmentArtifactView view = this.addReferenceArtifactUseCase.handle(
                 userId,
+                courseId,
                 assignmentId,
                 request.name(),
                 request.description(),
