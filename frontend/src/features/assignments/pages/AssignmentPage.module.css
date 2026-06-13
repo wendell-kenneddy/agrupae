@@ -136,46 +136,6 @@
   transform: translate(4px, 4px);
 }
 
-.progressSection {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.progressLabels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.78rem;
-}
-
-.progressIn {
-  color: #00100f99;
-}
-
-.progressOut {
-  color: #d97706;
-}
-
-.progressBarDouble {
-  height: 8px;
-  background: #00100f11;
-  border-radius: 999px;
-  overflow: hidden;
-  display: flex;
-}
-
-.progressFillGreen {
-  height: 100%;
-  background: #52c41a;
-  border-radius: 999px 0 0 999px;
-  transition: width 0.3s ease;
-}
-
-.progressFillOrange {
-  height: 100%;
-  background: #ffa940;
-  transition: width 0.3s ease;
-}
 
 .groupsSection {
   display: flex;
@@ -216,6 +176,85 @@
   background: var(--color-blue-primary);
   border-radius: 999px;
   transition: width 0.3s ease;
+}
+
+.createGroupBtn {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-blue-dark);
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
+}
+
+.createGroupBtn:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.modeToggle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modeLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+}
+
+.modeOptions {
+  display: flex;
+  gap: 8px;
+}
+
+.modeOption {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  background: #00100f0d;
+  border: 2px solid #00100f22;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #00100f99;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s,
+    box-shadow 0.2s;
+}
+
+.modeOption:hover {
+  border-color: #00100f44;
+}
+
+.modeOptionActive {
+  background: var(--color-blue-dark);
+  border-color: #000;
+  color: var(--color-text-light);
+  box-shadow: 3px 3px 0px #000;
+}
+
+.modeOptionActive:hover {
+  border-color: #000;
+}
+
+.modeDescription {
+  font-size: 0.78rem;
+  color: #00100f77;
+  line-height: 1.4;
 }
 
 .groupsList {
