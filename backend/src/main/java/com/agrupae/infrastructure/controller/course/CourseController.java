@@ -101,8 +101,9 @@ public class CourseController {
     }
 
     @GetMapping("/{id}/members")
-    public ResponseEntity<Page<UserProfileView>> getMembers(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, Pageable pageable) {
-        Page<UserProfileView> members = this.getMembersUseCase.handle(id, pageable);
+    public ResponseEntity<Page<UserProfileView>> getMembers(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID courseId, Pageable pageable) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        Page<UserProfileView> members = this.getMembersUseCase.handle(courseId, actorId, pageable);
         return ResponseEntity.ok(members);
     }
 

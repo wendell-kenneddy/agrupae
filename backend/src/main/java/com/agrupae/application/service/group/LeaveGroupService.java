@@ -20,6 +20,7 @@ import com.agrupae.domain.group.Group;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class LeaveGroupService implements LeaveGroupUseCase {
@@ -31,7 +32,7 @@ public class LeaveGroupService implements LeaveGroupUseCase {
 
     @Override
     @Transactional
-    public void handle(UUID userId, UUID groupId, UUID courseId, UUID assignmentId) {
+    public void handle(@NonNull UUID userId, @NonNull UUID groupId, @NonNull UUID courseId, @NonNull UUID assignmentId) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();
         }

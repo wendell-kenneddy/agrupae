@@ -9,6 +9,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface GetMembersUseCase {
 
-    Page<UserProfileView> handle(UUID courseId, Pageable pageable);
+    Page<UserProfileView> handle(UUID courseId, UUID actorId, Pageable pageable);
 
 }

@@ -14,6 +14,7 @@ import com.agrupae.domain.assignment.Assignment;
 import com.agrupae.domain.assignment.AssignmentFlags;
 import com.agrupae.domain.course.Course;
 import com.agrupae.domain.role.Role;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class EditAssignmentService implements EditAssignmentUseCase {
     private final AssignmentRepository assignmentRepository;
     private final CourseRepository courseRepository;
+    private final CourseMembershipRepository courseMembershipRepository;
 
     @Override
     @Transactional
@@ -43,7 +45,7 @@ public class EditAssignmentService implements EditAssignmentUseCase {
 
         Assignment assignment = this.assignmentRepository.findById(assignmentId);
 
-        if (assignment == null) {
+        if (assignment == null | !courseMembershipRepository.exists(actorId, courseId)) {
             throw new AssignmentNotFoundException();
         }
 

@@ -21,6 +21,7 @@ import com.agrupae.domain.group.GroupMember;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class CreateGroupService implements CreateGroupUseCase {
@@ -31,7 +32,7 @@ public class CreateGroupService implements CreateGroupUseCase {
 
     @Override
     @Transactional
-    public GroupView handle(UUID userId, UUID courseId, UUID assignmentId, String name, boolean open) {
+    public GroupView handle(@NonNull UUID userId, @NonNull UUID courseId, @NonNull UUID assignmentId, @NonNull String name, boolean open) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();
         }

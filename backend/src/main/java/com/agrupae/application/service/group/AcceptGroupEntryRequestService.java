@@ -23,6 +23,7 @@ import com.agrupae.domain.group.GroupEntryRequest;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class AcceptGroupEntryRequestService implements AcceptGroupEntryRequestUs
 
     @Override
     @Transactional
-    public void handle(UUID courseId, UUID assignmentId, UUID groupId, UUID requestId, UUID userId) {
+    public void handle(@NonNull UUID courseId, @NonNull UUID assignmentId, @NonNull UUID groupId, @NonNull UUID requestId, @NonNull UUID userId) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();
         }

@@ -22,6 +22,7 @@ import com.agrupae.domain.group.GroupEntryRequestStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class GetGroupEntryRequestsService implements GetGroupEntryRequestsUseCase {
@@ -32,7 +33,7 @@ public class GetGroupEntryRequestsService implements GetGroupEntryRequestsUseCas
 
     @Override
     @Transactional(readOnly = true)
-    public List<GroupEntryRequestView> handle(UUID courseId, UUID assignmentId, UUID groupId, UUID userId,
+    public List<GroupEntryRequestView> handle(@NonNull UUID courseId, @NonNull UUID assignmentId, @NonNull UUID groupId, @NonNull UUID userId,
             GroupEntryRequestStatus status) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();

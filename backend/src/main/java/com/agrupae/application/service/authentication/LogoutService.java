@@ -7,13 +7,14 @@ import com.agrupae.application.port.out.authentication.TokenHasher;
 import com.agrupae.domain.refresh_token.RefreshToken;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class LogoutService implements LogoutUseCase {
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenHasher tokenHasher;
 
-    public void handle(String rawRefreshToken) {
+    public void handle(@NonNull String rawRefreshToken) {
         String refreshTokenHash = this.tokenHasher.hash(rawRefreshToken);
         RefreshToken refreshToken = this.refreshTokenRepository.findByTokenHash(refreshTokenHash);
 

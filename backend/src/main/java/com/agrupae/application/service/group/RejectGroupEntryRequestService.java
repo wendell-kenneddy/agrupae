@@ -21,6 +21,7 @@ import com.agrupae.domain.group.GroupEntryRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class RejectGroupEntryRequestService implements RejectGroupEntryRequestUseCase {
@@ -31,7 +32,7 @@ public class RejectGroupEntryRequestService implements RejectGroupEntryRequestUs
 
     @Override
     @Transactional
-    public GroupEntryRequestView handle(UUID courseId, UUID assignmentId, UUID groupId, UUID requestId, UUID userId) {
+    public GroupEntryRequestView handle(@NonNull UUID courseId, @NonNull UUID assignmentId, @NonNull UUID groupId, @NonNull UUID requestId, @NonNull UUID userId) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();
         }

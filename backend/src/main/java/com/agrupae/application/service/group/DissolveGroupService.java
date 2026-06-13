@@ -21,6 +21,7 @@ import com.agrupae.domain.role.Role;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class DissolveGroupService implements DissolveGroupUseCase {
@@ -31,7 +32,7 @@ public class DissolveGroupService implements DissolveGroupUseCase {
 
     @Override
     @Transactional
-    public void handle(UUID actorId, Role actorRole, UUID courseId, UUID assignmentId, UUID groupId) {
+    public void handle(@NonNull UUID actorId, @NonNull Role actorRole, @NonNull UUID courseId, @NonNull UUID assignmentId, @NonNull UUID groupId) {
         Course course = this.courseRepository.findById(courseId);
         if (course == null) {
             throw new CourseNotFoundException();

@@ -16,6 +16,7 @@ import com.agrupae.domain.role.Role;
 import com.agrupae.domain.user.User;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class SignupService implements SignupUseCase {
@@ -26,7 +27,7 @@ public class SignupService implements SignupUseCase {
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenConfig tokenConfig;
 
-    public TokenPair handle(String name, String email, String password)
+    public TokenPair handle(@NonNull String name, @NonNull String email, @NonNull String password)
             throws UserAlreadyExistsException {
         User user = this.userRepository.findByEmail(email);
 

@@ -16,6 +16,7 @@ import com.agrupae.domain.refresh_token.RefreshToken;
 import com.agrupae.domain.user.User;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class RefreshService implements RefreshUseCase {
@@ -25,7 +26,7 @@ public class RefreshService implements RefreshUseCase {
     private final TokenHasher tokenHasher;
     private final TokenConfig tokenConfig;
 
-    public TokenPair handle(String rawRefreshToken) {
+    public TokenPair handle(@NonNull String rawRefreshToken) {
         String refreshTokenHash = this.tokenHasher.hash(rawRefreshToken);
         RefreshToken refreshToken = this.refreshTokenRepository.findByTokenHash(refreshTokenHash);
 

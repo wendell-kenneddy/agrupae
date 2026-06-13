@@ -24,9 +24,10 @@ public class GetMembersService implements GetMembersUseCase {
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
 
-    public Page<UserProfileView> handle(@NonNull UUID courseId,@NonNull Pageable pageable) {
+    public Page<UserProfileView> handle(@NonNull UUID courseId,@NonNull UUID actorId,@NonNull Pageable pageable) {
         Course course = this.courseRepository.findById(courseId);
-        if (course == null) throw new CourseNotFoundException();
+
+        if (course == null | !courseMembershipRepository.exists(actorId, courseId)) throw new CourseNotFoundException();
 
         List<CourseMembership> memberships = this.courseMembershipRepository.findByCourseId(courseId);
 

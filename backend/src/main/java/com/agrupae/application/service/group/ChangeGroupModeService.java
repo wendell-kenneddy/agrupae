@@ -19,6 +19,7 @@ import com.agrupae.domain.group.Group;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class ChangeGroupModeService implements ChangeGroupModeUseCase {
@@ -29,7 +30,7 @@ public class ChangeGroupModeService implements ChangeGroupModeUseCase {
 
     @Override
     @Transactional
-    public void handle(UUID courseId, UUID assignmentId, UUID groupId, UUID userId, boolean open) {
+    public void handle(@NonNull UUID courseId, @NonNull UUID assignmentId, @NonNull UUID groupId, @NonNull UUID userId, boolean open) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();
         }

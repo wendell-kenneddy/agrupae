@@ -9,13 +9,14 @@ import com.agrupae.application.port.out.user.UserRepository;
 import com.agrupae.domain.user.User;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class GetUserProfileService implements GetUserProfileUseCase {
     private final UserRepository userRepository;
 
     @Override
-    public UserProfileView handle(UUID userId) {
+    public UserProfileView handle(@NonNull UUID userId) {
         User user = this.userRepository.findById(userId);
 
         if (user == null) throw new UserNotFoundException();

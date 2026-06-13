@@ -13,6 +13,8 @@ import com.agrupae.domain.course.Course;
 import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.assignment.NotCourseLeaderException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.NonNull;
 
@@ -21,10 +23,12 @@ public class AddReferenceArtifactService implements AddReferenceArtifactUseCase 
     private final AssignmentArtifactRepository assignmentArtifactRepository;
     private final AssignmentRepository assignmentRepository;
     private final CourseRepository courseRepository;
+    private final CourseMembershipRepository courseMembershipRepository;
 
     @Override
     public AssignmentArtifactView handle(
             @NonNull UUID userId,
+            @NonNull UUID courseId,
             @NonNull UUID assignmentId,
             @NonNull String name,
             @NonNull String description,
@@ -35,7 +39,7 @@ public class AddReferenceArtifactService implements AddReferenceArtifactUseCase 
             throw new AssignmentNotFoundException();
 
         Course course = this.courseRepository.findById(assignment.getCourseId());
-        if (course == null)
+        if (course == null | !courseMembershipRepository.exists(userId, courseId))
             throw new CourseNotFoundException();
 
         if (!course.getLeaderId().equals(userId)) {

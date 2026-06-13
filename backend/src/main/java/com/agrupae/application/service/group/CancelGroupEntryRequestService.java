@@ -20,6 +20,7 @@ import com.agrupae.domain.exception.DomainException;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class CancelGroupEntryRequestService implements CancelGroupEntryRequestUseCase {
@@ -30,7 +31,7 @@ public class CancelGroupEntryRequestService implements CancelGroupEntryRequestUs
 
     @Override
     @Transactional
-    public void handle(UUID courseId, UUID assignmentId, UUID groupId, UUID requestId, UUID userId) {
+    public void handle(@NonNull UUID courseId, @NonNull UUID assignmentId, @NonNull UUID groupId, @NonNull UUID requestId, @NonNull UUID userId) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();
         }

@@ -16,6 +16,7 @@ import com.agrupae.domain.course.Course;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class CreateAssignmentService implements CreateAssignmentUseCase {
@@ -25,7 +26,7 @@ public class CreateAssignmentService implements CreateAssignmentUseCase {
     @Override
     @Transactional
     public AssignmentView handle(
-        UUID leaderId,
+        @NonNull UUID leaderId,
         UUID courseId,
         String name,
         String description, 

@@ -15,6 +15,7 @@ import com.agrupae.domain.refresh_token.RefreshToken;
 import com.agrupae.domain.user.User;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class LoginService implements LoginUseCase {
@@ -25,7 +26,7 @@ public class LoginService implements LoginUseCase {
     private final TokenHasher tokenHasher;
     private final TokenConfig tokenConfig;
 
-    public TokenPair handle(String email, String password) {
+    public TokenPair handle(@NonNull String email, @NonNull String password) {
         User user = this.userRepository.findByEmail(email);
 
         if (user == null || !this.passwordEncoder.matches(password, user.getPasswordHash())) {

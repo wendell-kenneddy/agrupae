@@ -21,6 +21,7 @@ import com.agrupae.domain.group.Group;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class RemoveGroupMemberService implements RemoveGroupMemberUseCase {
@@ -31,7 +32,7 @@ public class RemoveGroupMemberService implements RemoveGroupMemberUseCase {
 
     @Override
     @Transactional
-    public void handle(UUID courseId, UUID assignmentId, UUID groupId, UUID userId, UUID memberId) {
+    public void handle(@NonNull UUID courseId, @NonNull UUID assignmentId, @NonNull UUID groupId, @NonNull UUID userId, @NonNull UUID memberId) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();
         }

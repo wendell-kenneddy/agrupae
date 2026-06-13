@@ -16,6 +16,7 @@ import com.agrupae.domain.assignment.Assignment;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
 public class GetUserGroupEntryRequestsService implements GetUserGroupEntryRequestsUseCase {
@@ -25,7 +26,7 @@ public class GetUserGroupEntryRequestsService implements GetUserGroupEntryReques
 
     @Override
     @Transactional(readOnly = true)
-    public List<GroupEntryRequestView> handle(UUID courseId, UUID assignmentId, UUID userId) {
+    public List<GroupEntryRequestView> handle(@NonNull UUID courseId, @NonNull UUID assignmentId, @NonNull UUID userId) {
         if (!this.courseMembershipRepository.exists(userId, courseId)) {
             throw new CourseNotFoundException();
         }

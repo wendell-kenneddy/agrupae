@@ -11,6 +11,7 @@ import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.domain.assignment.Assignment;
 import com.agrupae.domain.course.Course;
 import com.agrupae.domain.role.Role;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +22,14 @@ import lombok.RequiredArgsConstructor;
 public class ArchiveCourseService implements ArchiveCourseUseCase {
     private final CourseRepository courseRepository;
     private final AssignmentRepository assignmentRepository;
+    private final CourseMembershipRepository courseMembershipRepository;
 
     @Override
     @Transactional
     public void handle(@NonNull UUID actorId, @NonNull Role actorRole, @NonNull UUID courseId) {
         Course course = this.courseRepository.findById(courseId);
 
-        if (course == null)
+        if (course == null | !courseMembershipRepository.exists(actorId, courseId))
             throw new CourseNotFoundException();
 
         if (actorRole != Role.ADMIN && !course.getLeaderId().equals(actorId))

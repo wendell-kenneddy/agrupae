@@ -2,27 +2,29 @@ package com.agrupae.application.service.assignment;
 
 import java.util.UUID;
 
-import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
-import com.agrupae.application.exception.assignment.NotAuthorizedToArchiveAssignmentException;
-import com.agrupae.application.exception.course.CourseNotFoundException;
-import com.agrupae.application.port.in.assignment.ArchiveAssignmentUseCase;
-import com.agrupae.application.port.out.assignment.AssignmentRepository;
-import com.agrupae.application.port.out.course.CourseRepository;
-import com.agrupae.domain.assignment.Assignment;
-import com.agrupae.domain.course.Course;
-import com.agrupae.domain.role.Role;
-import com.agrupae.application.port.out.course.CourseMembershipRepository;
-
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.NonNull;
+import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
+import com.agrupae.application.exception.assignment.NotAuthorizedToDeleteAssignmentException;
+import com.agrupae.application.exception.course.CourseNotFoundException;
+import com.agrupae.application.port.in.assignment.DeleteAssignmentUseCase;
+import com.agrupae.domain.course.Course;
+import com.agrupae.domain.assignment.Assignment;
+import com.agrupae.domain.role.Role;
+import com.agrupae.application.port.out.assignment.AssignmentRepository;
+import com.agrupae.application.port.out.course.CourseRepository;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
+
+
 import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
 @RequiredArgsConstructor
-public class ArchiveAssignmentService implements ArchiveAssignmentUseCase {
+public class DeleteAssignmentService implements DeleteAssignmentUseCase {
     private final AssignmentRepository assignmentRepository;
     private final CourseRepository courseRepository;
     private final CourseMembershipRepository courseMembershipRepository;
+
 
     @Override
     @Transactional
@@ -44,10 +46,9 @@ public class ArchiveAssignmentService implements ArchiveAssignmentUseCase {
         }
 
         if (actorRole != Role.ADMIN && !course.getLeaderId().equals(actorId)) {
-            throw new NotAuthorizedToArchiveAssignmentException();
+            throw new NotAuthorizedToDeleteAssignmentException();
         }
 
-        assignment.archive();
-        this.assignmentRepository.save(assignment);
+        this.assignmentRepository.delete(assignmentId);
     }
 }
