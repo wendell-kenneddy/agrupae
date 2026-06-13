@@ -38,6 +38,7 @@ import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.exception.course.InvalidInviteCodeException;
 import com.agrupae.application.exception.course.LeaderCannotJoinOwnCourseException;
 import com.agrupae.application.exception.course.NotAuthorizedToArchiveCourseException;
+import com.agrupae.application.exception.assignment.NotAuthorizedToDeleteAssignmentException;
 import com.agrupae.application.exception.course.NotAuthorizedToTransferLeadershipException;
 import com.agrupae.application.exception.course.TargetUserNotEnrolled;
 import com.agrupae.application.exception.user.UserAlreadyExistsException;
@@ -112,14 +113,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotAuthorizedToTransferLeadershipException.class)
-    public ResponseEntity<String> handleNotAuthorizedToTransferLeadershipCourse(NotAuthorizedToTransferLeadershipException ex) {
+    public ResponseEntity<String> handleNotAuthorizedToTransferLeadershipCourse(
+            NotAuthorizedToTransferLeadershipException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 
     @ExceptionHandler(TargetUserNotEnrolled.class)
     public ResponseEntity<String> handleTargetUserNotEnrolled(TargetUserNotEnrolled ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
-    } 
+    }
 
     @ExceptionHandler(AssignmentNotFoundException.class)
     public ResponseEntity<String> handleAssignmentNotFound(AssignmentNotFoundException ex) {
@@ -200,4 +202,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleSelfRemovalNotAllowed(SelfRemovalNotAllowedException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    @ExceptionHandler({ NotAuthorizedToDeleteAssignmentException.class })
+    public ResponseEntity<String> handleNotAuthorizedToDeleteAssignment(NotAuthorizedToDeleteAssignmentException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
 }
