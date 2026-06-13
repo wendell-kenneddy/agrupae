@@ -5,6 +5,7 @@ import { useAddArtifact } from '@/features/assignments/hooks/useAddArtifact'
 import { useGetAssignment } from '@/features/assignments/hooks/useGetAssignment'
 import { useGetClass } from '@/features/classes/hooks/useGetClass'
 import { useCreateGroup } from '@/features/group/hooks/useCreateGroup'
+import { useGetGroups } from '@/features/group/hooks/useGetGroups'
 
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import type { AssignmentArtifact } from '@/features/assignments/types/assignments.types'
@@ -18,6 +19,7 @@ export function AssignmentPage() {
   const { assignment, isLoading, isError } = useGetAssignment(courseId!, assignmentId!)
   const { course } = useGetClass(courseId!)
   const { create: createGroup, isLoading: isCreatingGroup } = useCreateGroup(courseId!, assignmentId!)
+  const { groupsData, isLoading: isLoadingGroups } = useGetGroups(courseId!, assignmentId!)
 
   const { artifacts, isLoading: isLoadingArtifacts } = useGetArtifacts(courseId!, assignmentId!)
   const { add, isLoading: isAdding } = useAddArtifact(courseId!, assignmentId!)
@@ -31,6 +33,7 @@ export function AssignmentPage() {
   const [groupOpen, setGroupOpen] = useState(true)
 
   const isOwner = course?.role === 'OWNER'
+  const hasGroup = !!groupsData?.myGroup
   const canCreateGroup =
     assignment?.assignmentFlags.studentsCanCreateGroups === true &&
     !assignment?.isArchived
@@ -201,16 +204,58 @@ export function AssignmentPage() {
               <span>Grupos</span>
             </div>
             <span className={styles.groupsCount}>
-              Limite: {maxGroups === 999 ? '∞' : maxGroups}
+              {groupsData?.groups.totalElements ?? 0}/{maxGroups === 999 ? '∞' : maxGroups}
             </span>
           </div>
 
           <div className={styles.groupsList}>
-            <p className={styles.emptyGroups}>Nenhum grupo formado ainda</p>
+            {isLoadingGroups && <p className={styles.feedbackSmall}>Carregando grupos...</p>}
+
+            {!isLoadingGroups && (!groupsData || groupsData.groups.content.length === 0) && (
+              <p className={styles.emptyGroups}>Nenhum grupo formado ainda</p>
+            )}
+
+            {!isLoadingGroups && groupsData && groupsData.groups.content.length > 0 && (
+              <div className={styles.groupsGrid}>
+                {groupsData.groups.content.map((g) => {
+                  const isMyGroup = groupsData.myGroup?.id === g.id
+                  return (
+                    <div
+                      key={g.id}
+                      className={`${styles.groupCard} ${isMyGroup ? styles.myGroupCard : ''}`}
+                    >
+                      <div className={styles.groupCardLeft}>
+                        <div className={styles.groupNameRow}>
+                          <span className={styles.groupName}>{g.name}</span>
+                          {isMyGroup && <span className={styles.myGroupTag}>Seu grupo</span>}
+                        </div>
+                        <div className={styles.groupMeta}>
+                          <span className={`${styles.groupBadge} ${g.open ? styles.openBadge : styles.closedBadge}`}>
+                            {g.open ? 'Aberto' : 'Fechado'}
+                          </span>
+                          {g.membersCanEditArtifacts && (
+                            <span className={styles.artifactsBadge}>Edita artefatos</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className={styles.groupCardRight}>
+                        <span className={styles.groupMembersCount}>
+                          {g.memberCount}/{assignment.assignmentFlags.maxGroupMembers === 999 ? '∞' : assignment.assignmentFlags.maxGroupMembers}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
           {canCreateGroup && (
-            <button className={styles.createGroupBtn} onClick={openCreateGroup}>
+            <button
+              className={styles.createGroupBtn}
+              onClick={openCreateGroup}
+              disabled={hasGroup && !isOwner}
+            >
               Criar grupo
             </button>
           )}

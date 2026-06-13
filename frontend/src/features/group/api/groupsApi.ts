@@ -1,5 +1,9 @@
 import api from '@/lib/axios'
-import type { Group, CreateGroupRequest } from '@/features/group/types/groups.types'
+import type {
+  Group,
+  CreateGroupRequest,
+  AssignmentGroupsResponse,
+} from '@/features/group/types/groups.types'
 
 export async function createGroup(
   courseId: string,
@@ -9,6 +13,16 @@ export async function createGroup(
   const response = await api.post<Group>(
     `/courses/${courseId}/assignments/${assignmentId}/groups`,
     data
+  )
+  return response.data
+}
+
+export async function getGroups(
+  courseId: string,
+  assignmentId: string
+): Promise<AssignmentGroupsResponse> {
+  const response = await api.get<AssignmentGroupsResponse>(
+    `/courses/${courseId}/assignments/${assignmentId}/groups`
   )
   return response.data
 }
