@@ -36,3 +36,14 @@ export interface AssignmentGroupsResponse {
     number: number
   }
 }
+
+export type GroupEntryRequestStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED'
+
+export interface GroupEntryRequest {
+  id: string
+  groupId: string
+  userId: string
+  status: GroupEntryRequestStatus
+  createdAt: string
+  updatedAt: string
+}
