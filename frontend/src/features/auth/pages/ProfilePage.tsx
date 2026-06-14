@@ -22,8 +22,11 @@ export function ProfilePage() {
     .join('')
     .toUpperCase()
 
+  const hasChanges = name.trim() !== (user?.name ?? '') || email.trim() !== (user?.email ?? '')
+
   async function handleSave() {
     if (!name.trim() || !email.trim()) return
+    if (!hasChanges) return
     setIsLoading(true)
     try {
       const response = await api.put('/users/me', { name: name.trim(), email: email.trim() })
@@ -82,10 +85,11 @@ export function ProfilePage() {
         <button
           className={styles.saveBtn}
           onClick={handleSave}
-          disabled={!name.trim() || !email.trim() || isLoading}
+          disabled={!name.trim() || !email.trim() || isLoading || !hasChanges}
         >
           {isLoading ? 'Salvando...' : 'Salvar alterações'}
         </button>
+
 
         <button className={styles.logoutBtn} onClick={handleLogout}>
           <svg
