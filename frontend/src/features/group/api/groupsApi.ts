@@ -105,3 +105,15 @@ export async function rejectGroupEntryRequest(
   return response.data
 }
 
+export async function changeGroupMode(
+  courseId: string,
+  assignmentId: string,
+  groupId: string,
+  open: boolean
+): Promise<void> {
+  await api.put(`/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/mode`, {
+    open,
+  })
+}
+
+

@@ -15,6 +15,7 @@ import { useGetMyEntryRequests } from '@/features/group/hooks/useGetMyEntryReque
 import { useGetGroupEntryRequests } from '@/features/group/hooks/useGetGroupEntryRequests'
 import { useAcceptGroupEntryRequest } from '@/features/group/hooks/useAcceptGroupEntryRequest'
 import { useRejectGroupEntryRequest } from '@/features/group/hooks/useRejectGroupEntryRequest'
+import { useChangeGroupMode } from '@/features/group/hooks/useChangeGroupMode'
 
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import type { AssignmentArtifact } from '@/features/assignments/types/assignments.types'
@@ -46,6 +47,7 @@ export function AssignmentPage() {
   const { requestEntry, isLoading: isRequesting } = useRequestGroupEntry(courseId!, assignmentId!)
   const { cancel: cancelRequest, isLoading: isCancelling } = useCancelGroupEntryRequest(courseId!, assignmentId!)
   const { myRequests } = useGetMyEntryRequests(courseId!, assignmentId!)
+  const { changeMode, isLoading: isChangingMode } = useChangeGroupMode(courseId!, assignmentId!)
 
   const [excludedRequestIds, setExcludedRequestIds] = useState<string[]>(() => {
     try {
@@ -192,6 +194,14 @@ export function AssignmentPage() {
   async function handleRejectRequest(groupId: string, requestId: string) {
     try {
       await rejectRequest({ groupId, requestId })
+    } catch {
+      // handled by hook
+    }
+  }
+
+  async function handleToggleMode(groupId: string, currentOpen: boolean) {
+    try {
+      await changeMode({ groupId, open: !currentOpen })
     } catch {
       // handled by hook
     }
@@ -365,6 +375,30 @@ export function AssignmentPage() {
                         <span className={`${styles.groupMembersCount} ${isFull ? styles.groupMembersFull : ''}`}>
                           {g.memberCount}/{maxMembers === 999 ? '∞' : maxMembers}
                         </span>
+
+                        {isMyGroup && g.leaderId === user?.id && assignment.assignmentFlags.groupLeaderCanChangeMode && isAssignmentActive && (
+                          <button
+                            id={`toggle-group-mode-${g.id}`}
+                            className={styles.toggleModeBtn}
+                            onClick={() => handleToggleMode(g.id, g.open)}
+                            disabled={isChangingMode}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              {g.open ? (
+                                <>
+                                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </>
+                              ) : (
+                                <>
+                                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                  <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+                                </>
+                              )}
+                            </svg>
+                            <span>{g.open ? 'Fechar grupo' : 'Abrir grupo'}</span>
+                          </button>
+                        )}
 
                         {canAct && !isMyGroup && (
                           <>
