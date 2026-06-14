@@ -922,3 +922,37 @@
   background: #00100f22;
 }
 
+.toggleModeBtn {
+  margin-left: 10px;
+  padding: 6px 14px;
+  background: transparent;
+  color: var(--color-blue-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 2px solid var(--color-blue-dark);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toggleModeBtn:hover {
+  background: var(--color-blue-dark);
+  color: var(--color-text-light);
+  box-shadow: 2px 2px 0px #000;
+}
+
+.toggleModeBtn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.toggleModeBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
