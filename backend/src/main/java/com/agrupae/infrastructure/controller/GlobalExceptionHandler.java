@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
+import com.agrupae.application.exception.assignment.AssignmentArtifactNotFoundException;
 import com.agrupae.application.exception.assignment.NotAuthorizedToArchiveAssignmentException;
 import com.agrupae.application.exception.assignment.NotAuthorizedToEditAssignmentException;
 import com.agrupae.application.exception.assignment.NotCourseLeaderException;
@@ -218,6 +219,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ NotAuthorizedToDeleteAssignmentException.class })
     public ResponseEntity<String> handleNotAuthorizedToDeleteAssignment(NotAuthorizedToDeleteAssignmentException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(AssignmentArtifactNotFoundException.class)
+    public ResponseEntity<String> handleAssignmentArtifactNotFound(AssignmentArtifactNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
 }

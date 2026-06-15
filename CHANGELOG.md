@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added `GET /courses/{courseId}/assignments/{assignmentId}/groups` endpoint returning a response wrapper containing `myGroup` (with the authenticated user's group details and memberCount) and a paginated list of all assignment groups with their member counts;
+- (backend) Added `GetAssignmentGroupsUseCase` port and `GetAssignmentGroupsService` application service;
+- (backend) Added `findByAssignmentId` and `findGroupIdByAssignmentIdAndMemberId` methods to Group/GroupMember repository ports and JPA adapters;
+- (backend) Added `GetAssignmentGroupsServiceTest` unit tests covering all success, validation, and error scenarios;
 - (backend) Added `DeleteAssignmentService` and `DELETE /courses/{courseId}/assignments/{assignmentId}` endpoint, gated by leader or admin role, with `NotAuthorizedToDeleteAssignmentException` and unit tests;
 - (backend) Added `DeleteAssignmentUseCase` port and wired `DeleteAssignmentService` in `ApplicationServiceConfig`;
 - (backend) Added unit tests for `DeleteAssignmentService` covering leader, admin, unauthorized user, course/assignment not found, cross-course mismatch, and `@NonNull` guard scenarios;

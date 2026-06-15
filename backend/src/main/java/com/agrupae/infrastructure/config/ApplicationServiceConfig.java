@@ -15,6 +15,8 @@ import com.agrupae.application.service.assignment.AddReferenceArtifactService;
 import com.agrupae.application.service.assignment.ArchiveAssignmentService;
 import com.agrupae.application.service.assignment.CreateAssignmentService;
 import com.agrupae.application.service.assignment.EditAssignmentService;
+import com.agrupae.application.service.assignment.EditAssignmentArtifactService;
+import com.agrupae.application.service.assignment.DeleteAssignmentArtifactService;
 import com.agrupae.application.service.assignment.GetAnAssignmentService;
 import com.agrupae.application.service.authentication.*;
 import com.agrupae.application.service.course.ArchiveCourseService;
@@ -30,6 +32,7 @@ import com.agrupae.application.service.assignment.GetAssignmentArtifactsService;
 import com.agrupae.application.service.assignment.GetAssignmentsService;
 import com.agrupae.application.port.out.group.GroupEntryRequestRepository;
 import com.agrupae.application.service.group.CreateGroupService;
+import com.agrupae.application.service.group.GetAssignmentGroupsService;
 import com.agrupae.application.service.group.JoinOpenGroupService;
 import com.agrupae.application.service.group.RequestGroupEntryService;
 import com.agrupae.application.service.group.CancelGroupEntryRequestService;
@@ -127,10 +130,9 @@ public class ApplicationServiceConfig {
 
     @Bean
     public GetAnAssignmentService getAnAssignmentService(
-        CourseRepository courseRepository,
-        CourseMembershipRepository courseMembershipRepository,
-        AssignmentRepository assignmentRepository
-    ) {
+            CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository) {
         return new GetAnAssignmentService(courseRepository, courseMembershipRepository, assignmentRepository);
     }
 
@@ -182,7 +184,8 @@ public class ApplicationServiceConfig {
             AssignmentArtifactRepository assignmentArtifactRepository,
             AssignmentRepository assignmentRepository,
             CourseRepository courseRepository, CourseMembershipRepository courseMembershipRepository) {
-        return new AddReferenceArtifactService(assignmentArtifactRepository, assignmentRepository, courseRepository, courseMembershipRepository);
+        return new AddReferenceArtifactService(assignmentArtifactRepository, assignmentRepository, courseRepository,
+                courseMembershipRepository);
     }
 
     @Bean
@@ -199,6 +202,26 @@ public class ApplicationServiceConfig {
     public EditAssignmentService editAssignmentService(AssignmentRepository assignmentRepository,
             CourseRepository courseRepository, CourseMembershipRepository courseMembershipRepository) {
         return new EditAssignmentService(assignmentRepository, courseRepository, courseMembershipRepository);
+    }
+
+    @Bean
+    public EditAssignmentArtifactService editAssignmentArtifactService(
+            AssignmentArtifactRepository assignmentArtifactRepository,
+            AssignmentRepository assignmentRepository,
+            CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository) {
+        return new EditAssignmentArtifactService(assignmentArtifactRepository,
+                assignmentRepository, courseRepository, courseMembershipRepository);
+    }
+
+    @Bean
+    public DeleteAssignmentArtifactService deleteAssignmentArtifactService(
+            AssignmentArtifactRepository assignmentArtifactRepository,
+            AssignmentRepository assignmentRepository,
+            CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository) {
+        return new DeleteAssignmentArtifactService(assignmentArtifactRepository,
+                assignmentRepository, courseRepository, courseMembershipRepository);
     }
 
     @Bean
@@ -324,6 +347,17 @@ public class ApplicationServiceConfig {
     }
 
     @Bean
+    public GetAssignmentGroupsService getAssignmentGroupsService(
+            CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository) {
+        return new GetAssignmentGroupsService(courseRepository, courseMembershipRepository,
+                assignmentRepository, groupRepository, groupMemberRepository);
+    }
+
+    @Bean
     public AddGroupArtifactService addGroupArtifactService(
             CourseMembershipRepository courseMembershipRepository,
             CourseRepository courseRepository,
@@ -337,8 +371,7 @@ public class ApplicationServiceConfig {
                 assignmentRepository,
                 groupRepository,
                 groupMemberRepository,
-                groupArtifactRepository
-        );
+                groupArtifactRepository);
     }
 
     @Bean
@@ -353,8 +386,7 @@ public class ApplicationServiceConfig {
                 assignmentRepository,
                 groupRepository,
                 groupMemberRepository,
-                groupArtifactRepository
-        );
+                groupArtifactRepository);
     }
 
     @Bean
@@ -367,8 +399,7 @@ public class ApplicationServiceConfig {
                 courseMembershipRepository,
                 assignmentRepository,
                 groupRepository,
-                groupArtifactRepository
-        );
+                groupArtifactRepository);
     }
 
     @Bean
@@ -385,8 +416,7 @@ public class ApplicationServiceConfig {
                 assignmentRepository,
                 groupRepository,
                 groupMemberRepository,
-                groupArtifactRepository
-        );
+                groupArtifactRepository);
     }
 
     @Bean
@@ -403,8 +433,7 @@ public class ApplicationServiceConfig {
                 assignmentRepository,
                 groupRepository,
                 groupMemberRepository,
-                groupArtifactRepository
-        );
+                groupArtifactRepository);
     }
 
     @Bean
@@ -421,7 +450,6 @@ public class ApplicationServiceConfig {
                 assignmentRepository,
                 groupRepository,
                 groupMemberRepository,
-                groupArtifactRepository
-        );
+                groupArtifactRepository);
     }
 }
