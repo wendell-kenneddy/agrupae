@@ -15,6 +15,8 @@ import com.agrupae.application.service.assignment.AddReferenceArtifactService;
 import com.agrupae.application.service.assignment.ArchiveAssignmentService;
 import com.agrupae.application.service.assignment.CreateAssignmentService;
 import com.agrupae.application.service.assignment.EditAssignmentService;
+import com.agrupae.application.service.assignment.EditAssignmentArtifactService;
+import com.agrupae.application.service.assignment.DeleteAssignmentArtifactService;
 import com.agrupae.application.service.assignment.GetAnAssignmentService;
 import com.agrupae.application.service.authentication.*;
 import com.agrupae.application.service.course.ArchiveCourseService;
@@ -193,6 +195,26 @@ public class ApplicationServiceConfig {
     public EditAssignmentService editAssignmentService(AssignmentRepository assignmentRepository,
             CourseRepository courseRepository, CourseMembershipRepository courseMembershipRepository) {
         return new EditAssignmentService(assignmentRepository, courseRepository, courseMembershipRepository);
+    }
+
+    @Bean
+    public EditAssignmentArtifactService editAssignmentArtifactService(
+            AssignmentArtifactRepository assignmentArtifactRepository,
+            AssignmentRepository assignmentRepository,
+            CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository) {
+        return new EditAssignmentArtifactService(assignmentArtifactRepository,
+                assignmentRepository, courseRepository, courseMembershipRepository);
+    }
+
+    @Bean
+    public DeleteAssignmentArtifactService deleteAssignmentArtifactService(
+            AssignmentArtifactRepository assignmentArtifactRepository,
+            AssignmentRepository assignmentRepository,
+            CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository) {
+        return new DeleteAssignmentArtifactService(assignmentArtifactRepository,
+                assignmentRepository, courseRepository, courseMembershipRepository);
     }
 
     @Bean

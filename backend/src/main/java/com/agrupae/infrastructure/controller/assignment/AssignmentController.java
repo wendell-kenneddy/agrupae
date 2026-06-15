@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,10 @@ import com.agrupae.application.port.in.assignment.ArchiveAssignmentUseCase;
 import com.agrupae.application.port.in.assignment.AssignmentView;
 import com.agrupae.application.port.in.assignment.CreateAssignmentUseCase;
 import com.agrupae.application.port.in.assignment.GetAssignmentArtifactsUseCase;
+import com.agrupae.application.port.in.assignment.EditAssignmentArtifactUseCase;
+import com.agrupae.application.port.in.assignment.DeleteAssignmentArtifactUseCase;
 import com.agrupae.infrastructure.controller.assignment.dto.AddReferenceArtifactRequest;
+import com.agrupae.infrastructure.controller.assignment.dto.EditAssignmentArtifactRequest;
 import com.agrupae.application.port.in.assignment.EditAssignmentUseCase;
 import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.assignment.dto.CreateAssignmentRequest;
@@ -46,6 +50,8 @@ public class AssignmentController {
     private final GetAssignmentArtifactsUseCase getAssignmentArtifactsUseCase;
     private final ArchiveAssignmentUseCase archiveAssignmentUseCase;
     private final EditAssignmentUseCase editAssignmentUseCase;
+    private final EditAssignmentArtifactUseCase editAssignmentArtifactUseCase;
+    private final DeleteAssignmentArtifactUseCase deleteAssignmentArtifactUseCase;
     private final GetAssignmentsUseCase getAssignmentsUseCase;
     private final GetAnAssignmentUseCase getAnAssignmentUseCase;
     private final GetUserGroupEntryRequestsUseCase getUserGroupEntryRequestsUseCase;
@@ -146,6 +152,44 @@ public class AssignmentController {
                 courseId,
                 assignmentId);
         return ResponseEntity.status(HttpStatus.OK).body(view);
+    }
+
+    @PutMapping("/{assignmentId}/artifacts/{artifactId}")
+    public ResponseEntity<AssignmentArtifactView> editArtifact(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID artifactId,
+            @Valid @RequestBody EditAssignmentArtifactRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        Role actorRole = Role.valueOf(jwt.getClaimAsString("role"));
+        AssignmentArtifactView view = this.editAssignmentArtifactUseCase.handle(
+                actorId,
+                actorRole,
+                courseId,
+                assignmentId,
+                artifactId,
+                request.name(),
+                request.description(),
+                request.resourceLink());
+        return ResponseEntity.ok(view);
+    }
+
+    @DeleteMapping("/{assignmentId}/artifacts/{artifactId}")
+    public ResponseEntity<Void> deleteArtifact(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID artifactId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        Role actorRole = Role.valueOf(jwt.getClaimAsString("role"));
+        this.deleteAssignmentArtifactUseCase.handle(
+                actorId,
+                actorRole,
+                courseId,
+                assignmentId,
+                artifactId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{assignmentId}/entry-requests/me")

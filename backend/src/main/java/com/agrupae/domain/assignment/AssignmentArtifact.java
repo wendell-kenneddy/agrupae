@@ -82,4 +82,19 @@ public class AssignmentArtifact {
                 .updatedAt(updatedAt)
                 .build();
     }
+
+    public void update(
+            @NonNull final String name,
+            @NonNull final String description,
+            @NonNull final String resourceLink) {
+        if (name.isBlank())
+            throw new DomainException("Assignment artifact name cannot be blank.");
+        if (resourceLink.isBlank())
+            throw new DomainException("Resource link cannot be blank.");
+
+        this.name = name;
+        this.description = description;
+        this.resourceLink = resourceLink;
+        this.updatedAt = Instant.now();
+    }
 }
