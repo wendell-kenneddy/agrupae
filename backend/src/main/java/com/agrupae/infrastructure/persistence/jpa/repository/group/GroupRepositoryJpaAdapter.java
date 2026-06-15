@@ -2,6 +2,8 @@ package com.agrupae.infrastructure.persistence.jpa.repository.group;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.agrupae.application.port.out.group.GroupRepository;
@@ -40,5 +42,12 @@ public class GroupRepositoryJpaAdapter implements GroupRepository {
     @Override
     public void deleteById(UUID id) {
         this.groupJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Group> findByAssignmentId(UUID assignmentId, Pageable pageable) {
+        return this.groupJpaRepository
+                .findByAssignmentId(assignmentId, pageable)
+                .map(this.groupJpaEntityMapper::toDomain);
     }
 }

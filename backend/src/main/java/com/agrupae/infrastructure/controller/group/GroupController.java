@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agrupae.application.port.in.group.CreateGroupUseCase;
+import com.agrupae.application.port.in.group.GetAssignmentGroupsUseCase;
+import com.agrupae.application.port.in.group.AssignmentGroupsView;
 import com.agrupae.application.port.in.group.GroupView;
 import com.agrupae.application.port.in.group.JoinOpenGroupUseCase;
 import com.agrupae.application.port.in.group.RequestGroupEntryUseCase;
@@ -34,6 +36,8 @@ import com.agrupae.domain.group.GroupEntryRequestStatus;
 import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.group.dto.ChangeGroupModeRequest;
 import com.agrupae.infrastructure.controller.group.dto.CreateGroupRequest;
+
+import org.springframework.data.domain.Pageable;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +57,19 @@ public class GroupController {
     private final DissolveGroupUseCase dissolveGroupUseCase;
     private final LeaveGroupUseCase leaveGroupUseCase;
     private final RemoveGroupMemberUseCase removeGroupMemberUseCase;
+    private final GetAssignmentGroupsUseCase getAssignmentGroupsUseCase;
+
+    @GetMapping
+    public ResponseEntity<AssignmentGroupsView> getGroups(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @AuthenticationPrincipal Jwt jwt,
+            Pageable pageable) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        AssignmentGroupsView view = this.getAssignmentGroupsUseCase.handle(
+                userId, courseId, assignmentId, pageable);
+        return ResponseEntity.ok(view);
+    }
 
     @PostMapping
     public ResponseEntity<GroupView> create(

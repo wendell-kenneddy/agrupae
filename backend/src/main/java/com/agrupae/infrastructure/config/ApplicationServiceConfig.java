@@ -30,6 +30,7 @@ import com.agrupae.application.service.assignment.GetAssignmentArtifactsService;
 import com.agrupae.application.service.assignment.GetAssignmentsService;
 import com.agrupae.application.port.out.group.GroupEntryRequestRepository;
 import com.agrupae.application.service.group.CreateGroupService;
+import com.agrupae.application.service.group.GetAssignmentGroupsService;
 import com.agrupae.application.service.group.JoinOpenGroupService;
 import com.agrupae.application.service.group.RequestGroupEntryService;
 import com.agrupae.application.service.group.CancelGroupEntryRequestService;
@@ -314,5 +315,16 @@ public class ApplicationServiceConfig {
             AssignmentRepository assignmentRepository) {
         return new LeaveGroupService(groupMemberRepository, groupRepository,
                 courseMembershipRepository, assignmentRepository);
+    }
+
+    @Bean
+    public GetAssignmentGroupsService getAssignmentGroupsService(
+            CourseRepository courseRepository,
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository) {
+        return new GetAssignmentGroupsService(courseRepository, courseMembershipRepository,
+                assignmentRepository, groupRepository, groupMemberRepository);
     }
 }
