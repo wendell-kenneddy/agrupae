@@ -26,7 +26,7 @@ public class GroupArtifact {
             @NonNull final UUID id,
             @NonNull final UUID groupId,
             @NonNull final String name,
-            @NonNull final String description,
+            final String description,
             final boolean privateArtifact,
             @NonNull String resourceLink,
             @NonNull Instant createdAt,
@@ -67,5 +67,48 @@ public class GroupArtifact {
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
+    }
+
+    public static GroupArtifact reconstruct(
+            final UUID id,
+            final UUID groupId,
+            final String name,
+            final String description,
+            final boolean privateArtifact,
+            final String resourceLink,
+            final Instant createdAt,
+            final Instant updatedAt) {
+        return GroupArtifact.builder()
+                .id(id)
+                .groupId(groupId)
+                .name(name)
+                .description(description)
+                .privateArtifact(privateArtifact)
+                .resourceLink(resourceLink)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .build();
+    }
+
+    public void editDetails(final String name, final String description, final String resourceLink) {
+        if (name == null || name.isBlank())
+            throw new DomainException("Group artifact name cannot be blank.");
+        if (resourceLink == null || resourceLink.isBlank())
+            throw new DomainException("Resource link cannot be blank.");
+
+        this.name = name;
+        this.description = description;
+        this.resourceLink = resourceLink;
+        this.updatedAt = Instant.now();
+    }
+
+    public void makePrivate() {
+        this.privateArtifact = true;
+        this.updatedAt = Instant.now();
+    }
+
+    public void makePublic() {
+        this.privateArtifact = false;
+        this.updatedAt = Instant.now();
     }
 }

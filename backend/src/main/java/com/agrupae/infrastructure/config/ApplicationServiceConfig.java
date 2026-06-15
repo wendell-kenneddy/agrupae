@@ -41,6 +41,13 @@ import com.agrupae.application.service.group.ChangeGroupModeService;
 import com.agrupae.application.service.group.DissolveGroupService;
 import com.agrupae.application.service.group.LeaveGroupService;
 import com.agrupae.application.service.group.RemoveGroupMemberService;
+import com.agrupae.application.port.out.group.GroupArtifactRepository;
+import com.agrupae.application.service.group.AddGroupArtifactService;
+import com.agrupae.application.service.group.GetGroupArtifactsService;
+import com.agrupae.application.service.group.GetPublicGroupArtifactsService;
+import com.agrupae.application.service.group.EditGroupArtifactService;
+import com.agrupae.application.service.group.DeleteGroupArtifactService;
+import com.agrupae.application.service.group.ChangeGroupArtifactPrivacyService;
 
 @Configuration
 public class ApplicationServiceConfig {
@@ -314,5 +321,107 @@ public class ApplicationServiceConfig {
             AssignmentRepository assignmentRepository) {
         return new LeaveGroupService(groupMemberRepository, groupRepository,
                 courseMembershipRepository, assignmentRepository);
+    }
+
+    @Bean
+    public AddGroupArtifactService addGroupArtifactService(
+            CourseMembershipRepository courseMembershipRepository,
+            CourseRepository courseRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository,
+            GroupArtifactRepository groupArtifactRepository) {
+        return new AddGroupArtifactService(
+                courseMembershipRepository,
+                courseRepository,
+                assignmentRepository,
+                groupRepository,
+                groupMemberRepository,
+                groupArtifactRepository
+        );
+    }
+
+    @Bean
+    public GetGroupArtifactsService getGroupArtifactsService(
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository,
+            GroupArtifactRepository groupArtifactRepository) {
+        return new GetGroupArtifactsService(
+                courseMembershipRepository,
+                assignmentRepository,
+                groupRepository,
+                groupMemberRepository,
+                groupArtifactRepository
+        );
+    }
+
+    @Bean
+    public GetPublicGroupArtifactsService getPublicGroupArtifactsService(
+            CourseMembershipRepository courseMembershipRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupArtifactRepository groupArtifactRepository) {
+        return new GetPublicGroupArtifactsService(
+                courseMembershipRepository,
+                assignmentRepository,
+                groupRepository,
+                groupArtifactRepository
+        );
+    }
+
+    @Bean
+    public EditGroupArtifactService editGroupArtifactService(
+            CourseMembershipRepository courseMembershipRepository,
+            CourseRepository courseRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository,
+            GroupArtifactRepository groupArtifactRepository) {
+        return new EditGroupArtifactService(
+                courseMembershipRepository,
+                courseRepository,
+                assignmentRepository,
+                groupRepository,
+                groupMemberRepository,
+                groupArtifactRepository
+        );
+    }
+
+    @Bean
+    public ChangeGroupArtifactPrivacyService changeGroupArtifactPrivacyService(
+            CourseMembershipRepository courseMembershipRepository,
+            CourseRepository courseRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository,
+            GroupArtifactRepository groupArtifactRepository) {
+        return new ChangeGroupArtifactPrivacyService(
+                courseMembershipRepository,
+                courseRepository,
+                assignmentRepository,
+                groupRepository,
+                groupMemberRepository,
+                groupArtifactRepository
+        );
+    }
+
+    @Bean
+    public DeleteGroupArtifactService deleteGroupArtifactService(
+            CourseMembershipRepository courseMembershipRepository,
+            CourseRepository courseRepository,
+            AssignmentRepository assignmentRepository,
+            GroupRepository groupRepository,
+            GroupMemberRepository groupMemberRepository,
+            GroupArtifactRepository groupArtifactRepository) {
+        return new DeleteGroupArtifactService(
+                courseMembershipRepository,
+                courseRepository,
+                assignmentRepository,
+                groupRepository,
+                groupMemberRepository,
+                groupArtifactRepository
+        );
     }
 }

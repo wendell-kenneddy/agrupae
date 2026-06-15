@@ -17,6 +17,7 @@ import com.agrupae.application.exception.group.AssignmentArchivedException;
 import com.agrupae.application.exception.group.GroupCreationNotAllowedException;
 import com.agrupae.application.exception.group.GroupMemberLimitReachedException;
 import com.agrupae.application.exception.group.GroupNotFoundException;
+import com.agrupae.application.exception.group.GroupArtifactNotFoundException;
 import com.agrupae.application.exception.group.GroupNotOpenException;
 import com.agrupae.application.exception.group.MaxGroupsReachedException;
 import com.agrupae.application.exception.group.StudentAlreadyInGroupException;
@@ -35,6 +36,7 @@ import com.agrupae.application.exception.auth.TokenExpiredException;
 import com.agrupae.application.exception.auth.TokenRevokedException;
 import com.agrupae.application.exception.course.AlreadyJoinedCourseException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
+import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.application.exception.course.InvalidInviteCodeException;
 import com.agrupae.application.exception.course.LeaderCannotJoinOwnCourseException;
 import com.agrupae.application.exception.course.NotAuthorizedToArchiveCourseException;
@@ -156,6 +158,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(GroupNotFoundException.class)
     public ResponseEntity<String> handleGroupNotFound(GroupNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(GroupArtifactNotFoundException.class)
+    public ResponseEntity<String> handleGroupArtifactNotFound(GroupArtifactNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(CourseArchivedException.class)
+    public ResponseEntity<String> handleCourseArchived(CourseArchivedException ex) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(ex.getMessage());
     }
 
     @ExceptionHandler({ GroupNotOpenException.class, GroupMemberLimitReachedException.class })
