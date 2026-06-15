@@ -14,6 +14,7 @@ public class Group {
     private UUID leaderId;
     private String name;
     private boolean open;
+    @Deprecated
     private boolean membersCanEditArtifacts;
     private Instant createdAt;
     private Instant updatedAt;
@@ -25,7 +26,7 @@ public class Group {
             @NonNull final UUID leaderId,
             @NonNull final String name,
             final boolean open,
-            final boolean membersCanEditArtifacts,
+            @Deprecated final boolean membersCanEditArtifacts,
             @NonNull final Instant createdAt,
             @NonNull final Instant updatedAt) {
         if (name.isBlank())
@@ -48,7 +49,7 @@ public class Group {
             final UUID leaderId,
             final String name,
             final boolean open,
-            final boolean membersCanEditArtifacts) {
+            @Deprecated final boolean membersCanEditArtifacts) {
         UUID id = UUID.randomUUID();
         Instant now = Instant.now();
 
@@ -70,7 +71,7 @@ public class Group {
             UUID leaderId,
             String name,
             boolean open,
-            boolean membersCanEditArtifacts,
+            @Deprecated boolean membersCanEditArtifacts,
             Instant createdAt,
             Instant updatedAt) {
         return Group.builder()
@@ -106,6 +107,7 @@ public class Group {
         this.updatedAt = Instant.now();
     }
 
+    @Deprecated
     public void toggleMemberArtifactEdit() {
         this.membersCanEditArtifacts = !this.membersCanEditArtifacts;
         this.updatedAt = Instant.now();

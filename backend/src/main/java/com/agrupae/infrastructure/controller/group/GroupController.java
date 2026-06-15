@@ -38,6 +38,16 @@ import com.agrupae.infrastructure.controller.group.dto.ChangeGroupModeRequest;
 import com.agrupae.infrastructure.controller.group.dto.CreateGroupRequest;
 
 import org.springframework.data.domain.Pageable;
+import com.agrupae.infrastructure.controller.group.dto.AddGroupArtifactRequest;
+import com.agrupae.infrastructure.controller.group.dto.EditGroupArtifactRequest;
+import com.agrupae.infrastructure.controller.group.dto.ChangeGroupArtifactPrivacyRequest;
+import com.agrupae.application.port.in.group.AddGroupArtifactUseCase;
+import com.agrupae.application.port.in.group.GetGroupArtifactsUseCase;
+import com.agrupae.application.port.in.group.GetPublicGroupArtifactsUseCase;
+import com.agrupae.application.port.in.group.EditGroupArtifactUseCase;
+import com.agrupae.application.port.in.group.DeleteGroupArtifactUseCase;
+import com.agrupae.application.port.in.group.GroupArtifactView;
+import com.agrupae.application.port.in.group.ChangeGroupArtifactPrivacyUseCase;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +67,12 @@ public class GroupController {
     private final DissolveGroupUseCase dissolveGroupUseCase;
     private final LeaveGroupUseCase leaveGroupUseCase;
     private final RemoveGroupMemberUseCase removeGroupMemberUseCase;
+    private final AddGroupArtifactUseCase addGroupArtifactUseCase;
+    private final GetGroupArtifactsUseCase getGroupArtifactsUseCase;
+    private final GetPublicGroupArtifactsUseCase getPublicGroupArtifactsUseCase;
+    private final EditGroupArtifactUseCase editGroupArtifactUseCase;
+    private final DeleteGroupArtifactUseCase deleteGroupArtifactUseCase;
+    private final ChangeGroupArtifactPrivacyUseCase changeGroupArtifactPrivacyUseCase;
     private final GetAssignmentGroupsUseCase getAssignmentGroupsUseCase;
 
     @GetMapping
@@ -204,6 +220,113 @@ public class GroupController {
             @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         this.leaveGroupUseCase.handle(userId, groupId, courseId, assignmentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{groupId}/artifacts")
+    public ResponseEntity<GroupArtifactView> addArtifact(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @Valid @RequestBody AddGroupArtifactRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        GroupArtifactView view = this.addGroupArtifactUseCase.handle(
+                userId,
+                courseId,
+                assignmentId,
+                groupId,
+                request.name(),
+                request.description(),
+                request.privateArtifact(),
+                request.resourceLink());
+        return ResponseEntity.status(HttpStatus.CREATED).body(view);
+    }
+
+    @GetMapping("/{groupId}/artifacts")
+    public ResponseEntity<List<GroupArtifactView>> getArtifacts(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        List<GroupArtifactView> views = this.getGroupArtifactsUseCase.handle(
+                userId,
+                courseId,
+                assignmentId,
+                groupId);
+        return ResponseEntity.ok(views);
+    }
+
+    @GetMapping("/{groupId}/artifacts/public")
+    public ResponseEntity<List<GroupArtifactView>> getPublicArtifacts(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        List<GroupArtifactView> views = this.getPublicGroupArtifactsUseCase.handle(
+                userId,
+                courseId,
+                assignmentId,
+                groupId);
+        return ResponseEntity.ok(views);
+    }
+
+    @PutMapping("/{groupId}/artifacts/{artifactId}")
+    public ResponseEntity<GroupArtifactView> editArtifact(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @PathVariable UUID artifactId,
+            @Valid @RequestBody EditGroupArtifactRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        GroupArtifactView view = this.editGroupArtifactUseCase.handle(
+                userId,
+                courseId,
+                assignmentId,
+                groupId,
+                artifactId,
+                request.name(),
+                request.description(),
+                request.resourceLink());
+        return ResponseEntity.ok(view);
+    }
+
+    @PutMapping("/{groupId}/artifacts/{artifactId}/privacy")
+    public ResponseEntity<Void> changePrivacy(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @PathVariable UUID artifactId,
+            @Valid @RequestBody ChangeGroupArtifactPrivacyRequest request,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        this.changeGroupArtifactPrivacyUseCase.handle(
+                courseId,
+                assignmentId,
+                groupId,
+                artifactId,
+                userId,
+                request.privateArtifact());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{groupId}/artifacts/{artifactId}")
+    public ResponseEntity<Void> deleteArtifact(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            @PathVariable UUID artifactId,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        this.deleteGroupArtifactUseCase.handle(
+                userId,
+                courseId,
+                assignmentId,
+                groupId,
+                artifactId);
         return ResponseEntity.noContent().build();
     }
 }
