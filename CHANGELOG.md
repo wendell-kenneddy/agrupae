@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added group artifacts CRUD endpoints;
 - (backend) Added `GET /courses/{courseId}/assignments/{assignmentId}/groups` endpoint returning a response wrapper containing `myGroup` (with the authenticated user's group details and memberCount) and a paginated list of all assignment groups with their member counts;
 - (backend) Added `GetAssignmentGroupsUseCase` port and `GetAssignmentGroupsService` application service;
 - (backend) Added `findByAssignmentId` and `findGroupIdByAssignmentIdAndMemberId` methods to Group/GroupMember repository ports and JPA adapters;
