@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- (backend) Added missing brances in if checks, plus more consistent validation order on courses and assignments;
 - (backend) Generalized `NotGroupLeaderException` message to "Only the group leader can perform this action.", since the exception is shared by entry-request management, mode change and member removal;
 - (backend) Added reconstruct factory method to `GroupEntryRequest` domain entity and replaced `IllegalArgumentException` with `DomainException`, with unit tests
 - (backend) Replaced generic `DomainException` with `CourseArchivedException` in `Course` domain entity's `archive` and `transferLeadership` methods;
