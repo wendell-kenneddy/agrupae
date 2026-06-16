@@ -7,13 +7,13 @@ interface ClassMembersTabProps {
 }
 
 function MemberAvatar({ name }: { name: string }) {
-  const initials = name
-    .split(' ')
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join('')
+  const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`
 
-  return <div className={styles.avatar}>{initials}</div>
+  return (
+    <div className={styles.avatar} style={{ padding: 0, overflow: 'hidden' }}>
+      <img src={avatarUrl} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+    </div>
+  )
 }
 
 export function ClassMembersTab({ course }: ClassMembersTabProps) {
