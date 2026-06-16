@@ -94,6 +94,7 @@ export function AssignmentPage() {
   const [formLink, setFormLink] = useState('')
 
   const [showCreateGroup, setShowCreateGroup] = useState(false)
+  const [dissolveGroupId, setDissolveGroupId] = useState<string | null>(null)
   const [groupName, setGroupName] = useState('')
   const [groupOpen, setGroupOpen] = useState(true)
 
@@ -215,10 +216,6 @@ export function AssignmentPage() {
   }
 
   async function handleDissolve(groupId: string) {
-    const confirmed = window.confirm(
-      'Tem certeza que deseja dissolver este grupo? Todos os membros serão removidos.'
-    )
-    if (!confirmed) return
     try {
       await dissolveGroup(groupId)
     } catch {
@@ -392,7 +389,15 @@ export function AssignmentPage() {
 
             {!isLoadingGroups && groupsData && groupsData.groups.content.length > 0 && (
               <div className={styles.groupsGrid}>
-                {groupsData.groups.content.map((g) => {
+                {[...groupsData.groups.content]
+                  .sort((a, b) => {
+                    const isAMyGroup = groupsData.myGroup?.id === a.id
+                    const isBMyGroup = groupsData.myGroup?.id === b.id
+                    if (isAMyGroup && !isBMyGroup) return -1
+                    if (!isAMyGroup && isBMyGroup) return 1
+                    return 0
+                  })
+                  .map((g) => {
                   const isMyGroup = groupsData.myGroup?.id === g.id
                   const maxMembers = assignment.assignmentFlags.maxGroupMembers
                   const isFull = g.memberCount >= maxMembers
@@ -466,7 +471,7 @@ export function AssignmentPage() {
                                   className={styles.groupActionDissolveBtn}
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    handleDissolve(g.id)
+                                    setDissolveGroupId(g.id)
                                   }}
                                   disabled={isDissolving}
                                   title="Dissolver grupo"
@@ -822,6 +827,51 @@ export function AssignmentPage() {
                 disabled={!groupName.trim() || isCreatingGroup}
               >
                 {isCreatingGroup ? 'Criando...' : 'Criar'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {dissolveGroupId !== null && (
+        <>
+          <div className={styles.overlay} onClick={() => setDissolveGroupId(null)} />
+          <div className={styles.confirmModal}>
+            <button className={styles.confirmModalCloseBtn} onClick={() => setDissolveGroupId(null)}>
+              <svg
+                width="34"
+                height="34"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <p className={styles.confirmModalTitle}>Dissolver grupo</p>
+            
+            <p className={styles.confirmModalWarning}>
+              Tem certeza que deseja dissolver este grupo? Todos os membros serão removidos.
+            </p>
+
+            <div className={styles.confirmModalActions}>
+              <button className={styles.confirmModalCancelBtn} onClick={() => setDissolveGroupId(null)}>
+                Cancelar
+              </button>
+              <button
+                className={styles.confirmModalConfirmBtn}
+                onClick={async () => {
+                  if (dissolveGroupId) {
+                    await handleDissolve(dissolveGroupId)
+                    setDissolveGroupId(null)
+                  }
+                }}
+                disabled={isDissolving}
+              >
+                {isDissolving ? 'Dissolvendo...' : 'Dissolver'}
               </button>
             </div>
           </div>
