@@ -37,6 +37,7 @@ import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.group.dto.ChangeGroupModeRequest;
 import com.agrupae.infrastructure.controller.group.dto.CreateGroupRequest;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.agrupae.infrastructure.controller.group.dto.AddGroupArtifactRequest;
 import com.agrupae.infrastructure.controller.group.dto.EditGroupArtifactRequest;
@@ -48,6 +49,8 @@ import com.agrupae.application.port.in.group.EditGroupArtifactUseCase;
 import com.agrupae.application.port.in.group.DeleteGroupArtifactUseCase;
 import com.agrupae.application.port.in.group.GroupArtifactView;
 import com.agrupae.application.port.in.group.ChangeGroupArtifactPrivacyUseCase;
+import com.agrupae.application.port.in.group.GetGroupMembersUseCase;
+import com.agrupae.application.port.in.group.GroupMemberView;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -74,6 +77,7 @@ public class GroupController {
     private final DeleteGroupArtifactUseCase deleteGroupArtifactUseCase;
     private final ChangeGroupArtifactPrivacyUseCase changeGroupArtifactPrivacyUseCase;
     private final GetAssignmentGroupsUseCase getAssignmentGroupsUseCase;
+    private final GetGroupMembersUseCase getGroupMembersUseCase;
 
     @GetMapping
     public ResponseEntity<AssignmentGroupsView> getGroups(
@@ -328,5 +332,18 @@ public class GroupController {
                 groupId,
                 artifactId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{groupId}/members")
+    public ResponseEntity<Page<GroupMemberView>> getMembers(
+            @PathVariable UUID courseId,
+            @PathVariable UUID assignmentId,
+            @PathVariable UUID groupId,
+            Pageable pageable,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        Page<GroupMemberView> views = this.getGroupMembersUseCase.handle(
+                userId, courseId, assignmentId, groupId, pageable);
+        return ResponseEntity.ok(views);
     }
 }

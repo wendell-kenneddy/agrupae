@@ -1,5 +1,6 @@
 package com.agrupae.infrastructure.persistence.jpa.repository.group;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
@@ -60,6 +61,11 @@ public class GroupMemberRepositoryJpaAdapter implements GroupMemberRepository {
     @Override
     public UUID findGroupIdByAssignmentIdAndMemberId(UUID assignmentId, UUID memberId) {
         return this.groupMemberJpaRepository.findGroupIdByAssignmentIdAndMemberId(assignmentId, memberId);
+    }
+
+    @Override
+    public List<UUID> findMemberIdsByGroupId(UUID groupId) {
+        return this.groupMemberJpaRepository.findMemberIdsByGroupId(groupId);
     }
 }
 

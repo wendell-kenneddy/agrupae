@@ -1,0 +1,71 @@
+package com.agrupae.application.service.group;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
+import com.agrupae.application.exception.course.CourseNotFoundException;
+import com.agrupae.application.exception.group.GroupNotFoundException;
+import com.agrupae.application.port.in.group.GetGroupMembersUseCase;
+import com.agrupae.application.port.in.group.GroupMemberView;
+import com.agrupae.application.port.out.assignment.AssignmentRepository;
+import com.agrupae.application.port.out.course.CourseMembershipRepository;
+import com.agrupae.application.port.out.group.GroupMemberRepository;
+import com.agrupae.application.port.out.group.GroupRepository;
+import com.agrupae.application.port.out.user.UserRepository;
+import com.agrupae.domain.assignment.Assignment;
+import com.agrupae.domain.group.Group;
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class GetGroupMembersService implements GetGroupMembersUseCase {
+    private final CourseMembershipRepository courseMembershipRepository;
+    private final AssignmentRepository assignmentRepository;
+    private final GroupRepository groupRepository;
+    private final GroupMemberRepository groupMemberRepository;
+    private final UserRepository userRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<GroupMemberView> handle(
+            @NonNull UUID userId,
+            @NonNull UUID courseId,
+            @NonNull UUID assignmentId,
+            @NonNull UUID groupId,
+            @NonNull Pageable pageable) {
+        if (!this.courseMembershipRepository.exists(userId, courseId)) {
+            throw new CourseNotFoundException();
+        }
+
+        Assignment assignment = this.assignmentRepository.findById(assignmentId);
+
+        if (assignment == null || !assignment.getCourseId().equals(courseId)) {
+            throw new AssignmentNotFoundException();
+        }
+
+        Group group = this.groupRepository.findById(groupId);
+
+        if (group == null || !group.getAssignmentId().equals(assignmentId)) {
+            throw new GroupNotFoundException();
+        }
+
+        List<UUID> memberIds = this.groupMemberRepository.findMemberIdsByGroupId(groupId);
+
+        if (memberIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        return this.userRepository.findAllByIdIn(memberIds, pageable)
+                .map(user -> new GroupMemberView(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getId().equals(group.getLeaderId())));
+    }
+}
