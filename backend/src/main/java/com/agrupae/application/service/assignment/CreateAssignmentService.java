@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 import com.agrupae.application.exception.assignment.NotCourseLeaderException;
+import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.port.in.assignment.AssignmentView;
 import com.agrupae.application.port.in.assignment.CreateAssignmentUseCase;
@@ -26,27 +27,31 @@ public class CreateAssignmentService implements CreateAssignmentUseCase {
     @Override
     @Transactional
     public AssignmentView handle(
-        @NonNull UUID leaderId,
-        @NonNull UUID courseId,
-        @NonNull String name,
-        String description, 
-        @NonNull Instant dueDate,
-        AssignmentFlags assignmentFlags) {
-            Course course = this.courseRepository.findById(courseId);
+            @NonNull UUID leaderId,
+            @NonNull UUID courseId,
+            @NonNull String name,
+            String description,
+            @NonNull Instant dueDate,
+            AssignmentFlags assignmentFlags) {
+        Course course = this.courseRepository.findById(courseId);
 
-            if (course == null) {
-                throw new CourseNotFoundException();
-            }
+        if (course == null) {
+            throw new CourseNotFoundException();
+        }
 
-            if (!course.getLeaderId().equals(leaderId)) {
-                throw new NotCourseLeaderException("Only course leader can create assignments.");
-            }
+        if (course.isArchived()) {
+            throw new CourseArchivedException();
+        }
 
-            Assignment assignment = Assignment.create(courseId, name, description, dueDate, assignmentFlags);
+        if (!course.getLeaderId().equals(leaderId)) {
+            throw new NotCourseLeaderException("Only course leader can create assignments.");
+        }
 
-            this.assignmentRepository.save(assignment);
+        Assignment assignment = Assignment.create(courseId, name, description, dueDate, assignmentFlags);
 
-            AssignmentView view = new AssignmentView(
+        this.assignmentRepository.save(assignment);
+
+        AssignmentView view = new AssignmentView(
                 assignment.getId(),
                 assignment.getCourseId(),
                 assignment.getName(),
@@ -57,7 +62,7 @@ public class CreateAssignmentService implements CreateAssignmentUseCase {
                 assignment.getCreatedAt(),
                 assignment.getUpdatedAt());
 
-            return view;
+        return view;
     }
 
 }

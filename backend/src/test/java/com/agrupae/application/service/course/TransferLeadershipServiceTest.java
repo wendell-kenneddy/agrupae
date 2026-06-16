@@ -10,7 +10,7 @@ import com.agrupae.application.port.in.course.CourseView;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.domain.course.Course;
-import com.agrupae.domain.exception.DomainException;
+import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.domain.role.Role;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -141,8 +141,8 @@ class TransferLeadershipServiceTest {
             when(courseMembershipRepository.exists(newLeaderId, courseId)).thenReturn(true);
 
             assertThatThrownBy(() -> service.handle(leaderId, Role.ADMIN, courseId, newLeaderId))
-                    .isInstanceOf(DomainException.class)
-                    .hasMessage("Cannot transfer leadership of an archived course.");
+                    .isInstanceOf(CourseArchivedException.class)
+                    .hasMessage("Course is archived.");
             verify(courseRepository, never()).save(any());
         }
 

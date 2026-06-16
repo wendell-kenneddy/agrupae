@@ -27,15 +27,21 @@ public class GetAssignmentArtifactsService implements GetAssignmentArtifactsUseC
     private final CourseRepository courseRepository;
 
     @Override
-    public List<AssignmentArtifactView> handle(@NonNull UUID userId, @NonNull UUID courseId, @NonNull UUID assignmentId) {
+    public List<AssignmentArtifactView> handle(
+            @NonNull UUID userId,
+            @NonNull UUID courseId,
+            @NonNull UUID assignmentId) {
         Course course = this.courseRepository.findById(courseId);
-        Assignment assignment = this.assignmentRepository.findById(assignmentId);
-        
-        if (course == null || !courseMembershipRepository.exists(userId, courseId)) 
-            throw new CourseNotFoundException();
 
-        if (assignment == null || !assignment.getCourseId().equals(courseId))
+        if (course == null || !courseMembershipRepository.exists(userId, courseId)) {
+            throw new CourseNotFoundException();
+        }
+
+        Assignment assignment = this.assignmentRepository.findById(assignmentId);
+
+        if (assignment == null || !assignment.getCourseId().equals(courseId)) {
             throw new AssignmentNotFoundException();
+        }
 
         List<AssignmentArtifact> artifacts = this.assignmentArtifactRepository.findByAssignmentId(assignmentId);
 

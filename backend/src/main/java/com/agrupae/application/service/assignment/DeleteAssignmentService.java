@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.assignment.NotAuthorizedToDeleteAssignmentException;
+import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.port.in.assignment.DeleteAssignmentUseCase;
 import com.agrupae.domain.course.Course;
@@ -14,7 +15,6 @@ import com.agrupae.domain.role.Role;
 import com.agrupae.application.port.out.assignment.AssignmentRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
-
 
 import lombok.RequiredArgsConstructor;
 import lombok.NonNull;
@@ -25,23 +25,23 @@ public class DeleteAssignmentService implements DeleteAssignmentUseCase {
     private final CourseRepository courseRepository;
     private final CourseMembershipRepository courseMembershipRepository;
 
-
     @Override
     @Transactional
-    public void handle(@NonNull UUID actorId, @NonNull Role actorRole, @NonNull UUID courseId, @NonNull UUID assignmentId) {
+    public void handle(@NonNull UUID actorId, @NonNull Role actorRole, @NonNull UUID courseId,
+            @NonNull UUID assignmentId) {
         Course course = this.courseRepository.findById(courseId);
 
-        if (course == null | !courseMembershipRepository.exists(actorId, courseId)) {
+        if (course == null || !courseMembershipRepository.exists(actorId, courseId)) {
             throw new CourseNotFoundException();
+        }
+
+        if (course.isArchived()) {
+            throw new CourseArchivedException();
         }
 
         Assignment assignment = this.assignmentRepository.findById(assignmentId);
 
-        if (assignment == null) {
-            throw new AssignmentNotFoundException();
-        }
-
-        if (!assignment.getCourseId().equals(courseId)) {
+        if (assignment == null || !assignment.getCourseId().equals(courseId)) {
             throw new AssignmentNotFoundException();
         }
 

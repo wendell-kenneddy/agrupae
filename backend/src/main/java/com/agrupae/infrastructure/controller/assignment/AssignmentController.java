@@ -131,8 +131,10 @@ public class AssignmentController {
             @Valid @RequestBody AddReferenceArtifactRequest request,
             @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
+        Role actorRole = Role.valueOf(jwt.getClaimAsString("role"));
         AssignmentArtifactView view = this.addReferenceArtifactUseCase.handle(
                 userId,
+                actorRole,
                 courseId,
                 assignmentId,
                 request.name(),

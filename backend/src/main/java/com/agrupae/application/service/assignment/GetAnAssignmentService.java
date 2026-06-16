@@ -22,21 +22,28 @@ public class GetAnAssignmentService implements GetAnAssignmentUseCase {
     private final AssignmentRepository assignmentRepository;
 
     @Override
-    public AssignmentView handle(@NonNull UUID studentId, @NonNull UUID courseId,@NonNull UUID assignmentId) {
-        Assignment assignment = assignmentRepository.findById(assignmentId);
-        Course course = courseRepository.findById(courseId);
+    public AssignmentView handle(@NonNull UUID studentId, @NonNull UUID courseId, @NonNull UUID assignmentId) {
+        Course course = this.courseRepository.findById(courseId);
 
-        if (course == null || !courseMembershipRepository.exists(studentId, courseId)) 
+        if (course == null || !this.courseMembershipRepository.exists(studentId, courseId)) {
             throw new CourseNotFoundException();
+        }
 
-        if (assignment == null || !assignment.getCourseId().equals(courseId))
+        Assignment assignment = this.assignmentRepository.findById(assignmentId);
+
+        if (assignment == null || !assignment.getCourseId().equals(courseId)) {
             throw new AssignmentNotFoundException();
+        }
 
         return new AssignmentView(
-            assignment.getId(), assignment.getCourseId(), assignment.getName(),
-            assignment.getDescription(),assignment.getAssignmentFlags(),
-            assignment.isArchived(), assignment.getDueDate(),
-            assignment.getCreatedAt(), assignment.getUpdatedAt()
-        );
+                assignment.getId(),
+                assignment.getCourseId(),
+                assignment.getName(),
+                assignment.getDescription(),
+                assignment.getAssignmentFlags(),
+                assignment.isArchived(),
+                assignment.getDueDate(),
+                assignment.getCreatedAt(),
+                assignment.getUpdatedAt());
     }
 }

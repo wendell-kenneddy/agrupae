@@ -12,7 +12,7 @@ import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.domain.assignment.Assignment;
 import com.agrupae.domain.assignment.AssignmentFlags;
 import com.agrupae.domain.course.Course;
-import com.agrupae.domain.exception.DomainException;
+import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.domain.role.Role;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -138,8 +138,8 @@ class ArchiveCourseServiceTest {
             when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
 
             assertThatThrownBy(() -> service.handle(leaderId, Role.USER, courseId))
-                    .isInstanceOf(DomainException.class)
-                    .hasMessage("Course is already archived.");
+                    .isInstanceOf(CourseArchivedException.class)
+                    .hasMessage("Course is archived.");
             verify(courseRepository, never()).save(any());
         }
 

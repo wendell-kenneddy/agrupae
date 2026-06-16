@@ -24,14 +24,17 @@ public class JoinCourseService implements JoinCourseUseCase {
     public CourseView handle(@NonNull UUID studentId, @NonNull String inviteCode) {
         Course course = this.courseRepository.findByInviteCode(inviteCode.trim());
         
-        if (course == null || course.isArchived())
+        if (course == null || course.isArchived()) {
             throw new InvalidInviteCodeException();
+        }
 
-        if (course.getLeaderId().equals(studentId))
+        if (course.getLeaderId().equals(studentId)) {
             throw new LeaderCannotJoinOwnCourseException();
+        }
 
-        if (this.courseMembershipRepository.exists(studentId, course.getId()))
+        if (this.courseMembershipRepository.exists(studentId, course.getId())) {
             throw new AlreadyJoinedCourseException();
+        }
 
         this.courseMembershipRepository.save(CourseMembership.create(studentId, course.getId()));
 

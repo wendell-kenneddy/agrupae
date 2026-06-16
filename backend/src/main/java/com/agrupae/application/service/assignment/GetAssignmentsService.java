@@ -24,19 +24,26 @@ public class GetAssignmentsService implements GetAssignmentsUseCase {
     @Override
     public Page<AssignmentView> handle(@NonNull UUID studentId, @NonNull UUID courseId, Pageable pageable) {
         Course course = this.courseRepository.findById(courseId);
-        if (course == null)
-            throw new CourseNotFoundException();
 
-        if (!this.courseMembershipRepository.exists(studentId, courseId))
+        if (course == null) {
             throw new CourseNotFoundException();
+        }
+
+        if (!this.courseMembershipRepository.exists(studentId, courseId)) {
+            throw new CourseNotFoundException();
+        }
 
         return this.assignmentRepository.findByCourseId(courseId, pageable)
                 .map(assignment -> new AssignmentView(
-                    assignment.getId(), assignment.getCourseId(), assignment.getName(),
-                    assignment.getDescription(),assignment.getAssignmentFlags(),
-                    assignment.isArchived(), assignment.getDueDate(),
-                    assignment.getCreatedAt(), assignment.getUpdatedAt()
-                ));
+                        assignment.getId(),
+                        assignment.getCourseId(),
+                        assignment.getName(),
+                        assignment.getDescription(),
+                        assignment.getAssignmentFlags(),
+                        assignment.isArchived(),
+                        assignment.getDueDate(),
+                        assignment.getCreatedAt(),
+                        assignment.getUpdatedAt()));
     }
-    
+
 }

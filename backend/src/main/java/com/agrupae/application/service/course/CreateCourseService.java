@@ -2,6 +2,8 @@ package com.agrupae.application.service.course;
 
 import java.util.UUID;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.agrupae.application.port.in.course.CourseView;
 import com.agrupae.application.port.in.course.CreateCourseUseCase;
 import com.agrupae.application.port.out.course.CourseRepository;
@@ -17,11 +19,12 @@ public class CreateCourseService implements CreateCourseUseCase {
     private final CourseMembershipRepository courseMembershipRepository;
 
     @Override
+    @Transactional
     public CourseView handle(UUID leaderId, String name, String description) {
         Course course = Course.create(leaderId, name, description);
         Course saved = courseRepository.save(course);
 
-        courseMembershipRepository.save(CourseMembership.create(leaderId,saved.getId()));
+        courseMembershipRepository.save(CourseMembership.create(leaderId, saved.getId()));
 
         return new CourseView(
                 saved.getId(),
