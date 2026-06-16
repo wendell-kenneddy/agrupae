@@ -15,13 +15,6 @@ export function ProfilePage() {
   const [email, setEmail] = useState(user?.email ?? '')
   const [isLoading, setIsLoading] = useState(false)
 
-  const initials = name
-    .split(' ')
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-
   const hasChanges = name.trim() !== (user?.name ?? '') || email.trim() !== (user?.email ?? '')
 
   async function handleSave() {
@@ -57,7 +50,13 @@ export function ProfilePage() {
 
       <div className={styles.content}>
         <div className={styles.avatarSection}>
-          <div className={styles.avatar}>{initials}</div>
+          <div className={styles.avatar} style={{ padding: 0, overflow: 'hidden' }}>
+            <img
+              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.id || 'default')}`}
+              alt="Avatar"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
         </div>
 
         <div className={styles.fields}>
