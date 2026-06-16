@@ -31,9 +31,13 @@ public class GetCoursesService implements GetCoursesUseCase {
 
         return courseRepository.findAllByIdIn(courseIds, pageable)
                 .map(course -> new CourseView(
-                    course.getId(), course.getLeaderId(), course.getName(),
-                    course.getDescription(), course.getInviteCode(), course.isArchived(),
-                    course.getCreatedAt(), course.getUpdatedAt()
-                ));
+                        course.getId(),
+                        course.getLeaderId(),
+                        course.getName(),
+                        course.getDescription(),
+                        course.getInviteCode(),
+                        course.isArchived(),
+                        course.getCreatedAt(),
+                        course.getUpdatedAt()));
     }
 }

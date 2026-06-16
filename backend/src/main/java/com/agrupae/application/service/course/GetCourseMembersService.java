@@ -19,25 +19,31 @@ import lombok.NonNull;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 
 @RequiredArgsConstructor
-public class GetMembersService implements GetMembersUseCase {
+public class GetCourseMembersService implements GetMembersUseCase {
     private final CourseMembershipRepository courseMembershipRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
 
-    public Page<UserProfileView> handle(@NonNull UUID courseId,@NonNull UUID actorId,@NonNull Pageable pageable) {
+    public Page<UserProfileView> handle(@NonNull UUID courseId, @NonNull UUID actorId, @NonNull Pageable pageable) {
         Course course = this.courseRepository.findById(courseId);
 
-        if (course == null | !courseMembershipRepository.exists(actorId, courseId)) throw new CourseNotFoundException();
+        if (course == null || !courseMembershipRepository.exists(actorId, courseId)) {
+            throw new CourseNotFoundException();
+        }
 
         List<CourseMembership> memberships = this.courseMembershipRepository.findByCourseId(courseId);
 
         List<UUID> studentIds = memberships.stream()
                 .map(CourseMembership::getStudentId)
                 .toList();
-        
+
         return userRepository.findAllByIdIn(studentIds, pageable)
                 .map(user -> new UserProfileView(
-                    user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getCreatedAt(), user.getUpdatedAt()
-                ));
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getRole(),
+                        user.getCreatedAt(),
+                        user.getUpdatedAt()));
     }
 }

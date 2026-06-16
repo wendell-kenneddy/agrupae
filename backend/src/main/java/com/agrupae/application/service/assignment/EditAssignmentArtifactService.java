@@ -16,6 +16,7 @@ import com.agrupae.domain.role.Role;
 import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.assignment.AssignmentArtifactNotFoundException;
 import com.agrupae.application.exception.assignment.NotCourseLeaderException;
+import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -39,18 +40,19 @@ public class EditAssignmentArtifactService implements EditAssignmentArtifactUseC
             @NonNull String name,
             @NonNull String description,
             @NonNull String resourceLink) {
-
         Course course = this.courseRepository.findById(courseId);
+
         if (course == null || !courseMembershipRepository.exists(actorId, courseId)) {
             throw new CourseNotFoundException();
         }
 
-        Assignment assignment = this.assignmentRepository.findById(assignmentId);
-        if (assignment == null) {
-            throw new AssignmentNotFoundException();
+        if (course.isArchived()) {
+            throw new CourseArchivedException();
         }
 
-        if (!assignment.getCourseId().equals(courseId)) {
+        Assignment assignment = this.assignmentRepository.findById(assignmentId);
+
+        if (assignment == null || !assignment.getCourseId().equals(courseId)) {
             throw new AssignmentNotFoundException();
         }
 
@@ -59,11 +61,8 @@ public class EditAssignmentArtifactService implements EditAssignmentArtifactUseC
         }
 
         AssignmentArtifact artifact = this.assignmentArtifactRepository.findById(artifactId);
-        if (artifact == null) {
-            throw new AssignmentArtifactNotFoundException();
-        }
 
-        if (!artifact.getAssignmentId().equals(assignmentId)) {
+        if (artifact == null || !artifact.getAssignmentId().equals(assignmentId)) {
             throw new AssignmentArtifactNotFoundException();
         }
 

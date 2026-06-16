@@ -3,6 +3,7 @@ package com.agrupae.application.service.course;
 import java.util.List;
 import java.util.UUID;
 
+import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.exception.course.NotAuthorizedToArchiveCourseException;
 import com.agrupae.application.port.in.course.ArchiveCourseUseCase;
@@ -29,11 +30,17 @@ public class ArchiveCourseService implements ArchiveCourseUseCase {
     public void handle(@NonNull UUID actorId, @NonNull Role actorRole, @NonNull UUID courseId) {
         Course course = this.courseRepository.findById(courseId);
 
-        if (course == null | !courseMembershipRepository.exists(actorId, courseId))
+        if (course == null || !courseMembershipRepository.exists(actorId, courseId)) {
             throw new CourseNotFoundException();
+        }
 
-        if (actorRole != Role.ADMIN && !course.getLeaderId().equals(actorId))
+        if (course.isArchived()) {
+            throw new CourseArchivedException();
+        }
+
+        if (actorRole != Role.ADMIN && !course.getLeaderId().equals(actorId)) {
             throw new NotAuthorizedToArchiveCourseException();
+        }
 
         course.archive();
         this.courseRepository.save(course);

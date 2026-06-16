@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.assignment.NotAuthorizedToEditAssignmentException;
+import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.port.in.assignment.AssignmentView;
 import com.agrupae.application.port.in.assignment.EditAssignmentUseCase;
@@ -18,6 +19,7 @@ import com.agrupae.application.port.out.course.CourseMembershipRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,27 +31,27 @@ public class EditAssignmentService implements EditAssignmentUseCase {
     @Override
     @Transactional
     public AssignmentView handle(
-            final UUID actorId,
-            final Role actorRole,
-            final UUID courseId,
-            final UUID assignmentId,
-            final String name,
+            @NonNull final UUID actorId,
+            @NonNull final Role actorRole,
+            @NonNull final UUID courseId,
+            @NonNull final UUID assignmentId,
+            @NonNull final String name,
             final String description,
-            final Instant dueDate,
-            final AssignmentFlags assignmentFlags) {
+            @NonNull final Instant dueDate,
+            @NonNull final AssignmentFlags assignmentFlags) {
         Course course = this.courseRepository.findById(courseId);
 
-        if (course == null) {
+        if (course == null || !courseMembershipRepository.exists(actorId, courseId)) {
             throw new CourseNotFoundException();
+        }
+
+        if (course.isArchived()) {
+            throw new CourseArchivedException();
         }
 
         Assignment assignment = this.assignmentRepository.findById(assignmentId);
 
-        if (assignment == null | !courseMembershipRepository.exists(actorId, courseId)) {
-            throw new AssignmentNotFoundException();
-        }
-
-        if (!assignment.getCourseId().equals(courseId)) {
+        if (assignment == null || !assignment.getCourseId().equals(courseId)) {
             throw new AssignmentNotFoundException();
         }
 

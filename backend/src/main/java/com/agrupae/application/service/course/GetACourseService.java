@@ -18,16 +18,20 @@ public class GetACourseService implements GetACourseUseCase {
     private final CourseMembershipRepository courseMembershipRepository;
 
     public CourseView handle(@NonNull UUID studentId, @NonNull UUID courseId) {
-
         Course course = this.courseRepository.findById(courseId);
-        if (course == null) throw new CourseNotFoundException();
 
-        if (this.courseMembershipRepository.exists(studentId, courseId)) {
-            return new CourseView(course.getId(), 
-            course.getLeaderId(), course.getName(),
-            course.getDescription(), course.getInviteCode(),
-            course.isArchived(), course.getCreatedAt(), course.getUpdatedAt());
-        } else 
+        if (course == null || !this.courseMembershipRepository.exists(studentId, courseId)) {
             throw new CourseNotFoundException();
+        }
+
+        return new CourseView(
+                course.getId(),
+                course.getLeaderId(),
+                course.getName(),
+                course.getDescription(),
+                course.getInviteCode(),
+                course.isArchived(),
+                course.getCreatedAt(),
+                course.getUpdatedAt());
     }
 }
