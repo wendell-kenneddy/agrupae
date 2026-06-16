@@ -116,4 +116,13 @@ export async function changeGroupMode(
   })
 }
 
+export async function dissolveGroup(
+  courseId: string,
+  assignmentId: string,
+  groupId: string
+): Promise<void> {
+  await api.delete(`/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}`)
+}
+
+
 
