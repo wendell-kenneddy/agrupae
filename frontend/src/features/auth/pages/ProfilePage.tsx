@@ -14,6 +14,7 @@ export function ProfilePage() {
   const [name, setName] = useState(user?.name ?? '')
   const [email, setEmail] = useState(user?.email ?? '')
   const [isLoading, setIsLoading] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   const hasChanges = name.trim() !== (user?.name ?? '') || email.trim() !== (user?.email ?? '')
 
@@ -90,7 +91,7 @@ export function ProfilePage() {
         </button>
 
 
-        <button className={styles.logoutBtn} onClick={handleLogout}>
+        <button className={styles.logoutBtn} onClick={() => setShowLogoutConfirm(true)}>
           <svg
             width="18"
             height="18"
@@ -108,6 +109,45 @@ export function ProfilePage() {
           Sair da conta
         </button>
       </div>
+
+      {showLogoutConfirm && (
+        <>
+          <div className={styles.overlay} onClick={() => setShowLogoutConfirm(false)} />
+          <div className={styles.confirmModal}>
+            <button className={styles.confirmModalCloseBtn} onClick={() => setShowLogoutConfirm(false)}>
+              <svg
+                width="34"
+                height="34"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <p className={styles.confirmModalTitle}>Sair da conta</p>
+            
+            <p className={styles.confirmModalWarning}>
+              Tem certeza que deseja sair da sua conta?
+            </p>
+
+            <div className={styles.confirmModalActions}>
+              <button className={styles.confirmModalCancelBtn} onClick={() => setShowLogoutConfirm(false)}>
+                Cancelar
+              </button>
+              <button
+                className={styles.confirmModalConfirmBtn}
+                onClick={handleLogout}
+              >
+                Sair
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </main>
   )
 }
