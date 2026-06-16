@@ -1,5 +1,6 @@
 package com.agrupae.application.port.out.group;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.agrupae.domain.group.GroupMember;
@@ -18,4 +19,6 @@ public interface GroupMemberRepository {
     UUID findOldestMemberIdExcluding(UUID groupId, UUID excludeMemberId);
 
     UUID findGroupIdByAssignmentIdAndMemberId(UUID assignmentId, UUID memberId);
+
+    List<UUID> findMemberIdsByGroupId(UUID groupId);
 }

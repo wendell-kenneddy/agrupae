@@ -47,6 +47,7 @@ import com.agrupae.application.service.group.RemoveGroupMemberService;
 import com.agrupae.application.port.out.group.GroupArtifactRepository;
 import com.agrupae.application.service.group.AddGroupArtifactService;
 import com.agrupae.application.service.group.GetGroupArtifactsService;
+import com.agrupae.application.service.group.GetGroupMembersService;
 import com.agrupae.application.service.group.GetPublicGroupArtifactsService;
 import com.agrupae.application.service.group.EditGroupArtifactService;
 import com.agrupae.application.service.group.DeleteGroupArtifactService;
@@ -389,6 +390,21 @@ public class ApplicationServiceConfig {
                                 groupRepository,
                                 groupMemberRepository,
                                 groupArtifactRepository);
+        }
+
+        @Bean
+        public GetGroupMembersService getGroupMembersService(
+                        CourseMembershipRepository courseMembershipRepository,
+                        AssignmentRepository assignmentRepository,
+                        GroupRepository groupRepository,
+                        GroupMemberRepository groupMemberRepository,
+                        UserRepository userRepository) {
+                return new GetGroupMembersService(
+                                courseMembershipRepository,
+                                assignmentRepository,
+                                groupRepository,
+                                groupMemberRepository,
+                                userRepository);
         }
 
         @Bean

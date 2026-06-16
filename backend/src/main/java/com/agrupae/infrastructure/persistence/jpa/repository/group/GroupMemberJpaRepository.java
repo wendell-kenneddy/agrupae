@@ -1,5 +1,6 @@
 package com.agrupae.infrastructure.persistence.jpa.repository.group;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,4 +32,7 @@ public interface GroupMemberJpaRepository extends JpaRepository<GroupMemberJpaEn
     UUID findGroupIdByAssignmentIdAndMemberId(
             @Param("assignmentId") UUID assignmentId,
             @Param("memberId") UUID memberId);
+
+    @Query("SELECT gm.memberId FROM GroupMemberJpaEntity gm WHERE gm.groupId = :groupId")
+    List<UUID> findMemberIdsByGroupId(@Param("groupId") UUID groupId);
 }
