@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added group artifact deliverable status toggling endpoint;
+- (backend) Added migration to add `deliverable` and `delivered_at` columns to `groups_artifacts` table;
 - (backend) Added group members listing endpoint with tests;
 - (backend) Added group artifacts CRUD endpoints;
 - (backend) Added `GET /courses/{courseId}/assignments/{assignmentId}/groups` endpoint returning a response wrapper containing `myGroup` (with the authenticated user's group details and memberCount) and a paginated list of all assignment groups with their member counts;
