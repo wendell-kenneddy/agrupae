@@ -47,3 +47,38 @@ export interface GroupEntryRequest {
   createdAt: string
   updatedAt: string
 }
+
+export interface GroupMember {
+  id: string
+  name: string
+  email: string
+  isLeader: boolean
+}
+
+export interface GroupMembersResponse {
+  content: GroupMember[]
+  totalPages: number
+  totalElements: number
+  size: number
+  number: number
+}
+
+export interface GroupArtifact {
+  id: string
+  groupId: string
+  name: string
+  description?: string
+  privateArtifact: boolean
+  resourceLink: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AddGroupArtifactRequest {
+  name: string
+  description?: string
+  privateArtifact: boolean
+  resourceLink: string
+}
+
+

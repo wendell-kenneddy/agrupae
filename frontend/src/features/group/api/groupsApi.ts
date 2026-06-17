@@ -5,6 +5,9 @@ import type {
   AssignmentGroupsResponse,
   GroupEntryRequest,
   GroupEntryRequestStatus,
+  GroupMembersResponse,
+  GroupArtifact,
+  AddGroupArtifactRequest,
 } from '@/features/group/types/groups.types'
 
 export async function createGroup(
@@ -123,6 +126,84 @@ export async function dissolveGroup(
 ): Promise<void> {
   await api.delete(`/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}`)
 }
+
+export async function getGroupMembers(
+  courseId: string,
+  assignmentId: string,
+  groupId: string
+): Promise<GroupMembersResponse> {
+  const response = await api.get<GroupMembersResponse>(
+    `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/members`
+  )
+  return response.data
+}
+
+export async function leaveGroup(
+  courseId: string,
+  assignmentId: string,
+  groupId: string
+): Promise<void> {
+  await api.delete(`/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/leave`)
+}
+
+export async function removeGroupMember(
+  courseId: string,
+  assignmentId: string,
+  groupId: string,
+  memberId: string
+): Promise<void> {
+  await api.delete(
+    `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/members/${memberId}`
+  )
+}
+
+export async function getGroupArtifacts(
+  courseId: string,
+  assignmentId: string,
+  groupId: string
+): Promise<GroupArtifact[]> {
+  const response = await api.get<GroupArtifact[]>(
+    `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/artifacts`
+  )
+  return response.data
+}
+
+export async function getPublicGroupArtifacts(
+  courseId: string,
+  assignmentId: string,
+  groupId: string
+): Promise<GroupArtifact[]> {
+  const response = await api.get<GroupArtifact[]>(
+    `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/artifacts/public`
+  )
+  return response.data
+}
+
+export async function addGroupArtifact(
+  courseId: string,
+  assignmentId: string,
+  groupId: string,
+  data: AddGroupArtifactRequest
+): Promise<GroupArtifact> {
+  const response = await api.post<GroupArtifact>(
+    `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/artifacts`,
+    data
+  )
+  return response.data
+}
+
+export async function deleteGroupArtifact(
+  courseId: string,
+  assignmentId: string,
+  groupId: string,
+  artifactId: string
+): Promise<void> {
+  await api.delete(
+    `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/artifacts/${artifactId}`
+  )
+}
+
+
 
 
 
