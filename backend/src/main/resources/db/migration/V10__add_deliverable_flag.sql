@@ -1,0 +1,2 @@
+ALTER TABLE "groups_artifacts" ADD COLUMN "deliverable" BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE "groups_artifacts" ADD COLUMN "delivered_at" TIMESTAMPTZ DEFAULT NULL;
