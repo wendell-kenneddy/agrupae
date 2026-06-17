@@ -1,5 +1,6 @@
 .page {
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
   background: var(--color-bg-light);
   display: flex;
   flex-direction: column;
@@ -45,6 +46,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow-y: auto;
 }
 
 .infoCard {
@@ -473,6 +475,20 @@
   box-shadow: 3px 3px 0px var(--color-blue-primary);
 }
 
+.groupCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.groupCardHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
 .groupNameRow {
   display: flex;
   align-items: center;
@@ -512,6 +528,8 @@
   padding: 2px 6px;
   border-radius: var(--radius-sm);
   border: 1px solid #0000001a;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .openBadge {
@@ -548,8 +566,14 @@
 
 /* ── Action buttons inside group cards ── */
 
+.groupCardActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
 .joinBtn {
-  margin-left: 10px;
   padding: 10px 16px;
   background: var(--color-blue-dark);
   color: var(--color-text-light);
@@ -557,64 +581,83 @@
   font-weight: 700;
   border-radius: var(--radius-md);
   border: 2px solid #000;
+  box-shadow: 2px 2px 0px #000;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: opacity 0.15s;
+  cursor: pointer;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
 }
 
 .joinBtn:active {
-  opacity: 0.8;
+  box-shadow: none;
+  transform: translate(2px, 2px);
 }
 
 .joinBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .requestBtn {
-  margin-left: 10px;
   padding: 10px 16px;
   background: transparent;
   color: var(--color-blue-dark);
   font-size: 0.88rem;
   font-weight: 700;
   border-radius: var(--radius-md);
-  border: 2px solid var(--color-blue-dark);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px #000;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: opacity 0.15s;
+  cursor: pointer;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
 }
 
 .requestBtn:active {
-  opacity: 0.7;
+  box-shadow: none;
+  transform: translate(2px, 2px);
 }
 
 .requestBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .cancelRequestBtn {
-  margin-left: 10px;
   padding: 10px 16px;
   background: transparent;
   color: #b45309;
   font-size: 0.88rem;
   font-weight: 700;
-  border-radius: 999px;
-  border: 2px solid #b45309;
+  border-radius: var(--radius-md);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px #000;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: opacity 0.15s;
+  cursor: pointer;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease;
 }
 
 .cancelRequestBtn:active {
-  opacity: 0.7;
+  box-shadow: none;
+  transform: translate(2px, 2px);
 }
 
 .cancelRequestBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 /* ── Inline status badges on group cards ── */
@@ -1212,3 +1255,232 @@
   box-shadow: none;
   transform: translate(3px, 3px);
 }
+
+.memberList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.memberItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(0, 16, 15, 0.04);
+  border: 1px solid rgba(0, 16, 15, 0.08);
+  border-radius: var(--radius-sm);
+  gap: 12px;
+  transition: background 0.2s;
+}
+
+.memberItem:hover {
+  background: rgba(0, 16, 15, 0.07);
+}
+
+.memberLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.memberInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.memberName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.leaderBadge {
+  background: #fef3c7;
+  color: #d97706;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 999px;
+  border: 1px solid #fcd34d;
+}
+
+.youBadge {
+  color: var(--color-blue-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.memberEmail {
+  font-size: 0.72rem;
+  color: rgba(0, 16, 15, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memberActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.memberLeaveBtn {
+  padding: 4px 10px;
+  background: transparent;
+  color: #dc2626;
+  border: 1.5px solid #dc2626;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.memberLeaveBtn:hover {
+  background: #fee2e2;
+}
+
+.memberRemoveBtn {
+  padding: 4px 10px;
+  background: transparent;
+  color: #dc2626;
+  border: 1.5px solid #dc2626;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.memberRemoveBtn:hover {
+  background: #fee2e2;
+}
+
+/* ── Sem Grupo section ── */
+.ungroupedSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.ungroupedHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ungroupedGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ungroupedMemberItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  background: var(--color-bg-gray);
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0px #000;
+  box-sizing: border-box;
+}
+
+.ungroupedMemberInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.ungroupedMemberName {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ungroupedMemberEmail {
+  font-size: 0.75rem;
+  color: #00100f88;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modalMembersList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 12px 0;
+  padding-right: 4px;
+  box-sizing: border-box;
+}
+
+.modalMemberItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: rgba(0, 16, 15, 0.04);
+  border: 1px solid rgba(0, 16, 15, 0.08);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+}
+
+.modalMemberInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.modalMemberName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modalLeaderTag {
+  background: #fef3c7;
+  color: #d97706;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid #fcd34d;
+  text-transform: uppercase;
+}
+
+.modalMemberEmail {
+  font-size: 0.72rem;
+  color: rgba(0, 16, 15, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+

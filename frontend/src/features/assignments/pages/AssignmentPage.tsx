@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useQueries } from '@tanstack/react-query'
 import { useAuth } from '@/app/providers/AuthContext'
 import { useGetClassMembers } from '@/features/classes/hooks/useGetClassMembers'
 import { useGetArtifacts } from '@/features/assignments/hooks/useGetArtifacts'
@@ -8,19 +9,20 @@ import { useGetAssignment } from '@/features/assignments/hooks/useGetAssignment'
 import { useGetClass } from '@/features/classes/hooks/useGetClass'
 import { useCreateGroup } from '@/features/group/hooks/useCreateGroup'
 import { useGetGroups } from '@/features/group/hooks/useGetGroups'
-import { useJoinOpenGroup } from '@/features/group/hooks/useJoinOpenGroup'
-import { useRequestGroupEntry } from '@/features/group/hooks/useRequestGroupEntry'
 import { useCancelGroupEntryRequest } from '@/features/group/hooks/useCancelGroupEntryRequest'
 import { useGetMyEntryRequests } from '@/features/group/hooks/useGetMyEntryRequests'
 import { useGetGroupEntryRequests } from '@/features/group/hooks/useGetGroupEntryRequests'
 import { useAcceptGroupEntryRequest } from '@/features/group/hooks/useAcceptGroupEntryRequest'
 import { useRejectGroupEntryRequest } from '@/features/group/hooks/useRejectGroupEntryRequest'
-import { useChangeGroupMode } from '@/features/group/hooks/useChangeGroupMode'
-import { useDissolveGroup } from '@/features/group/hooks/useDissolveGroup'
+import { useJoinOpenGroup } from '@/features/group/hooks/useJoinOpenGroup'
+import { useRequestGroupEntry } from '@/features/group/hooks/useRequestGroupEntry'
+import { getGroupMembers } from '@/features/group/api/groupsApi'
+
+
 
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
-import type { AssignmentArtifact } from '@/features/assignments/types/assignments.types'
-import type { GroupEntryRequest } from '@/features/group/types/groups.types'
+import type { Assignment, AssignmentArtifact } from '@/features/assignments/types/assignments.types'
+import type { GroupEntryRequest, GroupSummary } from '@/features/group/types/groups.types'
 
 import styles from './AssignmentPage.module.css'
 
@@ -39,17 +41,55 @@ export function AssignmentPage() {
   const { id: courseId, assignmentId } = useParams<{ id: string; assignmentId: string }>()
 
   const { user } = useAuth()
-  const { members: classMembers } = useGetClassMembers(courseId!)
+  const { members: classMembers, isLoading: isLoadingClassMembers } = useGetClassMembers(courseId!)
   const { assignment, isLoading, isError } = useGetAssignment(courseId!, assignmentId!)
   const { course } = useGetClass(courseId!)
   const { create: createGroup, isLoading: isCreatingGroup } = useCreateGroup(courseId!, assignmentId!)
   const { groupsData, isLoading: isLoadingGroups } = useGetGroups(courseId!, assignmentId!)
-  const { join, isLoading: isJoining } = useJoinOpenGroup(courseId!, assignmentId!)
-  const { requestEntry, isLoading: isRequesting } = useRequestGroupEntry(courseId!, assignmentId!)
   const { cancel: cancelRequest, isLoading: isCancelling } = useCancelGroupEntryRequest(courseId!, assignmentId!)
   const { myRequests } = useGetMyEntryRequests(courseId!, assignmentId!)
-  const { changeMode, isLoading: isChangingMode } = useChangeGroupMode(courseId!, assignmentId!)
-  const { dissolve: dissolveGroup, isLoading: isDissolving } = useDissolveGroup(courseId!, assignmentId!)
+  const { join: joinGroup, isLoading: isJoining } = useJoinOpenGroup(courseId!, assignmentId!)
+  const { requestEntry, isLoading: isRequesting } = useRequestGroupEntry(courseId!, assignmentId!)
+
+  const [selectedGroupForModal, setSelectedGroupForModal] = useState<GroupSummary | null>(null)
+
+  const groupIds = groupsData?.groups.content.map((g) => g.id) ?? []
+
+  const groupMembersQueries = useQueries({
+    queries: groupIds.map((groupId) => ({
+      queryKey: ['group-members', courseId, assignmentId, groupId],
+      queryFn: () => getGroupMembers(courseId!, assignmentId!, groupId),
+      enabled: !!courseId && !!assignmentId && !!groupId,
+    })),
+  })
+
+  const membersInGroupsIds = new Set<string>()
+  groupMembersQueries.forEach((q) => {
+    if (q.data?.content) {
+      q.data.content.forEach((m) => {
+        membersInGroupsIds.add(m.id)
+      })
+    }
+  })
+
+  const ungroupedStudents = classMembers.filter(
+    (member) => member.id !== course?.leaderId && !membersInGroupsIds.has(member.id)
+  )
+
+  const isUngroupedLoading =
+    isLoadingClassMembers ||
+    isLoadingGroups ||
+    groupMembersQueries.some((q) => q.isLoading)
+
+  const selectedGroupMembers = selectedGroupForModal
+    ? groupMembersQueries[groupIds.indexOf(selectedGroupForModal.id)]?.data?.content ?? []
+    : []
+
+  const isSelectedGroupMembersLoading = selectedGroupForModal
+    ? groupMembersQueries[groupIds.indexOf(selectedGroupForModal.id)]?.isLoading
+    : false
+
+
 
   const [excludedRequestIds, setExcludedRequestIds] = useState<string[]>(() => {
     try {
@@ -94,7 +134,6 @@ export function AssignmentPage() {
   const [formLink, setFormLink] = useState('')
 
   const [showCreateGroup, setShowCreateGroup] = useState(false)
-  const [dissolveGroupId, setDissolveGroupId] = useState<string | null>(null)
   const [groupName, setGroupName] = useState('')
   const [groupOpen, setGroupOpen] = useState(true)
 
@@ -171,16 +210,14 @@ export function AssignmentPage() {
 
   async function handleJoin(groupId: string) {
     try {
-      await join(groupId)
+      await joinGroup(groupId)
     } catch {}
   }
 
   async function handleRequestEntry(groupId: string) {
     try {
       await requestEntry(groupId)
-    } catch {
-      // handled by hook
-    }
+    } catch {}
   }
 
   async function handleCancelRequest(req: GroupEntryRequest) {
@@ -190,6 +227,7 @@ export function AssignmentPage() {
       // handled by hook
     }
   }
+
 
   async function handleAcceptRequest(groupId: string, requestId: string) {
     try {
@@ -202,22 +240,6 @@ export function AssignmentPage() {
   async function handleRejectRequest(groupId: string, requestId: string) {
     try {
       await rejectRequest({ groupId, requestId })
-    } catch {
-      // handled by hook
-    }
-  }
-
-  async function handleToggleMode(groupId: string, currentOpen: boolean) {
-    try {
-      await changeMode({ groupId, open: !currentOpen })
-    } catch {
-      // handled by hook
-    }
-  }
-
-  async function handleDissolve(groupId: string) {
-    try {
-      await dissolveGroup(groupId)
     } catch {
       // handled by hook
     }
@@ -398,33 +420,25 @@ export function AssignmentPage() {
                     return 0
                   })
                   .map((g) => {
-                  const isMyGroup = groupsData.myGroup?.id === g.id
-                  const maxMembers = assignment.assignmentFlags.maxGroupMembers
-                  const isFull = g.memberCount >= maxMembers
-                  const myRequest = myRequestByGroupId[g.id]
-
-                  const canAct = !hasGroup && !isOwner && isAssignmentActive
-
-                  const showModeBtn = isMyGroup && g.leaderId === user?.id && assignment.assignmentFlags.groupLeaderCanChangeMode && isAssignmentActive
-                  const showDissolveBtn = ((isMyGroup && g.leaderId === user?.id && assignment.assignmentFlags.groupLeaderCanDissolve) ||
-                    (isOwner && assignment.assignmentFlags.supervisorCanEditGroups)) && isAssignmentActive
-                  const showActionButtons = showModeBtn || showDissolveBtn
-
-                  return (
-                    <div
-                      key={g.id}
-                      className={`${styles.groupCard} ${isMyGroup ? styles.myGroupCard : ''}`}
-                    >
-                      <div className={styles.groupCardTop}>
-                        <div className={styles.groupCardHeaderLeft}>
-                          <span className={styles.groupName}>{g.name}</span>
-                          {showActionButtons && (
+                    const isMyGroup = groupsData.myGroup?.id === g.id
+                    const myRequest = myRequestByGroupId[g.id]
+                    const maxMembers = assignment.assignmentFlags.maxGroupMembers
+                    return (
+                      <div
+                        key={g.id}
+                        className={`${styles.groupCard} ${isMyGroup ? styles.myGroupCard : ''}`}
+                        onClick={
+                          isMyGroup || isOwner
+                            ? () => navigate(`/classes/${courseId}/assignments/${assignmentId}/groups/${g.id}`)
+                            : undefined
+                        }
+                        style={{ cursor: isMyGroup || isOwner ? 'pointer' : 'default' }}
+                      >
+                        <div className={styles.groupCardTop}>
+                          <div className={styles.groupCardHeaderLeft}>
+                            <span className={styles.groupName}>{g.name}</span>
                             <div className={styles.groupMeta}>
-                              <span className={`${styles.groupBadge} ${g.open ? styles.openBadge : styles.closedBadge}`}>
-                                {g.open ? 'Aberto' : 'Fechado'}
-                              </span>
                               {isMyGroup && <span className={styles.myGroupTag}>Meu grupo</span>}
-                              {/* Request status badges */}
                               {!isMyGroup && myRequest?.status === 'PENDING' && (
                                 <span className={styles.badgePending}>Pendente</span>
                               )}
@@ -432,144 +446,91 @@ export function AssignmentPage() {
                                 <span className={styles.badgeRejected}>Rejeitada</span>
                               )}
                             </div>
-                          )}
+                          </div>
+                          <span className={`${styles.groupBadge} ${g.open ? styles.openBadge : styles.closedBadge}`}>
+                            {g.open ? 'Aberto' : 'Fechado'}
+                          </span>
                         </div>
 
-                        <div className={styles.groupCardHeaderRight}>
-                          {showActionButtons ? (
-                            <>
-                              {showModeBtn && (
-                                <button
-                                  id={`toggle-group-mode-${g.id}`}
-                                  className={styles.groupActionIconBtn}
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleToggleMode(g.id, g.open)
-                                  }}
-                                  disabled={isChangingMode}
-                                  title={g.open ? 'Fechar grupo' : 'Abrir grupo'}
-                                >
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    {g.open ? (
-                                      <>
-                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                                      </>
-                                    ) : (
-                                      <>
-                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                                        <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-                                      </>
-                                    )}
-                                  </svg>
-                                </button>
-                              )}
+                        <hr className={styles.groupCardDivider} />
 
-                              {showDissolveBtn && (
-                                <button
-                                  id={`dissolve-group-${g.id}`}
-                                  className={styles.groupActionDissolveBtn}
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setDissolveGroupId(g.id)
-                                  }}
-                                  disabled={isDissolving}
-                                  title="Dissolver grupo"
-                                >
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
-                                  </svg>
-                                </button>
-                              )}
-                            </>
-                          ) : (
-                            <div className={styles.groupMeta}>
-                              <span className={`${styles.groupBadge} ${g.open ? styles.openBadge : styles.closedBadge}`}>
-                                {g.open ? 'Aberto' : 'Fechado'}
-                              </span>
-                              {isMyGroup && <span className={styles.myGroupTag}>Meu grupo</span>}
-                              {/* Request status badges */}
-                              {!isMyGroup && myRequest?.status === 'PENDING' && (
-                                <span className={styles.badgePending}>Pendente</span>
-                              )}
-                              {!isMyGroup && myRequest?.status === 'REJECTED' && (
-                                <span className={styles.badgeRejected}>Rejeitada</span>
-                              )}
-                            </div>
-                          )}
+                        <div
+                          className={styles.groupCardMembersSection}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedGroupForModal(g)
+                          }}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <span className={styles.groupMembersLabel}>
+                            Membros do grupo - <strong>{g.memberCount}/{maxMembers === 999 ? 'Sem limite' : maxMembers}</strong>
+                          </span>
+
+                          <div className={styles.memberAvatarsList}>
+                            {Array.from({ length: g.memberCount }).map((_, index) => {
+                              const seeds = ['custom1', 'custom2', 'custom3', 'custom4', 'custom5']
+                              const seed = seeds[index % seeds.length] + '-' + g.id.slice(0, 4)
+                              const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`
+                              return (
+                                <img
+                                  key={index}
+                                  src={avatarUrl}
+                                  alt="Membro"
+                                  className={styles.memberAvatarImg}
+                                />
+                              )
+                            })}
+
+                            {hasMemberLimit &&
+                              Array.from({ length: Math.max(0, maxMembers - g.memberCount) }).map((_, index) => (
+                                <div key={index} className={styles.emptyMemberSlot} />
+                              ))}
+                          </div>
                         </div>
+
+                        {isAssignmentActive && !hasGroup && (
+                          <div className={styles.groupCardActions} onClick={(e) => e.stopPropagation()}>
+                            {g.open && g.memberCount < maxMembers && (
+                              <button
+                                className={styles.joinBtn}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleJoin(g.id)
+                                }}
+                                disabled={isJoining}
+                              >
+                                {isJoining ? 'Entrando...' : 'Entrar'}
+                              </button>
+                            )}
+                            {!g.open && g.memberCount < maxMembers && !myRequest && !hasPendingRequest && (
+                              <button
+                                className={styles.requestBtn}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleRequestEntry(g.id)
+                                }}
+                                disabled={isRequesting}
+                              >
+                                {isRequesting ? 'Solicitando...' : 'Solicitar entrada'}
+                              </button>
+                            )}
+                            {!g.open && myRequest?.status === 'PENDING' && (
+                              <button
+                                className={styles.cancelRequestBtn}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleCancelRequest(myRequest)
+                                }}
+                                disabled={isCancelling}
+                              >
+                                {isCancelling ? 'Cancelando...' : 'Cancelar'}
+                              </button>
+                            )}
+                          </div>
+                        )}
                       </div>
-
-                      <hr className={styles.groupCardDivider} />
-
-                      <div className={styles.groupCardMembersSection}>
-                        <span className={styles.groupMembersLabel}>
-                          Membros do grupo - <strong>{g.memberCount}/{maxMembers === 999 ? 'Sem limite' : maxMembers}</strong>
-                        </span>
-                        
-                        <div className={styles.memberAvatarsList}>
-                          {/* Render memberCount avatars */}
-                          {Array.from({ length: g.memberCount }).map((_, index) => {
-                            const seeds = ['custom1', 'custom2', 'custom3', 'custom4', 'custom5']
-                            const seed = seeds[index % seeds.length] + '-' + g.id.slice(0, 4)
-                            const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`
-                            return (
-                              <img
-                                key={index}
-                                src={avatarUrl}
-                                alt="Membro"
-                                className={styles.memberAvatarImg}
-                              />
-                            )
-                          })}
-                          
-                          {/* Render empty slots if there is a limit */}
-                          {hasMemberLimit &&
-                            Array.from({ length: Math.max(0, maxMembers - g.memberCount) }).map((_, index) => (
-                              <div key={index} className={styles.emptyMemberSlot} />
-                            ))}
-                        </div>
-                      </div>
-
-                      {canAct && !isMyGroup && (
-                        <div className={styles.groupCardActionsBottom}>
-                          {g.open && !isFull && (
-                            <button
-                              id={`join-group-${g.id}`}
-                              className={styles.joinBtn}
-                              onClick={() => handleJoin(g.id)}
-                              disabled={isJoining}
-                            >
-                              Entrar
-                            </button>
-                          )}
-
-                          {!g.open && !isFull && !myRequest && !hasPendingRequest && (
-                            <button
-                              id={`request-entry-${g.id}`}
-                              className={styles.requestBtn}
-                              onClick={() => handleRequestEntry(g.id)}
-                              disabled={isRequesting}
-                            >
-                              Solicitar
-                            </button>
-                          )}
-
-                          {!g.open && myRequest?.status === 'PENDING' && (
-                            <button
-                              id={`cancel-request-${g.id}`}
-                              className={styles.cancelRequestBtn}
-                              onClick={() => handleCancelRequest(myRequest)}
-                              disabled={isCancelling}
-                            >
-                              Cancelar
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
+                    )
+                  })}
               </div>
             )}
           </div>
@@ -583,6 +544,41 @@ export function AssignmentPage() {
               Criar grupo
             </button>
           )}
+        </div>
+
+        {/* Line divider and Title "Sem grupo" */}
+        <hr className={styles.sectionDivider} />
+        <div className={styles.ungroupedSection}>
+          <div className={styles.ungroupedHeader}>
+            <div className={styles.groupsTitle}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <span>Sem grupo</span>
+            </div>
+            <span className={styles.groupsCount}>{isUngroupedLoading ? '...' : ungroupedStudents.length}</span>
+          </div>
+
+          <div className={styles.ungroupedList}>
+            {isUngroupedLoading ? (
+              <p className={styles.feedbackSmall}>Carregando estudantes sem grupo...</p>
+            ) : ungroupedStudents.length === 0 ? (
+              <p className={styles.emptyGroups}>Todos os estudantes possuem um grupo</p>
+            ) : (
+              <div className={styles.ungroupedGrid}>
+                {ungroupedStudents.map((student) => (
+                  <div key={student.id} className={styles.ungroupedMemberItem}>
+                    <MemberAvatar name={student.name} />
+                    <div className={styles.ungroupedMemberInfo}>
+                      <span className={styles.ungroupedMemberName}>{student.name}</span>
+                      <span className={styles.ungroupedMemberEmail}>{student.email}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {isGroupLeaderOfClosedGroup && leaderPendingRequests.length > 0 && (
@@ -832,51 +828,50 @@ export function AssignmentPage() {
           </div>
         </>
       )}
-
-      {dissolveGroupId !== null && (
+      {selectedGroupForModal !== null && (
         <>
-          <div className={styles.overlay} onClick={() => setDissolveGroupId(null)} />
-          <div className={styles.confirmModal}>
-            <button className={styles.confirmModalCloseBtn} onClick={() => setDissolveGroupId(null)}>
+          <div className={styles.overlay} onClick={() => setSelectedGroupForModal(null)} />
+          <div className={styles.modal}>
+            <button className={styles.closeBtn} onClick={() => setSelectedGroupForModal(null)}>
               <svg
-                width="34"
-                height="34"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="3.5"
+                strokeWidth="2.5"
                 strokeLinecap="round"
               >
                 <path d="M18 6L6 18M6 6l12 12" />
               </svg>
             </button>
 
-            <p className={styles.confirmModalTitle}>Dissolver grupo</p>
-            
-            <p className={styles.confirmModalWarning}>
-              Tem certeza que deseja dissolver este grupo? Todos os membros serão removidos.
-            </p>
+            <p className={styles.modalTitle}>Membros de {selectedGroupForModal.name}</p>
 
-            <div className={styles.confirmModalActions}>
-              <button className={styles.confirmModalCancelBtn} onClick={() => setDissolveGroupId(null)}>
-                Cancelar
-              </button>
-              <button
-                className={styles.confirmModalConfirmBtn}
-                onClick={async () => {
-                  if (dissolveGroupId) {
-                    await handleDissolve(dissolveGroupId)
-                    setDissolveGroupId(null)
-                  }
-                }}
-                disabled={isDissolving}
-              >
-                {isDissolving ? 'Dissolvendo...' : 'Dissolver'}
-              </button>
+            <div className={styles.modalMembersList}>
+              {isSelectedGroupMembersLoading ? (
+                <p className={styles.feedbackSmall}>Carregando membros...</p>
+              ) : selectedGroupMembers.length === 0 ? (
+                <p className={styles.feedbackSmall}>Nenhum membro no grupo</p>
+              ) : (
+                selectedGroupMembers.map((member) => (
+                  <div key={member.id} className={styles.modalMemberItem}>
+                    <MemberAvatar name={member.name} />
+                    <div className={styles.modalMemberInfo}>
+                      <span className={styles.modalMemberName}>
+                        {member.name}
+                        {member.isLeader && <span className={styles.modalLeaderTag}>Líder</span>}
+                      </span>
+                      <span className={styles.modalMemberEmail}>{member.email}</span>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </>
       )}
+
     </main>
   )
 }
