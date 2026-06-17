@@ -60,13 +60,15 @@ class GroupArtifactTest {
             Instant now = Instant.now();
 
             GroupArtifact artifact = GroupArtifact.reconstruct(
-                    id, groupId, "Artifact 2", "Desc", false, "http://link.com", now, now);
+                    id, groupId, "Artifact 2", "Desc", false, false, null, "http://link.com", now, now);
 
             assertThat(artifact.getId()).isEqualTo(id);
             assertThat(artifact.getGroupId()).isEqualTo(groupId);
             assertThat(artifact.getName()).isEqualTo("Artifact 2");
             assertThat(artifact.getDescription()).isEqualTo("Desc");
             assertThat(artifact.isPrivateArtifact()).isFalse();
+            assertThat(artifact.isDeliverable()).isFalse();
+            assertThat(artifact.getDeliveredAt()).isNull();
             assertThat(artifact.getResourceLink()).isEqualTo("http://link.com");
             assertThat(artifact.getCreatedAt()).isEqualTo(now);
             assertThat(artifact.getUpdatedAt()).isEqualTo(now);
@@ -78,10 +80,41 @@ class GroupArtifactTest {
             Instant updatedAt = createdAt.minusSeconds(60);
 
             assertThatThrownBy(() -> GroupArtifact.reconstruct(
-                    UUID.randomUUID(), UUID.randomUUID(), "Artifact", "Desc", true, "http://link.com", createdAt,
+                    UUID.randomUUID(), UUID.randomUUID(), "Artifact", "Desc", true, false, null, "http://link.com", createdAt,
                     updatedAt))
                     .isInstanceOf(DomainException.class)
                     .hasMessage("Update timestamp cannot be before creation timestamp.");
+        }
+
+        @Test
+        void withDeliverableTrueAndDeliveredAtNull_throwsDomainException() {
+            Instant now = Instant.now();
+            assertThatThrownBy(() -> GroupArtifact.reconstruct(
+                    UUID.randomUUID(), UUID.randomUUID(), "Artifact", "Desc", true, true, null, "http://link.com", now, now))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Only deliverables can hold a delivered at date.");
+        }
+
+        @Test
+        void withDeliverableFalseAndDeliveredAtNotNull_throwsDomainException() {
+            Instant now = Instant.now();
+            assertThatThrownBy(() -> GroupArtifact.reconstruct(
+                    UUID.randomUUID(), UUID.randomUUID(), "Artifact", "Desc", true, false, now, "http://link.com", now, now))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessage("Only deliverables can hold a delivered at date.");
+        }
+
+        @Test
+        void withDeliverableTrueAndDeliveredAtNotNull_reconstructsSuccessfully() {
+            UUID id = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            Instant now = Instant.now();
+
+            GroupArtifact artifact = GroupArtifact.reconstruct(
+                    id, groupId, "Artifact 2", "Desc", false, true, now, "http://link.com", now, now);
+
+            assertThat(artifact.isDeliverable()).isTrue();
+            assertThat(artifact.getDeliveredAt()).isEqualTo(now);
         }
     }
 
@@ -142,6 +175,43 @@ class GroupArtifactTest {
 
             artifact.makePublic();
             assertThat(artifact.isPrivateArtifact()).isFalse();
+        }
+    }
+
+    @Nested
+    class Deliverable {
+
+        @Test
+        void markAsDeliverable_updatesStatusAndDeliveredAt() {
+            GroupArtifact artifact = GroupArtifact.create(UUID.randomUUID(), "Artifact 1", "Desc", false,
+                    "http://link.com");
+            assertThat(artifact.isDeliverable()).isFalse();
+            assertThat(artifact.getDeliveredAt()).isNull();
+
+            Instant originalUpdatedAt = artifact.getUpdatedAt();
+
+            artifact.markAsDeliverable();
+
+            assertThat(artifact.isDeliverable()).isTrue();
+            assertThat(artifact.getDeliveredAt()).isNotNull();
+            assertThat(artifact.getUpdatedAt()).isAfterOrEqualTo(originalUpdatedAt);
+        }
+
+        @Test
+        void markAsNonDeliverable_updatesStatusAndClearsDeliveredAt() {
+            Instant now = Instant.now();
+            GroupArtifact artifact = GroupArtifact.reconstruct(
+                    UUID.randomUUID(), UUID.randomUUID(), "Artifact 1", "Desc", false, true, now, "http://link.com", now, now);
+            assertThat(artifact.isDeliverable()).isTrue();
+            assertThat(artifact.getDeliveredAt()).isEqualTo(now);
+
+            Instant originalUpdatedAt = artifact.getUpdatedAt();
+
+            artifact.markAsNonDeliverable();
+
+            assertThat(artifact.isDeliverable()).isFalse();
+            assertThat(artifact.getDeliveredAt()).isNull();
+            assertThat(artifact.getUpdatedAt()).isAfterOrEqualTo(originalUpdatedAt);
         }
     }
 }
