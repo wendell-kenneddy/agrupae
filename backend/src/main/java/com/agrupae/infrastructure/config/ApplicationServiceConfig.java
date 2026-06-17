@@ -36,6 +36,7 @@ import com.agrupae.application.service.group.GetAssignmentGroupsService;
 import com.agrupae.application.service.group.JoinOpenGroupService;
 import com.agrupae.application.service.group.RequestGroupEntryService;
 import com.agrupae.application.service.group.CancelGroupEntryRequestService;
+import com.agrupae.application.service.group.ChangeGroupArtifactDeliverableStatusService;
 import com.agrupae.application.service.group.GetUserGroupEntryRequestsService;
 import com.agrupae.application.service.group.AcceptGroupEntryRequestService;
 import com.agrupae.application.service.group.RejectGroupEntryRequestService;
@@ -465,6 +466,23 @@ public class ApplicationServiceConfig {
                 return new DeleteGroupArtifactService(
                                 courseMembershipRepository,
                                 courseRepository,
+                                assignmentRepository,
+                                groupRepository,
+                                groupMemberRepository,
+                                groupArtifactRepository);
+        }
+
+        @Bean
+        public ChangeGroupArtifactDeliverableStatusService changeGroupArtifactDeliverableStatusService(
+                        CourseRepository courseRepository,
+                        CourseMembershipRepository courseMembershipRepository,
+                        AssignmentRepository assignmentRepository,
+                        GroupRepository groupRepository,
+                        GroupMemberRepository groupMemberRepository,
+                        GroupArtifactRepository groupArtifactRepository) {
+                return new ChangeGroupArtifactDeliverableStatusService(
+                                courseRepository,
+                                courseMembershipRepository,
                                 assignmentRepository,
                                 groupRepository,
                                 groupMemberRepository,

@@ -15,6 +15,8 @@ public class GroupArtifactJpaEntityMapper {
                 entity.getName(),
                 entity.getDescription(),
                 entity.isPrivateArtifact(),
+                entity.isDeliverable(),
+                entity.getDeliveredAt(),
                 entity.getResourceLink(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());
@@ -27,6 +29,8 @@ public class GroupArtifactJpaEntityMapper {
                 .name(artifact.getName())
                 .description(artifact.getDescription())
                 .privateArtifact(artifact.isPrivateArtifact())
+                .deliverable(artifact.isDeliverable())
+                .deliveredAt(artifact.getDeliveredAt())
                 .resourceLink(artifact.getResourceLink())
                 .createdAt(artifact.getCreatedAt())
                 .updatedAt(artifact.getUpdatedAt())
