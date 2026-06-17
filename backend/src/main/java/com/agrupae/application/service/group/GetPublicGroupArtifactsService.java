@@ -58,6 +58,8 @@ public class GetPublicGroupArtifactsService implements GetPublicGroupArtifactsUs
                         artifact.getName(),
                         artifact.getDescription(),
                         artifact.isPrivateArtifact(),
+                        artifact.isDeliverable(),
+                        artifact.getDeliveredAt(),
                         artifact.getResourceLink(),
                         artifact.getCreatedAt(),
                         artifact.getUpdatedAt()))

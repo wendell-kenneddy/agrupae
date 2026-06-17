@@ -8,10 +8,10 @@ import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.exception.group.AssignmentArchivedException;
+import com.agrupae.application.exception.group.GroupArtifactNotFoundException;
 import com.agrupae.application.exception.group.GroupMemberNotFoundException;
 import com.agrupae.application.exception.group.GroupNotFoundException;
-import com.agrupae.application.port.in.group.AddGroupArtifactUseCase;
-import com.agrupae.application.port.in.group.GroupArtifactView;
+import com.agrupae.application.port.in.group.ChangeGroupArtifactDeliverableStatus;
 import com.agrupae.application.port.out.assignment.AssignmentRepository;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
@@ -27,9 +27,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class AddGroupArtifactService implements AddGroupArtifactUseCase {
-    private final CourseMembershipRepository courseMembershipRepository;
+public class ChangeGroupArtifactDeliverableStatusService implements ChangeGroupArtifactDeliverableStatus {
     private final CourseRepository courseRepository;
+    private final CourseMembershipRepository courseMembershipRepository;
     private final AssignmentRepository assignmentRepository;
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
@@ -37,16 +37,13 @@ public class AddGroupArtifactService implements AddGroupArtifactUseCase {
 
     @Override
     @Transactional
-    public GroupArtifactView handle(
-            @NonNull UUID userId,
+    public void handle(
             @NonNull UUID courseId,
             @NonNull UUID assignmentId,
             @NonNull UUID groupId,
-            @NonNull String name,
-            String description,
-            boolean privateArtifact,
-            @NonNull String resourceLink) {
-
+            @NonNull UUID groupArtifactId,
+            @NonNull UUID userId,
+            boolean deliverable) {
         Course course = this.courseRepository.findById(courseId);
 
         if (course == null) {
@@ -81,25 +78,23 @@ public class AddGroupArtifactService implements AddGroupArtifactUseCase {
             throw new GroupMemberNotFoundException();
         }
 
-        GroupArtifact artifact = GroupArtifact.create(
-                groupId,
-                name,
-                description == null ? "" : description,
-                privateArtifact,
-                resourceLink);
+        GroupArtifact groupArtifact = this.groupArtifactRepository.findById(groupArtifactId);
 
-        GroupArtifact saved = this.groupArtifactRepository.save(artifact);
+        if (groupArtifact == null || !groupArtifact.getGroupId().equals(groupId)) {
+            throw new GroupArtifactNotFoundException();
+        }
 
-        return new GroupArtifactView(
-                saved.getId(),
-                saved.getGroupId(),
-                saved.getName(),
-                saved.getDescription(),
-                saved.isPrivateArtifact(),
-                saved.isDeliverable(),
-                saved.getDeliveredAt(),
-                saved.getResourceLink(),
-                saved.getCreatedAt(),
-                saved.getUpdatedAt());
+        if (groupArtifact.isDeliverable() == deliverable) {
+            return;
+        }
+
+        if (deliverable) {
+            groupArtifact.markAsDeliverable();
+        } else {
+            groupArtifact.markAsNonDeliverable();
+        }
+
+        this.groupArtifactRepository.save(groupArtifact);
     }
+
 }
