@@ -97,6 +97,8 @@ public class EditGroupArtifactService implements EditGroupArtifactUseCase {
                 saved.getName(),
                 saved.getDescription(),
                 saved.isPrivateArtifact(),
+                saved.isDeliverable(),
+                saved.getDeliveredAt(),
                 saved.getResourceLink(),
                 saved.getCreatedAt(),
                 saved.getUpdatedAt());
