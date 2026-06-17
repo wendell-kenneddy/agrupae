@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import com.agrupae.application.exception.assignment.AssignmentNotFoundException;
 import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.exception.group.AssignmentArchivedException;
@@ -47,6 +48,7 @@ class GroupArtifactServicesTest {
     private DeleteGroupArtifactService deleteService;
     private ChangeGroupArtifactPrivacyService changePrivacyService;
     private GetPublicGroupArtifactsService getPublicService;
+    private ChangeGroupArtifactDeliverableStatusService changeDeliverableService;
 
     @BeforeEach
     void setUp() {
@@ -80,6 +82,10 @@ class GroupArtifactServicesTest {
         getPublicService = new GetPublicGroupArtifactsService(
                 courseMembershipRepository, assignmentRepository, groupRepository,
                 groupArtifactRepository);
+
+        changeDeliverableService = new ChangeGroupArtifactDeliverableStatusService(
+                courseRepository, courseMembershipRepository, assignmentRepository,
+                groupRepository, groupMemberRepository, groupArtifactRepository);
     }
 
     private static Course course(UUID id, boolean archived) {
@@ -100,12 +106,12 @@ class GroupArtifactServicesTest {
 
     private static GroupArtifact artifact(UUID id, UUID groupId) {
         Instant now = Instant.now();
-        return GroupArtifact.reconstruct(id, groupId, "Artifact 1", "Desc", true, "http://link.com", now, now);
+        return GroupArtifact.reconstruct(id, groupId, "Artifact 1", "Desc", true, false, null, "http://link.com", now, now);
     }
 
     private static GroupArtifact publicArtifact(UUID id, UUID groupId) {
         Instant now = Instant.now();
-        return GroupArtifact.reconstruct(id, groupId, "Public Artifact", "Desc", false, "http://link.com", now, now);
+        return GroupArtifact.reconstruct(id, groupId, "Public Artifact", "Desc", false, false, null, "http://link.com", now, now);
     }
 
     @Nested
@@ -127,7 +133,7 @@ class GroupArtifactServicesTest {
             UUID generatedId = UUID.randomUUID();
             when(groupArtifactRepository.save(any(GroupArtifact.class))).thenAnswer(invocation -> {
                 GroupArtifact a = invocation.getArgument(0);
-                return GroupArtifact.reconstruct(generatedId, a.getGroupId(), a.getName(), a.getDescription(), a.isPrivateArtifact(), a.getResourceLink(), a.getCreatedAt(), a.getUpdatedAt());
+                return GroupArtifact.reconstruct(generatedId, a.getGroupId(), a.getName(), a.getDescription(), a.isPrivateArtifact(), a.isDeliverable(), a.getDeliveredAt(), a.getResourceLink(), a.getCreatedAt(), a.getUpdatedAt());
             });
 
             GroupArtifactView view = addService.handle(userId, courseId, assignmentId, groupId, "New Artifact", "Desc", true, "http://link.com");
@@ -158,7 +164,7 @@ class GroupArtifactServicesTest {
             UUID generatedId = UUID.randomUUID();
             when(groupArtifactRepository.save(any(GroupArtifact.class))).thenAnswer(invocation -> {
                 GroupArtifact a = invocation.getArgument(0);
-                return GroupArtifact.reconstruct(generatedId, a.getGroupId(), a.getName(), a.getDescription(), a.isPrivateArtifact(), a.getResourceLink(), a.getCreatedAt(), a.getUpdatedAt());
+                return GroupArtifact.reconstruct(generatedId, a.getGroupId(), a.getName(), a.getDescription(), a.isPrivateArtifact(), a.isDeliverable(), a.getDeliveredAt(), a.getResourceLink(), a.getCreatedAt(), a.getUpdatedAt());
             });
 
             GroupArtifactView view = addService.handle(userId, courseId, assignmentId, groupId, "New Artifact", null, true, "http://link.com");
@@ -473,6 +479,259 @@ class GroupArtifactServicesTest {
 
             assertThatThrownBy(() -> getPublicService.handle(userId, courseId, assignmentId, groupId))
                     .isInstanceOf(GroupNotFoundException.class);
+        }
+    }
+
+    @Nested
+    class ChangeGroupArtifactDeliverableStatus {
+
+        @Test
+        void whenValidAndChangingToDeliverable_updatesStatus() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(assignmentRepository.findById(assignmentId)).thenReturn(assignment(assignmentId, courseId, false));
+            when(groupRepository.findById(groupId)).thenReturn(group(groupId, assignmentId));
+            when(groupMemberRepository.existsByGroupIdAndMemberId(groupId, userId)).thenReturn(true);
+
+            GroupArtifact existing = artifact(artifactId, groupId);
+            assertThat(existing.isDeliverable()).isFalse();
+            assertThat(existing.getDeliveredAt()).isNull();
+
+            when(groupArtifactRepository.findById(artifactId)).thenReturn(existing);
+
+            changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true);
+
+            assertThat(existing.isDeliverable()).isTrue();
+            assertThat(existing.getDeliveredAt()).isNotNull();
+            verify(groupArtifactRepository).save(existing);
+        }
+
+        @Test
+        void whenValidAndChangingToNonDeliverable_updatesStatus() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(assignmentRepository.findById(assignmentId)).thenReturn(assignment(assignmentId, courseId, false));
+            when(groupRepository.findById(groupId)).thenReturn(group(groupId, assignmentId));
+            when(groupMemberRepository.existsByGroupIdAndMemberId(groupId, userId)).thenReturn(true);
+
+            // Reconstruct an already deliverable artifact
+            GroupArtifact existing = GroupArtifact.reconstruct(
+                    artifactId, groupId, "Artifact 1", "Desc", true, true, Instant.now(), "http://link.com", Instant.now(), Instant.now()
+            );
+            assertThat(existing.isDeliverable()).isTrue();
+            assertThat(existing.getDeliveredAt()).isNotNull();
+
+            when(groupArtifactRepository.findById(artifactId)).thenReturn(existing);
+
+            changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, false);
+
+            assertThat(existing.isDeliverable()).isFalse();
+            assertThat(existing.getDeliveredAt()).isNull();
+            verify(groupArtifactRepository).save(existing);
+        }
+
+        @Test
+        void whenDeliverableIsAlreadySame_doesNotSave() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(assignmentRepository.findById(assignmentId)).thenReturn(assignment(assignmentId, courseId, false));
+            when(groupRepository.findById(groupId)).thenReturn(group(groupId, assignmentId));
+            when(groupMemberRepository.existsByGroupIdAndMemberId(groupId, userId)).thenReturn(true);
+
+            GroupArtifact existing = artifact(artifactId, groupId);
+            assertThat(existing.isDeliverable()).isFalse();
+
+            when(groupArtifactRepository.findById(artifactId)).thenReturn(existing);
+
+            changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, false);
+
+            verify(groupArtifactRepository, never()).save(any(GroupArtifact.class));
+        }
+
+        @Test
+        void whenCourseNotFound_throwsCourseNotFoundException() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseRepository.findById(courseId)).thenReturn(null);
+
+            assertThatThrownBy(() -> changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true))
+                    .isInstanceOf(CourseNotFoundException.class);
+        }
+
+        @Test
+        void whenCourseMemberNotFound_throwsCourseNotFoundException() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(false);
+
+            assertThatThrownBy(() -> changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true))
+                    .isInstanceOf(CourseNotFoundException.class);
+        }
+
+        @Test
+        void whenCourseArchived_throwsCourseArchivedException() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, true));
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+
+            assertThatThrownBy(() -> changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true))
+                    .isInstanceOf(CourseArchivedException.class);
+        }
+
+        @Test
+        void whenAssignmentNotFound_throwsAssignmentNotFoundException() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+            when(assignmentRepository.findById(assignmentId)).thenReturn(null);
+
+            assertThatThrownBy(() -> changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true))
+                    .isInstanceOf(AssignmentNotFoundException.class);
+        }
+
+        @Test
+        void whenAssignmentArchived_throwsAssignmentArchivedException() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+            when(assignmentRepository.findById(assignmentId)).thenReturn(assignment(assignmentId, courseId, true));
+
+            assertThatThrownBy(() -> changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true))
+                    .isInstanceOf(AssignmentArchivedException.class);
+        }
+
+        @Test
+        void whenGroupNotFound_throwsGroupNotFoundException() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+            when(assignmentRepository.findById(assignmentId)).thenReturn(assignment(assignmentId, courseId, false));
+            when(groupRepository.findById(groupId)).thenReturn(null);
+
+            assertThatThrownBy(() -> changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true))
+                    .isInstanceOf(GroupNotFoundException.class);
+        }
+
+        @Test
+        void whenGroupAssignmentMismatch_throwsGroupNotFoundException() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+            when(assignmentRepository.findById(assignmentId)).thenReturn(assignment(assignmentId, courseId, false));
+            // Group belongs to another assignment
+            when(groupRepository.findById(groupId)).thenReturn(group(groupId, UUID.randomUUID()));
+
+            assertThatThrownBy(() -> changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true))
+                    .isInstanceOf(GroupNotFoundException.class);
+        }
+
+        @Test
+        void whenGroupMemberNotFound_throwsGroupMemberNotFoundException() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+            when(assignmentRepository.findById(assignmentId)).thenReturn(assignment(assignmentId, courseId, false));
+            when(groupRepository.findById(groupId)).thenReturn(group(groupId, assignmentId));
+            when(groupMemberRepository.existsByGroupIdAndMemberId(groupId, userId)).thenReturn(false);
+
+            assertThatThrownBy(() -> changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true))
+                    .isInstanceOf(GroupMemberNotFoundException.class);
+        }
+
+        @Test
+        void whenArtifactNotFound_throwsGroupArtifactNotFoundException() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+            when(assignmentRepository.findById(assignmentId)).thenReturn(assignment(assignmentId, courseId, false));
+            when(groupRepository.findById(groupId)).thenReturn(group(groupId, assignmentId));
+            when(groupMemberRepository.existsByGroupIdAndMemberId(groupId, userId)).thenReturn(true);
+            when(groupArtifactRepository.findById(artifactId)).thenReturn(null);
+
+            assertThatThrownBy(() -> changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true))
+                    .isInstanceOf(GroupArtifactNotFoundException.class);
+        }
+
+        @Test
+        void whenArtifactGroupMismatch_throwsGroupArtifactNotFoundException() {
+            UUID userId = UUID.randomUUID();
+            UUID courseId = UUID.randomUUID();
+            UUID assignmentId = UUID.randomUUID();
+            UUID groupId = UUID.randomUUID();
+            UUID artifactId = UUID.randomUUID();
+
+            when(courseRepository.findById(courseId)).thenReturn(course(courseId, false));
+            when(courseMembershipRepository.exists(userId, courseId)).thenReturn(true);
+            when(assignmentRepository.findById(assignmentId)).thenReturn(assignment(assignmentId, courseId, false));
+            when(groupRepository.findById(groupId)).thenReturn(group(groupId, assignmentId));
+            when(groupMemberRepository.existsByGroupIdAndMemberId(groupId, userId)).thenReturn(true);
+            // Artifact belongs to another group
+            when(groupArtifactRepository.findById(artifactId)).thenReturn(artifact(artifactId, UUID.randomUUID()));
+
+            assertThatThrownBy(() -> changeDeliverableService.handle(courseId, assignmentId, groupId, artifactId, userId, true))
+                    .isInstanceOf(GroupArtifactNotFoundException.class);
         }
     }
 }
