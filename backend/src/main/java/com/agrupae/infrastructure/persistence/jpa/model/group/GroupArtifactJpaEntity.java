@@ -38,6 +38,12 @@ public class GroupArtifactJpaEntity {
     @Column(name = "private_artifact", nullable = false)
     private boolean privateArtifact;
 
+    @Column(name = "deliverable", nullable = false)
+    private boolean deliverable;
+
+    @Column(name = "delivered_at")
+    private Instant deliveredAt;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
