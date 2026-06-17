@@ -13,6 +13,7 @@ import { TransferOwnershipPage } from '@/features/classes/pages/TransferOwnershi
 import { CreateAssignmentPage } from '@/features/assignments/pages/CreateAssignmentPage'
 import { AssignmentPage } from '@/features/assignments/pages/AssignmentPage'
 import { EditAssignmentPage } from '@/features/assignments/pages/EditAssignmentPage'
+import { GroupPage } from '@/features/group/pages/GroupPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuth()
@@ -101,6 +102,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <EditAssignmentPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/classes/:id/assignments/:assignmentId/groups/:groupId',
+    element: (
+      <ProtectedRoute>
+        <GroupPage />
       </ProtectedRoute>
     ),
   },
