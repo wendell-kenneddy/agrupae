@@ -16,7 +16,7 @@ import { useAcceptGroupEntryRequest } from '@/features/group/hooks/useAcceptGrou
 import { useRejectGroupEntryRequest } from '@/features/group/hooks/useRejectGroupEntryRequest'
 import { useJoinOpenGroup } from '@/features/group/hooks/useJoinOpenGroup'
 import { useRequestGroupEntry } from '@/features/group/hooks/useRequestGroupEntry'
-import { getGroupMembers } from '@/features/group/api/groupsApi'
+import { getGroupMembers, getPublicGroupArtifacts } from '@/features/group/api/groupsApi'
 
 
 
@@ -52,8 +52,17 @@ export function AssignmentPage() {
   const { requestEntry, isLoading: isRequesting } = useRequestGroupEntry(courseId!, assignmentId!)
 
   const [selectedGroupForModal, setSelectedGroupForModal] = useState<GroupSummary | null>(null)
+  const [showDeliveriesModal, setShowDeliveriesModal] = useState(false)
 
   const groupIds = groupsData?.groups.content.map((g) => g.id) ?? []
+
+  const groupArtifactsQueries = useQueries({
+    queries: groupIds.map((groupId) => ({
+      queryKey: ['group-artifacts-public', courseId, assignmentId, groupId],
+      queryFn: () => getPublicGroupArtifacts(courseId!, assignmentId!, groupId),
+      enabled: !!courseId && !!assignmentId && !!groupId && (course?.role === 'OWNER'),
+    })),
+  })
 
   const groupMembersQueries = useQueries({
     queries: groupIds.map((groupId) => ({
@@ -115,11 +124,12 @@ export function AssignmentPage() {
   const myGroup = groupsData?.myGroup
   const isGroupLeaderOfClosedGroup =
     !!myGroup && myGroup.leaderId === user?.id && !myGroup.open
+  const isGroupLeader = !!myGroup && myGroup.leaderId === user?.id
 
   const { requests: leaderPendingRequests } = useGetGroupEntryRequests(
     courseId!,
     assignmentId!,
-    myGroup?.id,
+    isGroupLeader ? myGroup?.id : undefined,
     'PENDING'
   )
 
@@ -365,6 +375,27 @@ export function AssignmentPage() {
                   style={{ width: `${totalStudents > 0 ? (studentsWithoutGroup / totalStudents) * 100 : 0}%` }}
                 />
               </div>
+              <button
+                className={styles.viewDeliveriesBtn}
+                onClick={() => setShowDeliveriesModal(true)}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  style={{ marginRight: '6px' }}
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg>
+                Ver entregas
+              </button>
             </div>
             <hr className={styles.sectionDivider} />
           </>
@@ -866,6 +897,111 @@ export function AssignmentPage() {
                     </div>
                   </div>
                 ))
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {showDeliveriesModal && (
+        <>
+          <div className={styles.overlay} onClick={() => setShowDeliveriesModal(false)} />
+          <div className={styles.modal}>
+            <button className={styles.closeBtn} onClick={() => setShowDeliveriesModal(false)}>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <p className={styles.modalTitle}>Entregas dos Grupos</p>
+
+            <div className={styles.deliveriesModalList}>
+              {groupArtifactsQueries.some((q) => q.isLoading) ? (
+                <p className={styles.feedbackSmall}>Carregando entregas...</p>
+              ) : groupsData?.groups.content.length === 0 ? (
+                <p className={styles.feedbackSmall}>Nenhum grupo formado ainda.</p>
+              ) : (
+                groupsData?.groups.content.map((g, index) => {
+                  const queryResult = groupArtifactsQueries[index]
+                  const groupArtifacts = queryResult?.data ?? []
+                  const deliverables = groupArtifacts.filter((art) => art.deliverable)
+                  const hasDeliverables = deliverables.length > 0
+
+                  return (
+                    <div key={g.id} className={styles.deliveryGroupRow}>
+                      <div className={styles.deliveryGroupHeader}>
+                        <span className={styles.deliveryGroupName}>{g.name}</span>
+                        <span
+                          className={`${styles.deliveryBadgeCount} ${
+                            hasDeliverables
+                              ? styles.deliveryBadgeCountActive
+                              : styles.deliveryBadgeCountEmpty
+                          }`}
+                        >
+                          {deliverables.length === 1
+                            ? '1 entrega'
+                            : `${deliverables.length} entregas`}
+                        </span>
+                      </div>
+
+                      {hasDeliverables ? (
+                        <div className={styles.deliveryArtifactsList}>
+                          {deliverables.map((d) => (
+                            <div key={d.id} className={styles.deliveryArtifactRow}>
+                              <a
+                                href={d.resourceLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.deliveryArtifactLink}
+                              >
+                                <svg
+                                  width="14"
+                                  height="14"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                >
+                                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                                </svg>
+                                <span>
+                                  {d.name}
+                                  {d.description ? ` · ${d.description}` : ''}
+                                </span>
+                              </a>
+                              {d.deliveredAt && (
+                                <span className={styles.deliveryArtifactDate}>
+                                  {new Date(d.deliveredAt).toLocaleDateString('pt-BR')} às{' '}
+                                  {new Date(d.deliveredAt).toLocaleTimeString('pt-BR', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                  })}
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p
+                          className={styles.feedbackSmall}
+                          style={{ margin: 0, paddingLeft: 8, color: '#dc2626' }}
+                        >
+                          Nenhuma entrega realizada
+                        </p>
+                      )}
+                    </div>
+                  )
+                })
               )}
             </div>
           </div>
