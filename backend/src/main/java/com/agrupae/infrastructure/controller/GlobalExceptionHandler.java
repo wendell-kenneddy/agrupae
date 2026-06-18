@@ -44,6 +44,7 @@ import com.agrupae.application.exception.course.NotAuthorizedToArchiveCourseExce
 import com.agrupae.application.exception.assignment.NotAuthorizedToDeleteAssignmentException;
 import com.agrupae.application.exception.course.NotAuthorizedToTransferLeadershipException;
 import com.agrupae.application.exception.course.TargetUserNotEnrolled;
+import com.agrupae.application.exception.user.EmailAlreadyInUseException;
 import com.agrupae.application.exception.user.UserAlreadyExistsException;
 import com.agrupae.application.exception.user.UserNotFoundException;
 import com.agrupae.domain.exception.DomainException;
@@ -68,6 +69,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<String> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(EmailAlreadyInUseException.class)
+    public ResponseEntity<String> handleEmailAlreadyInUse(EmailAlreadyInUseException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
