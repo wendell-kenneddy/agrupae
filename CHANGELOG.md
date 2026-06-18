@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- (backend) Added group edit endpoint
 - (backend) Added group artifact deliverable status toggling endpoint;
 - (backend) Added migration to add `deliverable` and `delivered_at` columns to `groups_artifacts` table;
 - (backend) Added group members listing endpoint with tests;
