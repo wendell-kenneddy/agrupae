@@ -116,8 +116,14 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
   const { archive, isLoading: isArchiving } = useArchiveAssignment(course.id)
   const [showArchived, setShowArchived] = useState(false)
 
-  const activeAssignments = assignments.filter((a: Assignment) => !a.isArchived)
-  const archivedAssignments = assignments.filter((a: Assignment) => a.isArchived)
+  const sortedAssignments = [...assignments].sort((a, b) => {
+    const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+    const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+    return dateB - dateA
+  })
+
+  const activeAssignments = sortedAssignments.filter((a: Assignment) => !a.isArchived)
+  const archivedAssignments = sortedAssignments.filter((a: Assignment) => a.isArchived)
 
   function handleMenuOpen(e: MouseEvent<HTMLButtonElement>, id: string) {
     e.stopPropagation()

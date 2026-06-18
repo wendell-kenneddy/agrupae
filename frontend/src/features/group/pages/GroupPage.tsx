@@ -478,7 +478,7 @@ export function GroupPage() {
                     />
                     <div className={styles.memberInfo}>
                       <span className={styles.memberName}>
-                        {member.name}
+                        {member.id === user?.id ? 'Você' : member.name}
                         {member.isLeader && <span className={styles.leaderBadge}>Líder</span>}
                       </span>
                       <span className={styles.memberEmail}>{member.email}</span>

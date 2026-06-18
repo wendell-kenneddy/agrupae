@@ -19,7 +19,7 @@ import { getGroupMembers, getPublicGroupArtifacts } from '@/features/group/api/g
 
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import type { Assignment, AssignmentArtifact } from '@/features/assignments/types/assignments.types'
-import type { GroupEntryRequest, GroupSummary } from '@/features/group/types/groups.types'
+import type { GroupEntryRequest, GroupSummary, GroupArtifact } from '@/features/group/types/groups.types'
 
 import styles from './AssignmentPage.module.css'
 
@@ -29,6 +29,98 @@ function MemberAvatar({ name }: { name: string }) {
   return (
     <div className={styles.avatar} style={{ padding: 0, overflow: 'hidden' }}>
       <img src={avatarUrl} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+    </div>
+  )
+}
+
+interface DeliveryGroupRowProps {
+  group: GroupSummary
+  groupArtifacts: GroupArtifact[]
+}
+
+function DeliveryGroupRow({ group, groupArtifacts }: DeliveryGroupRowProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const deliverables = groupArtifacts.filter((art) => art.deliverable)
+  const hasDeliverables = deliverables.length > 0
+
+  return (
+    <div className={styles.deliveryGroupRow}>
+      <div
+        className={styles.deliveryGroupHeaderClickable}
+        onClick={() => hasDeliverables && setIsOpen(!isOpen)}
+        style={{ cursor: hasDeliverables ? 'pointer' : 'default' }}
+      >
+        <div className={styles.deliveryGroupHeaderLeft}>
+          {hasDeliverables && (
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              style={{
+                transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s',
+                marginRight: '4px',
+                color: 'rgba(0,16,15,0.4)',
+              }}
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          )}
+          <span className={styles.deliveryGroupName}>{group.name}</span>
+        </div>
+
+        <span
+          className={`${styles.deliveryStatusBadge} ${
+            hasDeliverables ? styles.statusDelivered : styles.statusNotDelivered
+          }`}
+        >
+          {hasDeliverables ? 'Entregue' : 'Não entregue'}
+        </span>
+      </div>
+
+      {hasDeliverables && (
+        <div className={`${styles.deliveryArtifactsList} ${isOpen ? styles.deliveryArtifactsListOpen : ''}`}>
+          {deliverables.map((d) => (
+            <div key={d.id} className={styles.deliveryArtifactRow}>
+              <a
+                href={d.resourceLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.deliveryArtifactLink}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                >
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+                <span>
+                  {d.name}
+                  {d.description ? ` · ${d.description}` : ''}
+                </span>
+              </a>
+              {d.deliveredAt && (
+                <span className={styles.deliveryArtifactDate}>
+                  {new Date(d.deliveredAt).toLocaleDateString('pt-BR')} às{' '}
+                  {new Date(d.deliveredAt).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -577,7 +669,7 @@ export function AssignmentPage() {
                     <MemberAvatar name={student.name} />
                     <div className={styles.ungroupedMemberInfo}>
                       <span className={styles.ungroupedMemberName}>
-                        {student.name}
+                        {student.id === user?.id ? 'Você' : student.name}
                         {student.id === course?.leaderId && <span className={styles.responsibleTag}>Responsável</span>}
                       </span>
                       <span className={styles.ungroupedMemberEmail}>{student.email}</span>
@@ -824,7 +916,7 @@ export function AssignmentPage() {
                     <MemberAvatar name={member.name} />
                     <div className={styles.modalMemberInfo}>
                       <span className={styles.modalMemberName}>
-                        {member.name}
+                        {member.id === user?.id ? 'Você' : member.name}
                         {member.isLeader && <span className={styles.modalLeaderTag}>Líder</span>}
                       </span>
                       <span className={styles.modalMemberEmail}>{member.email}</span>
@@ -866,74 +958,12 @@ export function AssignmentPage() {
                 sortedGroups.map((g, index) => {
                   const queryResult = groupArtifactsQueries[index]
                   const groupArtifacts = queryResult?.data ?? []
-                  const deliverables = groupArtifacts.filter((art) => art.deliverable)
-                  const hasDeliverables = deliverables.length > 0
-
                   return (
-                    <div key={g.id} className={styles.deliveryGroupRow}>
-                      <div className={styles.deliveryGroupHeader}>
-                        <span className={styles.deliveryGroupName}>{g.name}</span>
-                        <span
-                          className={`${styles.deliveryBadgeCount} ${
-                            hasDeliverables
-                              ? styles.deliveryBadgeCountActive
-                              : styles.deliveryBadgeCountEmpty
-                          }`}
-                        >
-                          {deliverables.length === 1
-                            ? '1 entrega'
-                            : `${deliverables.length} entregas`}
-                        </span>
-                      </div>
-
-                      {hasDeliverables ? (
-                        <div className={styles.deliveryArtifactsList}>
-                          {deliverables.map((d) => (
-                            <div key={d.id} className={styles.deliveryArtifactRow}>
-                              <a
-                                href={d.resourceLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={styles.deliveryArtifactLink}
-                              >
-                                <svg
-                                  width="14"
-                                  height="14"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2.5"
-                                  strokeLinecap="round"
-                                >
-                                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                                </svg>
-                                <span>
-                                  {d.name}
-                                  {d.description ? ` · ${d.description}` : ''}
-                                </span>
-                              </a>
-                              {d.deliveredAt && (
-                                <span className={styles.deliveryArtifactDate}>
-                                  {new Date(d.deliveredAt).toLocaleDateString('pt-BR')} às{' '}
-                                  {new Date(d.deliveredAt).toLocaleTimeString('pt-BR', {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                  })}
-                                </span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p
-                          className={styles.feedbackSmall}
-                          style={{ margin: 0, paddingLeft: 8, color: '#dc2626' }}
-                        >
-                          Nenhuma entrega realizada
-                        </p>
-                      )}
-                    </div>
+                    <DeliveryGroupRow
+                      key={g.id}
+                      group={g}
+                      groupArtifacts={groupArtifacts}
+                    />
                   )
                 })
               )}
