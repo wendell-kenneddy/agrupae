@@ -2,6 +2,7 @@ package com.agrupae.application.service.user;
 
 import java.util.UUID;
 
+import com.agrupae.application.exception.user.EmailAlreadyInUseException;
 import com.agrupae.application.exception.user.UserNotFoundException;
 import com.agrupae.application.port.in.user.UpdateProfileUseCase;
 import com.agrupae.application.port.in.user.UserProfileView;
@@ -21,6 +22,13 @@ public class UpdateProfileService implements UpdateProfileUseCase {
 
         if (user == null) {
             throw new UserNotFoundException();
+        }
+
+        if (!user.getEmail().equalsIgnoreCase(email)) {
+            User existingUser = this.userRepository.findByEmail(email);
+            if (existingUser != null) {
+                throw new EmailAlreadyInUseException();
+            }
         }
 
         user.updateProfile(name, email);
