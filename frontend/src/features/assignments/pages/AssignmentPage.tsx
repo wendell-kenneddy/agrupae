@@ -51,7 +51,19 @@ export function AssignmentPage() {
   const [selectedGroupForModal, setSelectedGroupForModal] = useState<GroupSummary | null>(null)
   const [showDeliveriesModal, setShowDeliveriesModal] = useState(false)
 
-  const groupIds = groupsData?.groups.content.map((g) => g.id) ?? []
+  const sortedGroups = groupsData
+    ? [...groupsData.groups.content].sort((a, b) => {
+        const isAMyGroup = groupsData.myGroup?.id === a.id
+        const isBMyGroup = groupsData.myGroup?.id === b.id
+        if (isAMyGroup && !isBMyGroup) return -1
+        if (!isAMyGroup && isBMyGroup) return 1
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+        return dateB - dateA
+      })
+    : []
+
+  const groupIds = sortedGroups.map((g) => g.id)
 
   const groupArtifactsQueries = useQueries({
     queries: groupIds.map((groupId) => ({
@@ -79,7 +91,7 @@ export function AssignmentPage() {
   })
 
   const ungroupedStudents = classMembers.filter(
-    (member) => member.id !== course?.leaderId && !membersInGroupsIds.has(member.id)
+    (member) => !membersInGroupsIds.has(member.id)
   )
 
   const isUngroupedLoading =
@@ -412,15 +424,7 @@ export function AssignmentPage() {
 
             {!isLoadingGroups && groupsData && groupsData.groups.content.length > 0 && (
               <div className={styles.groupsGrid}>
-                {[...groupsData.groups.content]
-                  .sort((a, b) => {
-                    const isAMyGroup = groupsData.myGroup?.id === a.id
-                    const isBMyGroup = groupsData.myGroup?.id === b.id
-                    if (isAMyGroup && !isBMyGroup) return -1
-                    if (!isAMyGroup && isBMyGroup) return 1
-                    return 0
-                  })
-                  .map((g) => {
+                {sortedGroups.map((g) => {
                     const isMyGroup = groupsData.myGroup?.id === g.id
                     const myRequest = myRequestByGroupId[g.id]
                     const maxMembers = assignment.assignmentFlags.maxGroupMembers
@@ -572,7 +576,10 @@ export function AssignmentPage() {
                   <div key={student.id} className={styles.ungroupedMemberItem}>
                     <MemberAvatar name={student.name} />
                     <div className={styles.ungroupedMemberInfo}>
-                      <span className={styles.ungroupedMemberName}>{student.name}</span>
+                      <span className={styles.ungroupedMemberName}>
+                        {student.name}
+                        {student.id === course?.leaderId && <span className={styles.responsibleTag}>Responsável</span>}
+                      </span>
                       <span className={styles.ungroupedMemberEmail}>{student.email}</span>
                     </div>
                   </div>
@@ -853,10 +860,10 @@ export function AssignmentPage() {
             <div className={styles.deliveriesModalList}>
               {groupArtifactsQueries.some((q) => q.isLoading) ? (
                 <p className={styles.feedbackSmall}>Carregando entregas...</p>
-              ) : groupsData?.groups.content.length === 0 ? (
+              ) : sortedGroups.length === 0 ? (
                 <p className={styles.feedbackSmall}>Nenhum grupo formado ainda.</p>
               ) : (
-                groupsData?.groups.content.map((g, index) => {
+                sortedGroups.map((g, index) => {
                   const queryResult = groupArtifactsQueries[index]
                   const groupArtifacts = queryResult?.data ?? []
                   const deliverables = groupArtifacts.filter((art) => art.deliverable)

@@ -27,7 +27,8 @@ export async function getGroups(
   assignmentId: string
 ): Promise<AssignmentGroupsResponse> {
   const response = await api.get<AssignmentGroupsResponse>(
-    `/courses/${courseId}/assignments/${assignmentId}/groups`
+    `/courses/${courseId}/assignments/${assignmentId}/groups`,
+    { params: { sort: 'createdAt,desc', size: 100 } }
   )
   return response.data
 }
