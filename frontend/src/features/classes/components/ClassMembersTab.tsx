@@ -1,5 +1,6 @@
 import { useGetClassMembers } from '@/features/classes/hooks/useGetClassMembers'
 import type { Class } from '@/features/classes/types/classes.types'
+import { useAuth } from '@/app/providers/AuthContext'
 import styles from './ClassMembersTab.module.css'
 
 interface ClassMembersTabProps {
@@ -17,6 +18,7 @@ function MemberAvatar({ name }: { name: string }) {
 }
 
 export function ClassMembersTab({ course }: ClassMembersTabProps) {
+  const { user } = useAuth()
   const { members, isLoading, isError } = useGetClassMembers(course.id)
 
   if (isLoading) return <div className={styles.feedback}>Carregando membros...</div>
@@ -29,7 +31,7 @@ export function ClassMembersTab({ course }: ClassMembersTabProps) {
           <MemberAvatar name={m.name} />
           <div className={styles.memberInfo}>
             <p className={styles.memberName}>
-              {m.name}
+              {m.id === user?.id ? 'Você' : m.name}
               {m.id === course.leaderId && <span className={styles.responsibleTag}>Responsável</span>}
             </p>
             <p className={styles.memberEmail}>{m.email}</p>
