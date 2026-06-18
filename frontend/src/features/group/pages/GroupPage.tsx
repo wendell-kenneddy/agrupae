@@ -8,6 +8,7 @@ import { useGetGroupMembers } from '@/features/group/hooks/useGetGroupMembers'
 import { useGetGroupArtifacts } from '@/features/group/hooks/useGetGroupArtifacts'
 import { useAddGroupArtifact } from '@/features/group/hooks/useAddGroupArtifact'
 import { useDeleteGroupArtifact } from '@/features/group/hooks/useDeleteGroupArtifact'
+import { useToggleGroupArtifactDeliverable } from '@/features/group/hooks/useToggleGroupArtifactDeliverable'
 import { useLeaveGroup } from '@/features/group/hooks/useLeaveGroup'
 import { useRemoveGroupMember } from '@/features/group/hooks/useRemoveGroupMember'
 import { useChangeGroupMode } from '@/features/group/hooks/useChangeGroupMode'
@@ -40,6 +41,7 @@ export function GroupPage() {
   const { artifacts, isLoading: isLoadingArtifacts } = useGetGroupArtifacts(courseId!, assignmentId!, groupId!, isMember)
   const { addArtifact, isLoading: isAddingArtifact } = useAddGroupArtifact(courseId!, assignmentId!, groupId!)
   const { deleteArtifact, isLoading: isDeletingArtifact } = useDeleteGroupArtifact(courseId!, assignmentId!, groupId!)
+  const { toggleDeliverable, isLoading: isTogglingDeliverable } = useToggleGroupArtifactDeliverable(courseId!, assignmentId!, groupId!)
 
   const { leave: leaveGroup, isLoading: isLeaving } = useLeaveGroup(courseId!, assignmentId!)
   const { removeMember, isLoading: isRemovingMember } = useRemoveGroupMember(courseId!, assignmentId!)
@@ -341,28 +343,52 @@ export function GroupPage() {
                       <span>
                         {a.name}
                         {a.description ? ` · ${a.description}` : ''}
+                        {a.deliverable && (
+                          <span className={styles.deliverableBadge}>Entregável</span>
+                        )}
                       </span>
                     </a>
                     {isMember && isAssignmentActive && (
-                      <button
-                        className={styles.linkDeleteBtn}
-                        onClick={() => handleDeleteLink(a.id)}
-                        disabled={isDeletingArtifact}
-                        title="Excluir link"
-                      >
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                      <div className={styles.linkActions}>
+                        <button
+                          className={`${styles.linkExportBtn} ${a.deliverable ? styles.linkExportBtnActive : ''}`}
+                          onClick={() => toggleDeliverable({ artifactId: a.id, deliverable: !a.deliverable })}
+                          disabled={isTogglingDeliverable}
+                          title={a.deliverable ? "Desmarcar como entregável" : "Marcar como entregável"}
                         >
-                          <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
-                        </svg>
-                      </button>
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/>
+                          </svg>
+                        </button>
+                        <button
+                          className={styles.linkDeleteBtn}
+                          onClick={() => handleDeleteLink(a.id)}
+                          disabled={isDeletingArtifact}
+                          title="Excluir link"
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+                          </svg>
+                        </button>
+                      </div>
                     )}
                   </div>
                 ))}

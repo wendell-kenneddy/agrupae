@@ -203,6 +203,32 @@ export async function deleteGroupArtifact(
   )
 }
 
+export async function changeGroupArtifactDeliverableStatus(
+  courseId: string,
+  assignmentId: string,
+  groupId: string,
+  artifactId: string,
+  deliverable: boolean
+): Promise<void> {
+  await api.patch(
+    `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/artifacts/${artifactId}/deliverable`,
+    { deliverable }
+  )
+}
+
+export async function changeGroupArtifactPrivacy(
+  courseId: string,
+  assignmentId: string,
+  groupId: string,
+  artifactId: string,
+  privateArtifact: boolean
+): Promise<void> {
+  await api.put(
+    `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/artifacts/${artifactId}/privacy`,
+    { privateArtifact }
+  )
+}
+
 
 
 
