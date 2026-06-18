@@ -12,6 +12,7 @@ import { useToggleGroupArtifactDeliverable } from '@/features/group/hooks/useTog
 import { useLeaveGroup } from '@/features/group/hooks/useLeaveGroup'
 import { useRemoveGroupMember } from '@/features/group/hooks/useRemoveGroupMember'
 import { useChangeGroupMode } from '@/features/group/hooks/useChangeGroupMode'
+import { useEditGroup } from '@/features/group/hooks/useEditGroup'
 import { useDissolveGroup } from '@/features/group/hooks/useDissolveGroup'
 import { useJoinOpenGroup } from '@/features/group/hooks/useJoinOpenGroup'
 import { useRequestGroupEntry } from '@/features/group/hooks/useRequestGroupEntry'
@@ -60,6 +61,7 @@ export function GroupPage() {
   const { leave: leaveGroup, isLoading: isLeaving } = useLeaveGroup(courseId!, assignmentId!)
   const { removeMember, isLoading: isRemovingMember } = useRemoveGroupMember(courseId!, assignmentId!)
   const { changeMode, isLoading: isChangingMode } = useChangeGroupMode(courseId!, assignmentId!)
+  const { edit: editGroup, isLoading: isEditingGroup } = useEditGroup(courseId!, assignmentId!)
   const { dissolve: dissolveGroup, isLoading: isDissolving } = useDissolveGroup(courseId!, assignmentId!)
 
   const { join, isLoading: isJoining } = useJoinOpenGroup(courseId!, assignmentId!)
@@ -73,6 +75,9 @@ export function GroupPage() {
   const [linkDescription, setLinkDescription] = useState('')
 
   const [showMenu, setShowMenu] = useState(false)
+  const [showEditGroupModal, setShowEditGroupModal] = useState(false)
+  const [editGroupName, setEditGroupName] = useState('')
+  const [editGroupOpen, setEditGroupOpen] = useState(true)
 
   // Confirm actions states
   const [showConfirmLeave, setShowConfirmLeave] = useState(false)
@@ -132,13 +137,14 @@ export function GroupPage() {
   const isFull = group.memberCount >= maxMembers
 
   const showLeaveOption = isMember && assignment.assignmentFlags.studentsCanLeaveGroups && isAssignmentActive
-  const showToggleModeOption = isGroupLeader && assignment.assignmentFlags.groupLeaderCanChangeMode && isAssignmentActive
+  const showEditGroupOption = isGroupLeader && isAssignmentActive
+  const canChangeMode = assignment.assignmentFlags.groupLeaderCanChangeMode
   const showDissolveOption =
     ((isGroupLeader && assignment.assignmentFlags.groupLeaderCanDissolve) ||
       (isOwner && assignment.assignmentFlags.supervisorCanEditGroups)) &&
     isAssignmentActive
 
-  const hasMenuOptions = showLeaveOption || showToggleModeOption || showDissolveOption
+  const hasMenuOptions = showLeaveOption || showEditGroupOption || showDissolveOption
 
   async function handleAddLink() {
     if (!linkName.trim() || !linkUrl.trim()) return
@@ -178,12 +184,28 @@ export function GroupPage() {
     } catch {}
   }
 
-  async function handleToggleMode() {
-    try {
-      await changeMode({ groupId, open: !group.open })
+  function openEditGroup() {
+    if (group) {
+      setEditGroupName(group.name)
+      setEditGroupOpen(group.open)
       setShowMenu(false)
+      setShowEditGroupModal(true)
+    }
+  }
+
+  async function handleEditGroup() {
+    if (!editGroupName.trim()) return
+    try {
+      if (editGroupName.trim() !== group.name) {
+        await editGroup({ groupId, name: editGroupName.trim() })
+      }
+      if (editGroupOpen !== group.open) {
+        await changeMode({ groupId, open: editGroupOpen })
+      }
+      setShowEditGroupModal(false)
     } catch {}
   }
+
 
   async function handleRemove(memberId: string) {
     try {
@@ -277,9 +299,9 @@ export function GroupPage() {
               <>
                 <div className={styles.dropdownOverlay} onClick={() => setShowMenu(false)} />
                 <div className={styles.dropdownMenu}>
-                  {showToggleModeOption && (
-                    <button className={styles.dropdownItem} onClick={handleToggleMode} disabled={isChangingMode}>
-                      {group.open ? 'Alterar para Fechado' : 'Alterar para Aberto'}
+                  {showEditGroupOption && (
+                    <button className={styles.dropdownItem} onClick={openEditGroup}>
+                      Editar grupo
                     </button>
                   )}
                   {showLeaveOption && (
@@ -665,6 +687,78 @@ export function GroupPage() {
                 disabled={isRemovingMember}
               >
                 {isRemovingMember ? 'Removendo...' : 'Remover'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {showEditGroupModal && (
+        <>
+          <div className={styles.overlay} onClick={() => setShowEditGroupModal(false)} />
+          <div className={styles.modal}>
+            <button className={styles.closeBtn} onClick={() => setShowEditGroupModal(false)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <p className={styles.modalTitle}>Editar grupo</p>
+
+            <div className={styles.modalFields}>
+              <input
+                className={styles.modalInput}
+                type="text"
+                placeholder="Nome do grupo"
+                value={editGroupName}
+                onChange={(e) => setEditGroupName(e.target.value)}
+              />
+
+              {canChangeMode && (
+                <div className={styles.modeToggle}>
+                  <span className={styles.modeLabel}>Modo do grupo</span>
+                  <div className={styles.modeOptions}>
+                    <button
+                      className={`${styles.modeOption} ${editGroupOpen ? styles.modeOptionActive : ''}`}
+                      onClick={() => setEditGroupOpen(true)}
+                      type="button"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3" />
+                      </svg>
+                      Aberto
+                    </button>
+                    <button
+                      className={`${styles.modeOption} ${!editGroupOpen ? styles.modeOptionActive : ''}`}
+                      onClick={() => setEditGroupOpen(false)}
+                      type="button"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </svg>
+                      Fechado
+                    </button>
+                  </div>
+                  <span className={styles.modeDescription}>
+                    {editGroupOpen
+                      ? 'Qualquer estudante da turma pode entrar diretamente.'
+                      : 'Estudantes precisam solicitar entrada. Você aprova ou rejeita.'}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className={styles.modalActions}>
+              <button className={styles.cancelBtn} onClick={() => setShowEditGroupModal(false)}>
+                Cancelar
+              </button>
+              <button
+                className={styles.confirmBtn}
+                onClick={handleEditGroup}
+                disabled={!editGroupName.trim() || isEditingGroup || isChangingMode}
+              >
+                {isEditingGroup || isChangingMode ? 'Salvando...' : 'Salvar'}
               </button>
             </div>
           </div>
