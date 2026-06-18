@@ -17,9 +17,23 @@ import { useJoinOpenGroup } from '@/features/group/hooks/useJoinOpenGroup'
 import { useRequestGroupEntry } from '@/features/group/hooks/useRequestGroupEntry'
 import { useCancelGroupEntryRequest } from '@/features/group/hooks/useCancelGroupEntryRequest'
 import { useGetMyEntryRequests } from '@/features/group/hooks/useGetMyEntryRequests'
+import { useGetGroupEntryRequests } from '@/features/group/hooks/useGetGroupEntryRequests'
+import { useAcceptGroupEntryRequest } from '@/features/group/hooks/useAcceptGroupEntryRequest'
+import { useRejectGroupEntryRequest } from '@/features/group/hooks/useRejectGroupEntryRequest'
+import { useGetClassMembers } from '@/features/classes/hooks/useGetClassMembers'
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
-
 import styles from './GroupPage.module.css'
+
+
+function MemberAvatar({ name }: { name: string }) {
+  const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`
+
+  return (
+    <div className={styles.avatar} style={{ padding: 0, overflow: 'hidden' }}>
+      <img src={avatarUrl} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+    </div>
+  )
+}
 
 export function GroupPage() {
   const navigate = useNavigate()
@@ -68,6 +82,32 @@ export function GroupPage() {
   const isOwner = course?.role === 'OWNER'
   const isAssignmentActive = assignment ? !assignment.isArchived : false
   const isGroupLeader = group ? group.leaderId === user?.id : false
+
+  const { requests: leaderPendingRequests = [] } = useGetGroupEntryRequests(
+    courseId!,
+    assignmentId!,
+    isGroupLeader ? groupId : undefined,
+    'PENDING'
+  )
+  const { accept: acceptRequest, isLoading: isAccepting } = useAcceptGroupEntryRequest(courseId!, assignmentId!)
+  const { reject: rejectRequest, isLoading: isRejecting } = useRejectGroupEntryRequest(courseId!, assignmentId!)
+  const { members: classMembers } = useGetClassMembers(courseId!)
+
+  async function handleAcceptRequest(requestId: string) {
+    try {
+      await acceptRequest({ groupId: groupId!, requestId })
+    } catch {
+      // handled by hook
+    }
+  }
+
+  async function handleRejectRequest(requestId: string) {
+    try {
+      await rejectRequest({ groupId: groupId!, requestId })
+    } catch {
+      // handled by hook
+    }
+  }
 
   useEffect(() => {
     if (!isLoadingAssignment && !isLoadingGroups && !isLoadingMembers) {
@@ -442,6 +482,51 @@ export function GroupPage() {
               ))}
             </div>
           </div>
+
+          {isGroupLeader && leaderPendingRequests.length > 0 && (
+            <div className={styles.leaderRequestsSection}>
+              <p className={styles.leaderRequestsTitle}>Solicitações de entrada</p>
+              <div className={styles.leaderRequestsList}>
+                {leaderPendingRequests.map((req) => {
+                  const requester = classMembers.find((m) => m.id === req.userId)
+                  const requesterName = requester?.name ?? 'Estudante'
+                  const requesterEmail = requester?.email ?? ''
+
+                  return (
+                    <div key={req.id} className={styles.leaderRequestCard}>
+                      <div className={styles.leaderRequestLeft}>
+                        <MemberAvatar name={requesterName} />
+                        <div className={styles.leaderRequestInfo}>
+                          <span className={styles.leaderRequestName}>{requesterName}</span>
+                          {requesterEmail && (
+                            <span className={styles.leaderRequestEmail}>{requesterEmail}</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className={styles.leaderRequestActions}>
+                        <button
+                          id={`accept-request-${req.id}`}
+                          className={styles.acceptBtn}
+                          onClick={() => handleAcceptRequest(req.id)}
+                          disabled={isAccepting || isRejecting}
+                        >
+                          {isAccepting ? 'Aceitando...' : 'Aceitar'}
+                        </button>
+                        <button
+                          id={`reject-request-${req.id}`}
+                          className={styles.rejectBtn}
+                          onClick={() => handleRejectRequest(req.id)}
+                          disabled={isAccepting || isRejecting}
+                        >
+                          {isRejecting ? 'Rejeitando...' : 'Rejeitar'}
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
       {/* Add Link Modal */}

@@ -635,3 +635,143 @@
     transform: translateX(-50%) translateY(0);
   }
 }
+
+/* ── Leader Requests section ── */
+
+.leaderRequestsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.leaderRequestsTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0 0 4px;
+}
+
+.leaderRequestsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leaderRequestCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  background: var(--color-bg-gray);
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0px #000;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.leaderRequestLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.leaderRequestInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.leaderRequestName {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.leaderRequestEmail {
+  font-size: 0.75rem;
+  color: #00100f88;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.leaderRequestActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.acceptBtn {
+  padding: 6px 14px;
+  background: var(--color-blue-dark);
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px #000;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease,
+    opacity 0.15s;
+}
+
+.acceptBtn:active {
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+
+.acceptBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.rejectBtn {
+  padding: 6px 14px;
+  background: transparent;
+  color: #dc2626;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 2px solid #dc2626;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.rejectBtn:active {
+  opacity: 0.7;
+}
+
+.rejectBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-blue-primary);
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  flex-shrink: 0;
+}
+

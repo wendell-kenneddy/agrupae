@@ -11,9 +11,6 @@ import { useCreateGroup } from '@/features/group/hooks/useCreateGroup'
 import { useGetGroups } from '@/features/group/hooks/useGetGroups'
 import { useCancelGroupEntryRequest } from '@/features/group/hooks/useCancelGroupEntryRequest'
 import { useGetMyEntryRequests } from '@/features/group/hooks/useGetMyEntryRequests'
-import { useGetGroupEntryRequests } from '@/features/group/hooks/useGetGroupEntryRequests'
-import { useAcceptGroupEntryRequest } from '@/features/group/hooks/useAcceptGroupEntryRequest'
-import { useRejectGroupEntryRequest } from '@/features/group/hooks/useRejectGroupEntryRequest'
 import { useJoinOpenGroup } from '@/features/group/hooks/useJoinOpenGroup'
 import { useRequestGroupEntry } from '@/features/group/hooks/useRequestGroupEntry'
 import { getGroupMembers, getPublicGroupArtifacts } from '@/features/group/api/groupsApi'
@@ -122,19 +119,7 @@ export function AssignmentPage() {
   const visibleMyRequests = myRequests.filter((req) => !excludedRequestIds.includes(req.id))
 
   const myGroup = groupsData?.myGroup
-  const isGroupLeaderOfClosedGroup =
-    !!myGroup && myGroup.leaderId === user?.id && !myGroup.open
-  const isGroupLeader = !!myGroup && myGroup.leaderId === user?.id
 
-  const { requests: leaderPendingRequests } = useGetGroupEntryRequests(
-    courseId!,
-    assignmentId!,
-    isGroupLeader ? myGroup?.id : undefined,
-    'PENDING'
-  )
-
-  const { accept: acceptRequest, isLoading: isAccepting } = useAcceptGroupEntryRequest(courseId!, assignmentId!)
-  const { reject: rejectRequest, isLoading: isRejecting } = useRejectGroupEntryRequest(courseId!, assignmentId!)
 
   const { artifacts, isLoading: isLoadingArtifacts } = useGetArtifacts(courseId!, assignmentId!)
   const { add, isLoading: isAdding } = useAddArtifact(courseId!, assignmentId!)
@@ -239,21 +224,6 @@ export function AssignmentPage() {
   }
 
 
-  async function handleAcceptRequest(groupId: string, requestId: string) {
-    try {
-      await acceptRequest({ groupId, requestId })
-    } catch {
-      // handled by hook
-    }
-  }
-
-  async function handleRejectRequest(groupId: string, requestId: string) {
-    try {
-      await rejectRequest({ groupId, requestId })
-    } catch {
-      // handled by hook
-    }
-  }
 
   const isAssignmentActive = !assignment.isArchived
 
@@ -612,50 +582,7 @@ export function AssignmentPage() {
           </div>
         </div>
 
-        {isGroupLeaderOfClosedGroup && leaderPendingRequests.length > 0 && (
-          <div className={styles.leaderRequestsSection}>
-            <p className={styles.leaderRequestsTitle}>Solicitações de entrada</p>
-            <div className={styles.leaderRequestsList}>
-              {leaderPendingRequests.map((req) => {
-                const requester = classMembers.find((m) => m.id === req.userId)
-                const requesterName = requester?.name ?? 'Estudante'
-                const requesterEmail = requester?.email ?? ''
 
-                return (
-                  <div key={req.id} className={styles.leaderRequestCard}>
-                    <div className={styles.leaderRequestLeft}>
-                      <MemberAvatar name={requesterName} />
-                      <div className={styles.leaderRequestInfo}>
-                        <span className={styles.leaderRequestName}>{requesterName}</span>
-                        {requesterEmail && (
-                          <span className={styles.leaderRequestEmail}>{requesterEmail}</span>
-                        )}
-                      </div>
-                    </div>
-                    <div className={styles.leaderRequestActions}>
-                      <button
-                        id={`accept-request-${req.id}`}
-                        className={styles.acceptBtn}
-                        onClick={() => handleAcceptRequest(myGroup.id, req.id)}
-                        disabled={isAccepting || isRejecting}
-                      >
-                        {isAccepting ? 'Aceitando...' : 'Aceitar'}
-                      </button>
-                      <button
-                        id={`reject-request-${req.id}`}
-                        className={styles.rejectBtn}
-                        onClick={() => handleRejectRequest(myGroup.id, req.id)}
-                        disabled={isAccepting || isRejecting}
-                      >
-                        {isRejecting ? 'Rejeitando...' : 'Rejeitar'}
-                      </button>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )}
 
         {visibleMyRequests.length > 0 && (
           <div className={styles.myRequestsSection}>
