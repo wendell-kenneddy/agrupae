@@ -69,6 +69,8 @@ export interface GroupArtifact {
   name: string
   description?: string
   privateArtifact: boolean
+  deliverable: boolean
+  deliveredAt?: string
   resourceLink: string
   createdAt: string
   updatedAt: string
