@@ -35,9 +35,11 @@ import com.agrupae.application.port.in.group.LeaveGroupUseCase;
 import com.agrupae.application.port.in.group.ChangeGroupArtifactDeliverableStatus;
 import com.agrupae.application.port.in.group.RemoveGroupMemberUseCase;
 import com.agrupae.domain.group.GroupEntryRequestStatus;
+import com.agrupae.application.port.in.group.EditGroupUseCase;
 import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.group.dto.ChangeGroupModeRequest;
 import com.agrupae.infrastructure.controller.group.dto.CreateGroupRequest;
+import com.agrupae.infrastructure.controller.group.dto.EditGroupRequest;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,6 +65,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/courses/{courseId}/assignments/{assignmentId}/groups")
 public class GroupController {
         private final CreateGroupUseCase createGroupUseCase;
+        private final EditGroupUseCase editGroupUseCase;
         private final JoinOpenGroupUseCase joinOpenGroupUseCase;
         private final RequestGroupEntryUseCase requestGroupEntryUseCase;
         private final CancelGroupEntryRequestUseCase cancelGroupEntryRequestUseCase;
@@ -182,6 +185,23 @@ public class GroupController {
                 UUID userId = UUID.fromString(jwt.getSubject());
                 this.changeGroupModeUseCase.handle(courseId, assignmentId, groupId, userId, request.open());
                 return ResponseEntity.noContent().build();
+        }
+
+        @PutMapping("/{groupId}")
+        public ResponseEntity<GroupView> edit(
+                        @PathVariable UUID courseId,
+                        @PathVariable UUID assignmentId,
+                        @PathVariable UUID groupId,
+                        @Valid @RequestBody EditGroupRequest request,
+                        @AuthenticationPrincipal Jwt jwt) {
+                UUID userId = UUID.fromString(jwt.getSubject());
+                GroupView view = this.editGroupUseCase.handle(
+                                courseId,
+                                assignmentId,
+                                groupId,
+                                userId,
+                                request.name());
+                return ResponseEntity.ok(view);
         }
 
         @DeleteMapping("/{groupId}")
