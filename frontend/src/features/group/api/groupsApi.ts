@@ -228,8 +228,15 @@ export async function changeGroupArtifactPrivacy(
     { privateArtifact }
   )
 }
-
-
-
-
-
+export async function editGroup(
+  courseId: string,
+  assignmentId: string,
+  groupId: string,
+  name: string
+): Promise<Group> {
+  const response = await api.put<Group>(
+    `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}`,
+    { name }
+  )
+  return response.data
+}
