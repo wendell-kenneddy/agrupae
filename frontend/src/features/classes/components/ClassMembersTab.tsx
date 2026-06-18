@@ -28,7 +28,10 @@ export function ClassMembersTab({ course }: ClassMembersTabProps) {
         <div key={m.id} className={styles.memberItem}>
           <MemberAvatar name={m.name} />
           <div className={styles.memberInfo}>
-            <p className={styles.memberName}>{m.name}</p>
+            <p className={styles.memberName}>
+              {m.name}
+              {m.id === course.leaderId && <span className={styles.responsibleTag}>Responsável</span>}
+            </p>
             <p className={styles.memberEmail}>{m.email}</p>
           </div>
         </div>

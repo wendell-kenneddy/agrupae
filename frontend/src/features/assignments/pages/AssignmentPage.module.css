@@ -1607,4 +1607,18 @@
   flex-shrink: 0;
 }
 
+.responsibleTag {
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  margin-left: 8px;
+  text-transform: uppercase;
+  display: inline-block;
+  vertical-align: middle;
+  border: 1.5px solid #00100f;
+}
+
 

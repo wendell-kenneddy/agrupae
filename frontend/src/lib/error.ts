@@ -20,6 +20,7 @@ const errorTranslations: Record<string, string> = {
   // User / Auth
   "User not found.": "Usuário não encontrado.",
   "User already exists.": "Usuário já cadastrado.",
+  "Email is already in use.": "Este e-mail já está sendo utilizado.",
   "Invalid refresh token.": "Sessão expirada. Faça login novamente.",
   "Refresh token has been revoked.": "Sessão revogada. Faça login novamente.",
   "Refresh token has expired.": "Sessão expirada. Faça login novamente.",
