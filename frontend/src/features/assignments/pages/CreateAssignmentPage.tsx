@@ -115,9 +115,11 @@ export function CreateAssignmentPage() {
     PRESETS.free
   )
   const [submitted, setSubmitted] = useState(false)
+  const [showWarningModal, setShowWarningModal] = useState(false)
 
   const [forcedAdvanced, setForcedAdvanced] = useState(false)
   const mode = forcedAdvanced ? 'advanced' : detectMode(flags)
+  const matchingPreset = detectMode(flags)
   const validations = getValidationErrors(flags, mode)
   
   if (dueDate) {
@@ -145,6 +147,18 @@ export function CreateAssignmentPage() {
   async function handleSubmit() {
     setSubmitted(true)
     if (!name.trim() || hasErrors) return
+
+    const hasWarnings = validations.some((v) => v.type === 'warning')
+    if (hasWarnings && !showWarningModal) {
+      setShowWarningModal(true)
+      return
+    }
+
+    await proceedSubmit()
+  }
+
+  async function proceedSubmit() {
+    setShowWarningModal(false)
     try {
       await create({
         name: name.trim(),
@@ -319,6 +333,33 @@ export function CreateAssignmentPage() {
                 </label>
               ))}
             </div>
+            {matchingPreset !== 'advanced' && (
+              <div className={styles.alertInfo} style={{ marginTop: '12px' }}>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 16v-4M12 8h.01" />
+                </svg>
+                <p>
+                  Esta combinação de permissões corresponde ao preset{' '}
+                  <strong>
+                    {matchingPreset === 'free'
+                      ? 'Livre'
+                      : matchingPreset === 'moderate'
+                        ? 'Moderado'
+                        : 'Controlado'}
+                  </strong>
+                  .
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -366,6 +407,57 @@ export function CreateAssignmentPage() {
           {isLoading ? 'Criando...' : 'Criar trabalho'}
         </button>
       </div>
+      {showWarningModal && (
+        <>
+          <div className={styles.overlay} onClick={() => setShowWarningModal(false)} />
+          <div className={styles.confirmModal}>
+            <button className={styles.confirmModalCloseBtn} onClick={() => setShowWarningModal(false)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <p className={styles.confirmModalTitle}>Aviso de Configuração</p>
+            <p className={styles.confirmModalSub}>
+              Algumas configurações de permissões podem causar comportamentos indesejados. Tem certeza que deseja continuar?
+            </p>
+
+            <div className={styles.modalWarningsList}>
+              {validations
+                .filter((v) => v.type === 'warning')
+                .map((w, index) => (
+                  <div key={index} className={styles.modalWarningItem}>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M12 8v4M12 16h.01" />
+                    </svg>
+                    <span>{w.message}</span>
+                  </div>
+                ))}
+            </div>
+
+            <div className={styles.confirmModalActions}>
+              <button className={styles.confirmModalCancelBtn} onClick={() => setShowWarningModal(false)}>
+                Revisar Configurações
+              </button>
+              <button
+                className={styles.confirmModalConfirmBtn}
+                onClick={proceedSubmit}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Criando...' : 'Confirmar Criação'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </main>
   )
 }

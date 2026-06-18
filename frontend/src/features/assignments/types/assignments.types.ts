@@ -51,7 +51,7 @@ export const PRESETS: Record<
     groupLeaderCanRemoveMembers: true,
     groupLeaderCanChangeMode: true,
     groupLeaderCanTransferLeadership: true,
-    supervisorCanEditGroups: true,
+    supervisorCanEditGroups: false,
   },
   controlled: {
     studentsCanCreateGroups: false,
