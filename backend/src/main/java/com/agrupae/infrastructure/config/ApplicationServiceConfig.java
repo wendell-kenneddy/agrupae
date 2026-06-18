@@ -53,6 +53,7 @@ import com.agrupae.application.service.group.GetPublicGroupArtifactsService;
 import com.agrupae.application.service.group.EditGroupArtifactService;
 import com.agrupae.application.service.group.DeleteGroupArtifactService;
 import com.agrupae.application.service.group.ChangeGroupArtifactPrivacyService;
+import com.agrupae.application.service.group.EditGroupService;
 
 @Configuration
 public class ApplicationServiceConfig {
@@ -487,5 +488,15 @@ public class ApplicationServiceConfig {
                                 groupRepository,
                                 groupMemberRepository,
                                 groupArtifactRepository);
+        }
+
+        @Bean
+        public EditGroupService editGroupService(
+                        CourseRepository courseRepository,
+                        CourseMembershipRepository courseMembershipRepository,
+                        AssignmentRepository assignmentRepository,
+                        GroupRepository groupRepository) {
+                return new EditGroupService(courseRepository, courseMembershipRepository,
+                                assignmentRepository, groupRepository);
         }
 }
