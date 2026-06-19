@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
+## [0.11.0] 2026-09-19
+
 ### Added
 
 - (backend) Added group edit endpoint
