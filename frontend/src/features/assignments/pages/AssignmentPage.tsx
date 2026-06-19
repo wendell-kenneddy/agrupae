@@ -218,7 +218,9 @@ export function AssignmentPage() {
     } catch {}
   }
 
-  const visibleMyRequests = myRequests.filter((req) => !excludedRequestIds.includes(req.id))
+  const visibleMyRequests = myRequests.filter(
+    (req) => !excludedRequestIds.includes(req.id) && !(hasGroup && req.status === 'PENDING')
+  )
 
 
 

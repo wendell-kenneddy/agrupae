@@ -474,12 +474,18 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-blue-dark);
+  box-shadow: 3px 3px 0px var(--color-blue-dark);
   cursor: pointer;
-  transition: opacity 0.1s ease;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease,
+    opacity 0.1s ease;
 }
 
 .confirmModalCancelBtn:active {
   opacity: 0.7;
+  box-shadow: none;
+  transform: translate(3px, 3px);
 }
 
 .confirmModalConfirmBtn {
@@ -491,12 +497,18 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-text-light);
+  box-shadow: 3px 3px 0px #000;
   cursor: pointer;
-  transition: opacity 0.1s ease;
+  transition:
+    box-shadow 0.1s ease,
+    transform 0.1s ease,
+    opacity 0.1s ease;
 }
 
 .confirmModalConfirmBtn:active {
   opacity: 0.7;
+  box-shadow: none;
+  transform: translate(3px, 3px);
 }
 
 .modalWarningsList {
