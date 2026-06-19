@@ -43,44 +43,99 @@ export function HomeClassesPage() {
       </header>
 
       <div className={styles.content}>
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Minhas turmas</h2>
-          {myClasses.map((c) => (
-            <ClassCard key={c.id} class={c} />
-          ))}
-        </section>
-
-        <hr className={styles.divider} />
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Turmas que participo</h2>
-          {joinedClasses.map((c) => (
-            <ClassCard key={c.id} class={c} />
-          ))}
-        </section>
-
-        {archivedClasses.length > 0 && (
-          <>
-            <hr className={styles.divider} />
-            <section className={styles.section}>
+        {courses.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateIcon}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              </svg>
+            </div>
+            <h3 className={styles.emptyStateTitle}>Nenhuma turma por aqui</h3>
+            <p className={styles.emptyStateText}>
+              Crie uma turma para gerenciar seus trabalhos ou entre em uma com o código fornecido pelo professor.
+            </p>
+            <div className={styles.emptyStateActions}>
               <button
-                className={styles.archivedHeader}
-                onClick={() => setShowArchived(!showArchived)}
+                className={styles.ctaButton}
+                onClick={() => navigate('/classes/create')}
               >
-                <span>Turmas arquivadas ({archivedClasses.length})</span>
-                <span className={`${styles.chevron} ${showArchived ? styles.chevronExpanded : ''}`}>
-                  <ChevronIcon />
-                </span>
+                Criar turma
               </button>
-
-              {showArchived && (
-                <div className={styles.archivedList}>
-                  {archivedClasses.map((c) => (
-                    <ClassCard key={c.id} class={c} />
-                  ))}
+              <button
+                className={`${styles.ctaButton} ${styles.ctaButtonSecondary}`}
+                onClick={() => navigate('/classes/join')}
+              >
+                Entrar com código
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Minhas turmas</h2>
+              {myClasses.length > 0 ? (
+                myClasses.map((c) => (
+                  <ClassCard key={c.id} class={c} />
+                ))
+              ) : (
+                <div className={styles.sectionEmptyState}>
+                  <span>Você ainda não criou nenhuma turma.</span>
+                  <button
+                    className={styles.inlineLink}
+                    onClick={() => navigate('/classes/create')}
+                  >
+                    Criar turma
+                  </button>
                 </div>
               )}
             </section>
+
+            <hr className={styles.divider} />
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Turmas que participo</h2>
+              {joinedClasses.length > 0 ? (
+                joinedClasses.map((c) => (
+                  <ClassCard key={c.id} class={c} />
+                ))
+              ) : (
+                <div className={styles.sectionEmptyState}>
+                  <span>Você ainda não entrou em nenhuma turma.</span>
+                  <button
+                    className={styles.inlineLink}
+                    onClick={() => navigate('/classes/join')}
+                  >
+                    Entrar com código
+                  </button>
+                </div>
+              )}
+            </section>
+
+            {archivedClasses.length > 0 && (
+              <>
+                <hr className={styles.divider} />
+                <section className={styles.section}>
+                  <button
+                    className={styles.archivedHeader}
+                    onClick={() => setShowArchived(!showArchived)}
+                  >
+                    <span>Turmas arquivadas ({archivedClasses.length})</span>
+                    <span className={`${styles.chevron} ${showArchived ? styles.chevronExpanded : ''}`}>
+                      <ChevronIcon />
+                    </span>
+                  </button>
+
+                  {showArchived && (
+                    <div className={styles.archivedList}>
+                      {archivedClasses.map((c) => (
+                        <ClassCard key={c.id} class={c} />
+                      ))}
+                    </div>
+                  )}
+                </section>
+              </>
+            )}
           </>
         )}
       </div>

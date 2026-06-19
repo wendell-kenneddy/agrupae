@@ -28,14 +28,10 @@ import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import styles from './GroupPage.module.css'
 
 
-function MemberAvatar({ name }: { name: string }) {
-  const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`
+import { UserAvatar } from '@/components/ui/UserAvatar'
 
-  return (
-    <div className={styles.avatar} style={{ padding: 0, overflow: 'hidden' }}>
-      <img src={avatarUrl} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-    </div>
-  )
+function MemberAvatar({ name }: { name: string }) {
+  return <UserAvatar name={name} size="md" />
 }
 
 export function GroupPage() {
@@ -108,6 +104,7 @@ export function GroupPage() {
   const { members: classMembers } = useGetClassMembers(courseId!)
 
   async function handleAcceptRequest(requestId: string) {
+    if (!assignment || assignment.isArchived) return
     try {
       await acceptRequest({ groupId: groupId!, requestId })
     } catch {
@@ -116,6 +113,7 @@ export function GroupPage() {
   }
 
   async function handleRejectRequest(requestId: string) {
+    if (!assignment || assignment.isArchived) return
     try {
       await rejectRequest({ groupId: groupId!, requestId })
     } catch {
@@ -156,6 +154,7 @@ export function GroupPage() {
   const hasMenuOptions = showLeaveOption || showEditGroupOption || showDissolveOption
 
   async function handleAddLink() {
+    if (!assignment || assignment.isArchived) return
     if (!linkName.trim() || !linkUrl.trim()) return
     try {
       await addArtifact({
@@ -172,6 +171,7 @@ export function GroupPage() {
   }
 
   function openEditArtifact(a: GroupArtifact) {
+    if (!assignment || assignment.isArchived) return
     setEditingArtifact(a)
     setEditArtifactName(a.name)
     setEditArtifactDescription(a.description || '')
@@ -179,6 +179,7 @@ export function GroupPage() {
   }
 
   async function handleEditLink() {
+    if (!assignment || assignment.isArchived) return
     if (!editingArtifact || !editArtifactName.trim() || !editArtifactUrl.trim()) return
     try {
       await editArtifact({
@@ -194,6 +195,7 @@ export function GroupPage() {
   }
 
   async function handleConfirmDeleteArtifact() {
+    if (!assignment || assignment.isArchived) return
     if (!artifactToDelete) return
     try {
       await deleteArtifact(artifactToDelete.id)
@@ -202,6 +204,7 @@ export function GroupPage() {
   }
 
   async function handleLeave() {
+    if (!assignment || assignment.isArchived) return
     try {
       await leaveGroup(groupId!)
       setShowConfirmLeave(false)
@@ -210,6 +213,7 @@ export function GroupPage() {
   }
 
   async function handleDissolve() {
+    if (!assignment || assignment.isArchived) return
     try {
       await dissolveGroup(groupId!)
       setShowConfirmDissolve(false)
@@ -218,6 +222,7 @@ export function GroupPage() {
   }
 
   function openEditGroup() {
+    if (!assignment || assignment.isArchived) return
     if (group) {
       setEditGroupName(group.name)
       setEditGroupOpen(group.open)
@@ -227,6 +232,7 @@ export function GroupPage() {
   }
 
   async function handleEditGroup() {
+    if (!assignment || assignment.isArchived) return
     if (!editGroupName.trim() || !group) return
     try {
       if (editGroupName.trim() !== group.name) {
@@ -241,6 +247,7 @@ export function GroupPage() {
 
 
   async function handleRemove(memberId: string) {
+    if (!assignment || assignment.isArchived) return
     try {
       await removeMember({ groupId: groupId!, memberId })
       setRemoveMemberInfo(null)
@@ -248,18 +255,21 @@ export function GroupPage() {
   }
 
   async function handleJoinGroup() {
+    if (!assignment || assignment.isArchived) return
     try {
       await join(groupId!)
     } catch {}
   }
 
   async function handleRequestGroupEntry() {
+    if (!assignment || assignment.isArchived) return
     try {
       await requestEntry(groupId!)
     } catch {}
   }
 
   async function handleCancelRequestEntry() {
+    if (!assignment || assignment.isArchived) return
     if (myRequest && myRequest.status === 'PENDING') {
       try {
         await cancelRequest({ groupId: groupId!, requestId: myRequest.id })
@@ -280,6 +290,17 @@ export function GroupPage() {
         </header>
 
         <div className={styles.content}>
+          {!isAssignmentActive && (
+            <div className={styles.archivedWarningCard}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="21 8 21 21 3 21 3 8" />
+                <rect x="1" y="3" width="22" height="5" />
+                <line x1="10" y1="12" x2="14" y2="12" />
+              </svg>
+              <span>Este trabalho está arquivado. As interações estão desativadas.</span>
+            </div>
+          )}
+
           {/* Informações Card */}
           <div className={styles.infoCard}>
             <div className={styles.infoCardHeader}>
@@ -362,42 +383,6 @@ export function GroupPage() {
               </p>
               {assignment.description && <p>{assignment.description}</p>}
             </div>
-          </div>
-
-          {/* Action buttons for non-members */}
-          {!isMember && !hasGroup && isAssignmentActive && (
-            <div style={{ marginTop: -10 }}>
-              {group.open && !isFull && (
-                <button className={styles.addLinkBtn} onClick={handleJoinGroup} disabled={isJoining}>
-                  {isJoining ? 'Entrando...' : 'Entrar no grupo'}
-                </button>
-              )}
-              {!group.open && !isFull && !myRequest && !hasPendingRequest && (
-                <button className={styles.addLinkBtn} onClick={handleRequestGroupEntry} disabled={isRequesting}>
-                  {isRequesting ? 'Solicitando...' : 'Solicitar entrada'}
-                </button>
-              )}
-              {!group.open && myRequest?.status === 'PENDING' && (
-                <button
-                  className={styles.addLinkBtn}
-                  style={{ background: '#d97706' }}
-                  onClick={handleCancelRequestEntry}
-                  disabled={isCancelling}
-                >
-                  {isCancelling ? 'Cancelando...' : 'Cancelar solicitação'}
-                </button>
-              )}
-              {myRequest?.status === 'REJECTED' && (
-                <div style={{ textAlign: 'center', fontSize: '0.85rem', color: '#dc2626', fontWeight: 600, padding: 8 }}>
-                  Sua solicitação de entrada foi rejeitada.
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Links do Grupo Card */}
-          <div className={styles.linksCard}>
-            <span className={styles.linksTitle}>Links do grupo</span>
 
             <div className={styles.linksList}>
               {isLoadingArtifacts && <div style={{ fontSize: '0.8rem', color: '#1e3a8a' }}>Carregando links...</div>}
@@ -505,7 +490,37 @@ export function GroupPage() {
             )}
           </div>
 
-          {/* Membros Section */}
+          {/* Action buttons for non-members */}
+          {!isMember && !hasGroup && isAssignmentActive && (
+            <div style={{ marginTop: 0 }}>
+              {group.open && !isFull && (
+                <button className={styles.addLinkBtn} onClick={handleJoinGroup} disabled={isJoining}>
+                  {isJoining ? 'Entrando...' : 'Entrar no grupo'}
+                </button>
+              )}
+              {!group.open && !isFull && !myRequest && !hasPendingRequest && (
+                <button className={styles.addLinkBtn} onClick={handleRequestGroupEntry} disabled={isRequesting}>
+                  {isRequesting ? 'Solicitando...' : 'Solicitar entrada'}
+                </button>
+              )}
+              {!group.open && myRequest?.status === 'PENDING' && (
+                <button
+                  className={styles.addLinkBtn}
+                  style={{ background: 'var(--color-orange)' }}
+                  onClick={handleCancelRequestEntry}
+                  disabled={isCancelling}
+                >
+                  {isCancelling ? 'Cancelando...' : 'Cancelar solicitação'}
+                </button>
+              )}
+              {myRequest?.status === 'REJECTED' && (
+                <div style={{ textAlign: 'center', fontSize: '0.85rem', color: 'var(--color-red)', fontWeight: 600, padding: 8 }}>
+                  Sua solicitação de entrada foi rejeitada.
+                </div>
+              )}
+            </div>
+          )}
+
           <div className={styles.membersSection}>
             <h2 className={styles.sectionTitle}>Membros</h2>
 
@@ -513,9 +528,8 @@ export function GroupPage() {
               {members.map((member) => (
                 <div key={member.id} className={styles.memberRow}>
                   <div className={styles.memberLeft}>
-                    <img
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(member.name)}`}
-                      alt={member.name}
+                    <UserAvatar
+                      name={member.name}
                       className={styles.memberAvatar}
                     />
                     <div className={styles.memberInfo}>
@@ -527,7 +541,6 @@ export function GroupPage() {
                     </div>
                   </div>
 
-                  {/* Remove member button for Group Leader */}
                   {isGroupLeader &&
                     !member.isLeader &&
                     assignment.assignmentFlags.groupLeaderCanRemoveMembers &&
@@ -547,7 +560,7 @@ export function GroupPage() {
             </div>
           </div>
 
-          {isGroupLeader && leaderPendingRequests.length > 0 && (
+          {isGroupLeader && leaderPendingRequests.length > 0 && isAssignmentActive && (
             <div className={styles.leaderRequestsSection}>
               <p className={styles.leaderRequestsTitle}>Solicitações de entrada</p>
               <div className={styles.leaderRequestsList}>
@@ -572,7 +585,7 @@ export function GroupPage() {
                           id={`accept-request-${req.id}`}
                           className={styles.acceptBtn}
                           onClick={() => handleAcceptRequest(req.id)}
-                          disabled={isAccepting || isRejecting}
+                          disabled={isAccepting || isRejecting || !isAssignmentActive}
                         >
                           {isAccepting ? 'Aceitando...' : 'Aceitar'}
                         </button>
@@ -580,7 +593,7 @@ export function GroupPage() {
                           id={`reject-request-${req.id}`}
                           className={styles.rejectBtn}
                           onClick={() => handleRejectRequest(req.id)}
-                          disabled={isAccepting || isRejecting}
+                          disabled={isAccepting || isRejecting || !isAssignmentActive}
                         >
                           {isRejecting ? 'Rejeitando...' : 'Rejeitar'}
                         </button>
@@ -593,7 +606,6 @@ export function GroupPage() {
           )}
         </div>
 
-      {/* Add Link Modal */}
       {showAddLink && (
         <>
           <div className={styles.overlay} onClick={() => setShowAddLink(false)} />
@@ -675,7 +687,6 @@ export function GroupPage() {
         </>
       )}
 
-      {/* Confirm Dissolve Modal */}
       {showConfirmDissolve && (
         <>
           <div className={styles.overlay} onClick={() => setShowConfirmDissolve(false)} />
@@ -703,7 +714,6 @@ export function GroupPage() {
         </>
       )}
 
-      {/* Confirm Remove Member Modal */}
       {removeMemberInfo !== null && (
         <>
           <div className={styles.overlay} onClick={() => setRemoveMemberInfo(null)} />
@@ -766,7 +776,8 @@ export function GroupPage() {
                       type="button"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3" />
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 9.9-1" />
                       </svg>
                       Aberto
                     </button>

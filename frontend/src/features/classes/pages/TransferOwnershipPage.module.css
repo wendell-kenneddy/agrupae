@@ -37,7 +37,7 @@
 }
 
 .title {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--color-text-dark);
   letter-spacing: -0.02em;
@@ -249,12 +249,12 @@
   flex: 1;
   padding: 14px;
   background: transparent;
-  border: 2px solid #000;
+  border: 2px solid var(--color-blue-dark);
   border-radius: var(--radius-md);
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--color-text-dark);
-  box-shadow: 3px 3px 0px #000;
+  color: var(--color-blue-dark);
+  box-shadow: 3px 3px 0px var(--color-blue-dark);
   transition:
     box-shadow 0.1s ease,
     transform 0.1s ease;

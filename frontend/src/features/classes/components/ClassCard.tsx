@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import type { Class } from '@/features/classes/types/classes.types'
 import { useGetClassMembers } from '@/features/classes/hooks/useGetClassMembers'
 import { useGetAssignments } from '@/features/assignments/hooks/useGetAssignments'
+import { UserAvatar } from '@/components/ui/UserAvatar'
 import styles from './ClassCard.module.css'
 
 interface ClassCardProps {
@@ -11,17 +12,16 @@ interface ClassCardProps {
 export function ClassCard({ class: c }: ClassCardProps) {
   const navigate = useNavigate()
 
-  // Fetch members and assignments to display on the card
   const { members } = useGetClassMembers(c.id)
   const { assignments } = useGetAssignments(c.id)
 
-  const students = (members ?? [])
+  const students = (members ?? []).filter((m) => m.role === 'STUDENT')
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
 
   const activeAssignmentsCount = (assignments ?? []).filter((a) => !a.isArchived).length
 
-  const displayedStudents = students.slice(0, 3)
-  const remainingCount = students.length - 3
+  const displayedStudents = students.slice(0, 4)
+  const remainingCount = students.length - 4
 
   return (
     <div
@@ -44,18 +44,16 @@ export function ClassCard({ class: c }: ClassCardProps) {
         {students.length > 0 && (
           <div className={styles.avatars}>
             {displayedStudents.map((student) => {
-              const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(student.name)}`
               return (
-                <div key={student.id} className={styles.avatar} style={{ padding: 0, overflow: 'hidden' }}>
-                  <img
-                    src={avatarUrl}
-                    alt={student.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </div>
+                <UserAvatar
+                  key={student.id}
+                  name={student.name}
+                  className={styles.avatar}
+                  style={{ fontSize: '11px' }}
+                />
               )
             })}
-            {students.length >= 4 && (
+            {students.length > 4 && (
               <div className={styles.avatarExtra}>
                 +{remainingCount}
               </div>

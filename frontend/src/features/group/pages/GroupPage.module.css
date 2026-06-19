@@ -31,7 +31,7 @@
 
 .headerTitle {
   flex: 1;
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--color-text-dark);
   letter-spacing: -0.02em;
@@ -50,15 +50,13 @@
 }
 
 .infoCard {
-  background: var(--color-bg-gray);
-  border: 2px solid #000;
+  background: #00100f0d;
   border-radius: var(--radius-md);
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   position: relative;
-  box-shadow: 3px 3px 0px #000;
 }
 
 .infoCardHeader {
@@ -112,16 +110,7 @@
   line-height: 1.5;
 }
 
-.linksCard {
-  background: var(--color-bg-gray);
-  border: 2px solid #000;
-  border-radius: var(--radius-md);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  box-shadow: 3px 3px 0px #000;
-}
+
 
 .linksTitle {
   font-size: 0.95rem;
@@ -152,7 +141,7 @@
   align-items: center;
   gap: 8px;
   font-size: 0.78rem;
-  color: var(--color-blue-primary);
+  color: var(--color-blue-dark);
   text-decoration: none;
   white-space: nowrap;
   overflow: hidden;
@@ -225,21 +214,21 @@
 }
 
 .linkExportBtnActive {
-  color: var(--color-blue-primary);
+  color: var(--color-blue-dark);
 }
 
 .deliverableBadge {
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  color: #166534;
-  border: 2px solid #166534;
-  padding: 1px 6px;
+  color: var(--color-green);
+  border: 2px solid var(--color-green);
+  padding: 2px 8px;
   border-radius: var(--radius-sm);
-  background: #f0fdf4;
-  text-transform: uppercase;
+  background: var(--color-green-lightest);
+  text-transform: none;
   margin-left: 6px;
   display: inline-block;
-  box-shadow: 1px 1px 0px #166534;
+  box-shadow: 1px 1px 0px #000;
 }
 
 .addLinkBtn {
@@ -298,13 +287,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
-  background: var(--color-bg-gray);
-  border: 2px solid #000;
-  box-shadow: 3px 3px 0px #000;
+  padding: 12px 0;
   gap: 12px;
   box-sizing: border-box;
+  border-bottom: 1px solid #00100f11;
+}
+
+.memberRow:last-child {
+  border-bottom: none;
 }
 
 .memberLeft {
@@ -344,14 +334,15 @@
 }
 
 .leaderBadge {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--color-text-dark);
-  border: 2px solid #000;
-  padding: 2px 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-blue-dark);
+  border: 2px solid var(--color-blue-dark);
+  padding: 2px 8px;
   border-radius: var(--radius-sm);
-  background: var(--color-yellow);
-  text-transform: uppercase;
+  background: var(--color-blue-light);
+  text-transform: none;
+  box-shadow: 1px 1px 0px #000;
 }
 
 .memberEmail {
@@ -366,7 +357,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #dc2626;
+  color: var(--color-red);
   padding: 6px;
   border-radius: 50%;
   display: flex;
@@ -376,7 +367,7 @@
 }
 
 .memberRemoveBtn:hover {
-  background: rgba(220, 38, 38, 0.1);
+  background: rgba(216, 88, 88, 0.1);
 }
 
 .dropdownMenu {
@@ -411,11 +402,11 @@
 }
 
 .dropdownItemDelete {
-  color: #dc2626;
+  color: var(--color-red);
 }
 
 .dropdownItemDelete:hover {
-  background: #fee2e2;
+  background: var(--color-red-light);
 }
 
 .dropdownOverlay {
@@ -508,7 +499,7 @@
   padding: 14px;
   background: transparent;
   border: 2px solid var(--color-blue-dark);
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-blue-dark);
@@ -525,7 +516,7 @@
   padding: 14px;
   background: var(--color-blue-dark);
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-text-light);
@@ -606,7 +597,7 @@
   padding: 14px;
   background: transparent;
   border: 2px solid var(--color-blue-dark);
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-blue-dark);
@@ -621,9 +612,9 @@
 .confirmModalConfirmBtn {
   flex: 1;
   padding: 14px;
-  background: #dc2626;
+  background: var(--color-red);
   border: 2px solid #000;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   font-size: 0.95rem;
   font-weight: 600;
   color: #fff;
@@ -723,7 +714,7 @@
   color: var(--color-text-light);
   font-size: 0.8rem;
   font-weight: 700;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   border: 2px solid #000;
   box-shadow: 2px 2px 0px #000;
   white-space: nowrap;
@@ -749,11 +740,11 @@
 .rejectBtn {
   padding: 6px 14px;
   background: transparent;
-  color: #dc2626;
+  color: var(--color-red);
   font-size: 0.8rem;
   font-weight: 700;
-  border-radius: 999px;
-  border: 2px solid #dc2626;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-red);
   white-space: nowrap;
   cursor: pointer;
   transition: opacity 0.15s;
@@ -844,6 +835,21 @@
   color: #00100f77;
   line-height: 1.4;
   text-align: left;
+}
+
+.archivedWarningCard {
+  background: var(--color-orange-light);
+  color: var(--color-orange);
+  border: 2px solid var(--color-orange);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  box-shadow: 3px 3px 0px var(--color-orange);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 8px;
 }
 
 

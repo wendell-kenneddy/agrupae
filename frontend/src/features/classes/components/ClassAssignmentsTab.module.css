@@ -106,7 +106,7 @@
 }
 
 .menuItemDanger {
-  color: #cf1322;
+  color: var(--color-red);
 }
 
 .cardTop {
@@ -215,7 +215,7 @@
 
 .archiveWarning {
   font-size: 0.82rem;
-  color: #d97706;
+  color: var(--color-orange);
   text-align: center;
   margin: 4px 0;
 }
@@ -232,7 +232,7 @@
   padding: 14px;
   background: transparent;
   border: 2px solid var(--color-blue-dark);
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-blue-dark);
@@ -248,7 +248,7 @@
   padding: 14px;
   background: var(--color-blue-dark);
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-text-light);
