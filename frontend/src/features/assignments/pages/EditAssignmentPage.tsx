@@ -3,8 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useEditAssignment } from '@/features/assignments/hooks/useEditAssignment'
 import { PRESETS } from '@/features/assignments/types/assignments.types'
 import type {
+  Assignment,
   AssignmentFlags,
   AssignmentMode,
+  CreateAssignmentRequest,
 } from '@/features/assignments/types/assignments.types'
 
 import styles from './CreateAssignmentPage.module.css'
@@ -95,17 +97,41 @@ function getTodayString() {
 }
 
 export function EditAssignmentPage() {
-  const navigate = useNavigate()
   const { id: courseId, assignmentId } = useParams<{ id: string; assignmentId: string }>()
   const { edit, isLoading: isSaving } = useEditAssignment(courseId!, assignmentId!)
-
   const { assignment, isLoading } = useGetAssignment(courseId!, assignmentId!)
 
-  if (isLoading || !assignment) return <div>Carregando...</div>
-
+  if (isLoading) return <div>Carregando...</div>
   if (!assignment) return <div>Trabalho não encontrado.</div>
 
-  const { maxGroupMembers, maxGroups, ...flagsOnly } = assignment.assignmentFlags
+  return (
+    <EditAssignmentForm
+      assignment={assignment}
+      edit={edit}
+      isSaving={isSaving}
+    />
+  )
+}
+
+interface EditAssignmentFormProps {
+  assignment: Assignment
+  edit: (data: CreateAssignmentRequest) => Promise<unknown>
+  isSaving: boolean
+}
+
+function EditAssignmentForm({ assignment, edit, isSaving }: EditAssignmentFormProps) {
+  const navigate = useNavigate()
+  const maxGroupMembers = assignment.assignmentFlags.maxGroupMembers
+
+  const flagsOnly: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'> = {
+    studentsCanCreateGroups: assignment.assignmentFlags.studentsCanCreateGroups,
+    studentsCanLeaveGroups: assignment.assignmentFlags.studentsCanLeaveGroups,
+    groupLeaderCanDissolve: assignment.assignmentFlags.groupLeaderCanDissolve,
+    groupLeaderCanRemoveMembers: assignment.assignmentFlags.groupLeaderCanRemoveMembers,
+    groupLeaderCanChangeMode: assignment.assignmentFlags.groupLeaderCanChangeMode,
+    groupLeaderCanTransferLeadership: assignment.assignmentFlags.groupLeaderCanTransferLeadership,
+    supervisorCanEditGroups: assignment.assignmentFlags.supervisorCanEditGroups,
+  }
 
   const [name, setName] = useState(assignment.name)
   const [description, setDescription] = useState(assignment.description ?? '')
@@ -175,7 +201,7 @@ export function EditAssignmentPage() {
         },
       })
       navigate(-1)
-    } catch (error) {
+    } catch {
       // Error handled in mutation hook
     }
   }

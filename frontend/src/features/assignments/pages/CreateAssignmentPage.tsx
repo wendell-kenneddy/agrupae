@@ -163,7 +163,7 @@ export function CreateAssignmentPage() {
         },
       })
       navigate(-1)
-    } catch (error) {
+    } catch {
       // Error handled in mutation hook
     }
   }
