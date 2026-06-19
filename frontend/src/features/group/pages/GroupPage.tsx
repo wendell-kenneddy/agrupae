@@ -13,6 +13,8 @@ import { useLeaveGroup } from '@/features/group/hooks/useLeaveGroup'
 import { useRemoveGroupMember } from '@/features/group/hooks/useRemoveGroupMember'
 import { useChangeGroupMode } from '@/features/group/hooks/useChangeGroupMode'
 import { useEditGroup } from '@/features/group/hooks/useEditGroup'
+import { useEditGroupArtifact } from '@/features/group/hooks/useEditGroupArtifact'
+import type { GroupArtifact } from '@/features/group/types/groups.types'
 import { useDissolveGroup } from '@/features/group/hooks/useDissolveGroup'
 import { useJoinOpenGroup } from '@/features/group/hooks/useJoinOpenGroup'
 import { useRequestGroupEntry } from '@/features/group/hooks/useRequestGroupEntry'
@@ -56,6 +58,7 @@ export function GroupPage() {
   const { artifacts, isLoading: isLoadingArtifacts } = useGetGroupArtifacts(courseId!, assignmentId!, groupId!, isMember)
   const { addArtifact, isLoading: isAddingArtifact } = useAddGroupArtifact(courseId!, assignmentId!, groupId!)
   const { deleteArtifact, isLoading: isDeletingArtifact } = useDeleteGroupArtifact(courseId!, assignmentId!, groupId!)
+  const { editArtifact, isLoading: isEditingArtifact } = useEditGroupArtifact(courseId!, assignmentId!, groupId!)
   const { toggleDeliverable, isLoading: isTogglingDeliverable } = useToggleGroupArtifactDeliverable(courseId!, assignmentId!, groupId!)
 
   const { leave: leaveGroup, isLoading: isLeaving } = useLeaveGroup(courseId!, assignmentId!)
@@ -73,6 +76,12 @@ export function GroupPage() {
   const [linkName, setLinkName] = useState('')
   const [linkUrl, setLinkUrl] = useState('')
   const [linkDescription, setLinkDescription] = useState('')
+
+  const [editingArtifact, setEditingArtifact] = useState<GroupArtifact | null>(null)
+  const [editArtifactName, setEditArtifactName] = useState('')
+  const [editArtifactUrl, setEditArtifactUrl] = useState('')
+  const [editArtifactDescription, setEditArtifactDescription] = useState('')
+  const [artifactToDelete, setArtifactToDelete] = useState<GroupArtifact | null>(null)
 
   const [showMenu, setShowMenu] = useState(false)
   const [showEditGroupModal, setShowEditGroupModal] = useState(false)
@@ -162,15 +171,39 @@ export function GroupPage() {
     } catch {}
   }
 
-  async function handleDeleteLink(artifactId: string) {
+  function openEditArtifact(a: GroupArtifact) {
+    setEditingArtifact(a)
+    setEditArtifactName(a.name)
+    setEditArtifactDescription(a.description || '')
+    setEditArtifactUrl(a.resourceLink)
+  }
+
+  async function handleEditLink() {
+    if (!editingArtifact || !editArtifactName.trim() || !editArtifactUrl.trim()) return
     try {
-      await deleteArtifact(artifactId)
+      await editArtifact({
+        artifactId: editingArtifact.id,
+        data: {
+          name: editArtifactName.trim(),
+          resourceLink: editArtifactUrl.trim(),
+          description: editArtifactDescription.trim(),
+        },
+      })
+      setEditingArtifact(null)
+    } catch {}
+  }
+
+  async function handleConfirmDeleteArtifact() {
+    if (!artifactToDelete) return
+    try {
+      await deleteArtifact(artifactToDelete.id)
+      setArtifactToDelete(null)
     } catch {}
   }
 
   async function handleLeave() {
     try {
-      await leaveGroup(groupId)
+      await leaveGroup(groupId!)
       setShowConfirmLeave(false)
       navigate(`/classes/${courseId}/assignments/${assignmentId}`)
     } catch {}
@@ -178,7 +211,7 @@ export function GroupPage() {
 
   async function handleDissolve() {
     try {
-      await dissolveGroup(groupId)
+      await dissolveGroup(groupId!)
       setShowConfirmDissolve(false)
       navigate(`/classes/${courseId}/assignments/${assignmentId}`)
     } catch {}
@@ -194,13 +227,13 @@ export function GroupPage() {
   }
 
   async function handleEditGroup() {
-    if (!editGroupName.trim()) return
+    if (!editGroupName.trim() || !group) return
     try {
       if (editGroupName.trim() !== group.name) {
-        await editGroup({ groupId, name: editGroupName.trim() })
+        await editGroup({ groupId: groupId!, name: editGroupName.trim() })
       }
       if (editGroupOpen !== group.open) {
-        await changeMode({ groupId, open: editGroupOpen })
+        await changeMode({ groupId: groupId!, open: editGroupOpen })
       }
       setShowEditGroupModal(false)
     } catch {}
@@ -209,38 +242,28 @@ export function GroupPage() {
 
   async function handleRemove(memberId: string) {
     try {
-      await removeMember({ groupId, memberId })
+      await removeMember({ groupId: groupId!, memberId })
       setRemoveMemberInfo(null)
     } catch {}
   }
 
   async function handleJoinGroup() {
     try {
-      await join(groupId)
+      await join(groupId!)
     } catch {}
   }
 
   async function handleRequestGroupEntry() {
     try {
-      await requestEntry(groupId)
+      await requestEntry(groupId!)
     } catch {}
   }
 
   async function handleCancelRequestEntry() {
     if (myRequest && myRequest.status === 'PENDING') {
       try {
-        await cancelRequest({ groupId, requestId: myRequest.id })
+        await cancelRequest({ groupId: groupId!, requestId: myRequest.id })
       } catch {}
-    }
-  }
-
-  // Format resourceLink for display in mockup style
-  function displayLink(url: string) {
-    try {
-      const cleanUrl = url.replace(/^(https?:\/\/)?(www\.)?/, '')
-      return cleanUrl
-    } catch {
-      return url
     }
   }
 
@@ -432,8 +455,27 @@ export function GroupPage() {
                           </svg>
                         </button>
                         <button
+                          className={styles.linkExportBtn}
+                          onClick={() => openEditArtifact(a)}
+                          title="Editar link"
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                          </svg>
+                        </button>
+                        <button
                           className={styles.linkDeleteBtn}
-                          onClick={() => handleDeleteLink(a.id)}
+                          onClick={() => setArtifactToDelete(a)}
                           disabled={isDeletingArtifact}
                           title="Excluir link"
                         >
@@ -759,6 +801,95 @@ export function GroupPage() {
                 disabled={!editGroupName.trim() || isEditingGroup || isChangingMode}
               >
                 {isEditingGroup || isChangingMode ? 'Salvando...' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Edit Group Artifact Modal */}
+      {editingArtifact !== null && (
+        <>
+          <div className={styles.overlay} onClick={() => setEditingArtifact(null)} />
+          <div className={styles.modal}>
+            <button className={styles.closeBtn} onClick={() => setEditingArtifact(null)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <p className={styles.modalTitle}>Editar artefato</p>
+
+            <div className={styles.modalFields}>
+              <input
+                className={styles.modalInput}
+                type="text"
+                placeholder="Nome"
+                value={editArtifactName}
+                onChange={(e) => setEditArtifactName(e.target.value)}
+              />
+              <input
+                className={styles.modalInput}
+                type="text"
+                placeholder="Descrição (opcional)"
+                value={editArtifactDescription}
+                onChange={(e) => setEditArtifactDescription(e.target.value)}
+              />
+              <input
+                className={styles.modalInput}
+                type="url"
+                placeholder="Link"
+                value={editArtifactUrl}
+                onChange={(e) => setEditArtifactUrl(e.target.value)}
+              />
+            </div>
+
+            <div className={styles.modalActions}>
+              <button className={styles.cancelBtn} onClick={() => setEditingArtifact(null)}>
+                Cancelar
+              </button>
+              <button
+                className={styles.confirmBtn}
+                onClick={handleEditLink}
+                disabled={!editArtifactName.trim() || !editArtifactUrl.trim() || isEditingArtifact}
+              >
+                {isEditingArtifact ? 'Salvando...' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Delete Group Artifact Confirmation Modal */}
+      {artifactToDelete !== null && (
+        <>
+          <div className={styles.overlay} onClick={() => setArtifactToDelete(null)} />
+          <div className={styles.confirmModal}>
+            <button className={styles.confirmModalCloseBtn} onClick={() => setArtifactToDelete(null)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <p className={styles.confirmModalTitle}>Excluir Link</p>
+            <p className={styles.confirmModalSub} style={{ margin: '12px 24px 20px', color: 'var(--color-text-dark)', lineHeight: '1.4' }}>
+              Tem certeza que deseja excluir o link <strong>{artifactToDelete.name}</strong>? Esta ação não pode ser desfeita.
+            </p>
+
+            <div className={styles.confirmModalActions}>
+              <button
+                className={styles.confirmModalCancelBtn}
+                onClick={() => setArtifactToDelete(null)}
+                disabled={isDeletingArtifact}
+              >
+                Cancelar
+              </button>
+              <button
+                className={styles.confirmModalConfirmBtn}
+                onClick={handleConfirmDeleteArtifact}
+                disabled={isDeletingArtifact}
+              >
+                {isDeletingArtifact ? 'Excluindo...' : 'Excluir'}
               </button>
             </div>
           </div>

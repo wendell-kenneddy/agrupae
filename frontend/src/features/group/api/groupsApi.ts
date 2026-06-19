@@ -8,6 +8,7 @@ import type {
   GroupMembersResponse,
   GroupArtifact,
   AddGroupArtifactRequest,
+  EditGroupArtifactRequest,
 } from '@/features/group/types/groups.types'
 
 export async function createGroup(
@@ -238,6 +239,20 @@ export async function editGroup(
   const response = await api.put<Group>(
     `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}`,
     { name }
+  )
+  return response.data
+}
+
+export async function editGroupArtifact(
+  courseId: string,
+  assignmentId: string,
+  groupId: string,
+  artifactId: string,
+  data: EditGroupArtifactRequest
+): Promise<GroupArtifact> {
+  const response = await api.put<GroupArtifact>(
+    `/courses/${courseId}/assignments/${assignmentId}/groups/${groupId}/artifacts/${artifactId}`,
+    data
   )
   return response.data
 }

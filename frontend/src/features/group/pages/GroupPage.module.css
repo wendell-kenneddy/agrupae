@@ -585,6 +585,14 @@
   margin: 0;
 }
 
+.confirmModalSub {
+  font-size: 0.85rem;
+  color: var(--color-text-dark);
+  opacity: 0.7;
+  text-align: center;
+  margin: 0;
+}
+
 .confirmModalActions {
   display: flex;
   gap: 12px;

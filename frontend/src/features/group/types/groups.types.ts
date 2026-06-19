@@ -83,4 +83,11 @@ export interface AddGroupArtifactRequest {
   resourceLink: string
 }
 
+export interface EditGroupArtifactRequest {
+  name: string
+  description?: string
+  resourceLink: string
+}
+
+
 
