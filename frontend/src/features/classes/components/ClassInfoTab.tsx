@@ -105,7 +105,7 @@ export function ClassInfoTab({ course }: ClassInfoTabProps) {
             <p className={styles.modalTitle}>
               Arquivar a turma <strong>{course.name}</strong>?
             </p>
-            <p className={styles.modalWarning}>A turma ficará inacessível para todos os membros.</p>
+            <p className={styles.modalWarning}>A turma ficará em modo de leitura para todos os membros.</p>
             <div className={styles.modalActions}>
               <button className={styles.cancelBtn} onClick={() => setShowArchiveModal(false)}>
                 Cancelar

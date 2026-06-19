@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useQueries } from '@tanstack/react-query'
+import { getGroupMembers } from '@/features/group/api/groupsApi'
+import { NotFoundPage } from '@/components/ui/NotFoundPage'
 import { useAuth } from '@/app/providers/AuthContext'
 import { useGetAssignment } from '@/features/assignments/hooks/useGetAssignment'
 import { useGetClass } from '@/features/classes/hooks/useGetClass'
@@ -103,12 +106,37 @@ export function GroupPage() {
   const { reject: rejectRequest, isLoading: isRejecting } = useRejectGroupEntryRequest(courseId!, assignmentId!)
   const { members: classMembers } = useGetClassMembers(courseId!)
 
+  const [failedRequestIds, setFailedRequestIds] = useState<string[]>([])
+
+  const groupIds = groupsData?.groups.content.map((g) => g.id) ?? []
+
+  const groupMembersQueries = useQueries({
+    queries: groupIds.map((id) => ({
+      queryKey: ['group-members', courseId, assignmentId, id],
+      queryFn: () => getGroupMembers(courseId, assignmentId, id),
+      enabled: !!courseId && !!assignmentId && !!id,
+    })),
+  })
+
+  const membersInGroupsIds = new Set<string>()
+  groupMembersQueries.forEach((q) => {
+    if (q.data?.content) {
+      q.data.content.forEach((m) => {
+        membersInGroupsIds.add(m.id)
+      })
+    }
+  })
+
+  const visibleLeaderRequests = leaderPendingRequests.filter(
+    (req) => !failedRequestIds.includes(req.id) && !membersInGroupsIds.has(req.userId)
+  )
+
   async function handleAcceptRequest(requestId: string) {
     if (!assignment || assignment.isArchived) return
     try {
       await acceptRequest({ groupId: groupId!, requestId })
     } catch {
-      // handled by hook
+      setFailedRequestIds((prev) => [...prev, requestId])
     }
   }
 
@@ -134,7 +162,7 @@ export function GroupPage() {
   }
 
   if (!group || !assignment || (!isMember && !isOwner)) {
-    return null
+    return <NotFoundPage />
   }
 
   const myRequest = myRequests.find((r) => r.groupId === groupId && (r.status === 'PENDING' || r.status === 'REJECTED'))
@@ -391,7 +419,10 @@ export function GroupPage() {
               )}
               {!isLoadingArtifacts &&
                 artifacts.map((a) => (
-                  <div key={a.id} className={styles.linkRow}>
+                  <div
+                    key={a.id}
+                    className={`${styles.linkRow} ${a.deliverable ? styles.deliverableRow : ''}`}
+                  >
                     <a
                       href={a.resourceLink}
                       target="_blank"
@@ -410,13 +441,13 @@ export function GroupPage() {
                         <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                       </svg>
-                      <span>
+                      <span className={styles.linkInfo}>
                         {a.name}
                         {a.description ? ` · ${a.description}` : ''}
-                        {a.deliverable && (
-                          <span className={styles.deliverableBadge}>Entregável</span>
-                        )}
                       </span>
+                      {a.deliverable && (
+                        <span className={styles.deliverableBadge}>Entregável</span>
+                      )}
                     </a>
                     {isMember && isAssignmentActive && (
                       <div className={styles.linkActions}>
@@ -560,11 +591,11 @@ export function GroupPage() {
             </div>
           </div>
 
-          {isGroupLeader && leaderPendingRequests.length > 0 && isAssignmentActive && (
+          {isGroupLeader && visibleLeaderRequests.length > 0 && isAssignmentActive && (
             <div className={styles.leaderRequestsSection}>
               <p className={styles.leaderRequestsTitle}>Solicitações de entrada</p>
               <div className={styles.leaderRequestsList}>
-                {leaderPendingRequests.map((req) => {
+                {visibleLeaderRequests.map((req) => {
                   const requester = classMembers.find((m) => m.id === req.userId)
                   const requesterName = requester?.name ?? 'Estudante'
                   const requesterEmail = requester?.email ?? ''

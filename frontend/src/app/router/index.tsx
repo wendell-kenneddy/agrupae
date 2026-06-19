@@ -14,6 +14,7 @@ import { CreateAssignmentPage } from '@/features/assignments/pages/CreateAssignm
 import { AssignmentPage } from '@/features/assignments/pages/AssignmentPage'
 import { EditAssignmentPage } from '@/features/assignments/pages/EditAssignmentPage'
 import { GroupPage } from '@/features/group/pages/GroupPage'
+import { NotFoundPage } from '@/components/ui/NotFoundPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuth()
@@ -112,6 +113,10 @@ const router = createBrowserRouter([
         <GroupPage />
       </ProtectedRoute>
     ),
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ])
 
