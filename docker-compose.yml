@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: agrupae
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "6543:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d agrupae"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  flyway:
+    image: flyway/flyway
+    command: migrate
+    environment:
+      FLYWAY_URL: jdbc:postgresql://db:5432/agrupae
+      FLYWAY_USER: admin
+      FLYWAY_PASSWORD: admin
+    volumes:
+      - ./backend/src/main/resources/db/migration:/flyway/sql
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/agrupae
+      DATABASE_USERNAME: admin
+      DATABASE_PASSWORD: admin
+      CORS_ALLOWED_ORIGINS: "*"
+    ports:
+      - "8081:8081"
+    depends_on:
+      flyway:
+        condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    environment:
+      VITE_API_URL: http://backend:8081
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
