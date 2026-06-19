@@ -1,0 +1,39 @@
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid #000;
+  box-shadow: 1px 1px 0px #000;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  user-select: none;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.sm {
+  width: 28px;
+  height: 28px;
+  font-size: 0.72rem;
+}
+
+.md {
+  width: 36px;
+  height: 36px;
+  font-size: 0.85rem;
+}
+
+.lg {
+  width: 40px;
+  height: 40px;
+  font-size: 0.92rem;
+}
+
+.xl {
+  width: 96px;
+  height: 96px;
+  font-size: 2.2rem;
+  border-width: 3px;
+  box-shadow: 3px 3px 0px #000;
+}

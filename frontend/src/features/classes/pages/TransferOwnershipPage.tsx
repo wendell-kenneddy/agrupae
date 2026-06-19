@@ -7,14 +7,18 @@ import { useGetClass } from '@/features/classes/hooks/useGetClass'
 import styles from './TransferOwnershipPage.module.css'
 import type { Member } from '@/features/classes/types/classes.types'
 
-function MemberAvatar({ name, large }: { name: string; large?: boolean }) {
-  const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`
+import { UserAvatar } from '@/components/ui/UserAvatar'
 
-  return (
-    <div className={large ? styles.avatarLarge : styles.avatar} style={{ padding: 0, overflow: 'hidden' }}>
-      <img src={avatarUrl} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-    </div>
-  )
+function MemberAvatar({ name, large }: { name: string; large?: boolean }) {
+  if (large) {
+    return (
+      <UserAvatar
+        name={name}
+        style={{ width: '64px', height: '64px', fontSize: '1.5rem', borderWidth: '2.5px', boxShadow: '2px 2px 0px #000' }}
+      />
+    )
+  }
+  return <UserAvatar name={name} size="md" />
 }
 
 export function TransferOwnershipPage() {

@@ -39,7 +39,7 @@
 
 .headerTitle {
   flex: 1;
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--color-text-dark);
   letter-spacing: -0.02em;

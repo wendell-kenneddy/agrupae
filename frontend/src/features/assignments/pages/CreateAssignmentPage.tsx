@@ -236,7 +236,15 @@ export function CreateAssignmentPage() {
             >
               −
             </button>
-            <span className={styles.counterValue}>{noLimit ? '∞' : maxGroupMembers}</span>
+            <span className={styles.counterValue} style={noLimit ? { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '7px 0' } : undefined}>
+              {noLimit ? (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+                  <path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4Z" />
+                </svg>
+              ) : (
+                maxGroupMembers
+              )}
+            </span>
             <button
               className={styles.counterBtn}
               onClick={() => setMaxGroupMembers((v) => v + 1)}
