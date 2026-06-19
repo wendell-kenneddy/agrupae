@@ -3,8 +3,8 @@ import type {
   Class,
   CreateClassRequest,
   JoinClassRequest,
+  Member,
 } from '@/features/classes/types/classes.types'
-import type { Page } from '@/types/page'
 
 export async function createClass(data: CreateClassRequest): Promise<Class> {
   const response = await api.post<Class>('/courses', data)

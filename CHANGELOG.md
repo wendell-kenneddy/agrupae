@@ -47,7 +47,15 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - (frontend) Added global toast notification system;
 - (frontend) Added assignment creation, details, editing pages and API integration;
 - (frontend) Added archived assignments and archived classes accordion panels;
-- (frontend) Added user profile page and custom 404 page.
+- (frontend) Added user profile page and custom 404 page;
+- (frontend) Added group creation, mode toggle (open/closed), listing on assignments page, and group details view with member/artifact actions;
+- (frontend) Added group dissolution functionality with confirmation modals;
+- (frontend) Added group entry requests management including leader approval views and student request history;
+- (frontend) Added reference and group artifacts editing and custom delete confirmation modals;
+- (frontend) Added monitoring and deliveries dashboard modals for leaders, allowing group members to mark artifacts as deliverable;
+- (frontend) Added copy class code toast notification;
+- (frontend) Added custom font dependency.
+
 
 ### Changed
 
@@ -59,7 +67,12 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - (frontend) Redesigned advanced mode validation to be lazy and stack multiple alerts;
 - (frontend) Updated class card styles to dim archived classes;
 - (frontend) Updated class info page to fetch member count dynamically;
-- (frontend) Updated course hooks to compare user and leader IDs case-insensitively.
+- (frontend) Updated course hooks to compare user and leader IDs case-insensitively;
+- (frontend) Redesigned class cards on home page and integrated Dicebear avatars globally to refine group cards UI;
+- (frontend) Enforced mandatory student group creation in advanced mode and disabled moderate/controlled presets;
+- (frontend) Moved group entry requests section to the main group page;
+- (frontend) Sorted groups/assignments in views, added leader tags, custom "Você" labels, and animated the deliveries dropdown.
+
 
 ### Fixed
 
@@ -68,7 +81,13 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - (backend) Fixed Group domain entity anemic behavior by giving it approppriate domain methods;
 - (frontend) Fixed infinite loading loop on course page with invalid URLs by disabling query retries;
 - (frontend) Fixed toast transition delay to allow exit animation to complete before unmounting;
-- (frontend) Fixed duplicate email registration conflict handler.
+- (frontend) Fixed duplicate email registration conflict handler;
+- (frontend) Fixed validation for past due dates and translated backend error messages to Portuguese;
+- (frontend) Added protected routes (`ProtectedRoute`) to class creation and class join pages;
+- (frontend) Fixed silent token refresh by skipping authorization headers on public routes;
+- (frontend) Fixed profile email error handling and disabled redundant profile save toast notification;
+- (frontend) Fixed styling and labels for adding artifacts and artifact list rows.
+
 
 ## [0.10.0] 2026-06-09
 

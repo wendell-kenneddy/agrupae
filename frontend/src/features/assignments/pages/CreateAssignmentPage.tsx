@@ -50,11 +50,10 @@ function getValidationErrors(
 
   const results: { type: 'error' | 'warning'; message: string }[] = []
 
-  if (!flags.studentsCanCreateGroups && !flags.supervisorCanEditGroups) {
+  if (!flags.studentsCanCreateGroups) {
     results.push({
       type: 'error',
-      message:
-        "Nenhum ator pode criar grupos. Ative 'Estudantes criam grupos' ou 'Responsável edita composição' para continuar.",
+      message: "A permissão 'Estudantes criam grupos' é obrigatória neste modo.",
     })
   }
   if (!flags.studentsCanLeaveGroups && flags.groupLeaderCanDissolve) {
@@ -68,13 +67,6 @@ function getValidationErrors(
       type: 'warning',
       message:
         "Autoridade sobre composição compartilhada com saída bloqueada. Verifique se 'Estudantes podem sair' deve permanecer desativado.",
-    })
-  }
-  if (flags.groupLeaderCanDissolve && !flags.studentsCanCreateGroups && !flags.supervisorCanEditGroups) {
-    results.push({
-      type: 'warning',
-      message:
-        'O líder pode dissolver grupos, mas nenhum novo grupo pode ser criado. Membros dissolvidos ficarão permanentemente sem grupo.',
     })
   }
   return results
@@ -93,6 +85,14 @@ function detectMode(flags: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'
   return 'advanced'
 }
 
+function getTodayString() {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 export function CreateAssignmentPage() {
   const navigate = useNavigate()
   const { id: courseId } = useParams<{ id: string }>()
@@ -107,10 +107,23 @@ export function CreateAssignmentPage() {
     PRESETS.free
   )
   const [submitted, setSubmitted] = useState(false)
+  const [showWarningModal, setShowWarningModal] = useState(false)
 
   const [forcedAdvanced, setForcedAdvanced] = useState(false)
   const mode = forcedAdvanced ? 'advanced' : detectMode(flags)
+  const matchingPreset = detectMode(flags)
   const validations = getValidationErrors(flags, mode)
+  
+  if (dueDate) {
+    const todayStr = getTodayString()
+    if (dueDate < todayStr) {
+      validations.push({
+        type: 'error',
+        message: 'A data de entrega não pode ser anterior à data atual.',
+      })
+    }
+  }
+
   const hasErrors = validations.some((v) => v.type === 'error')
 
   function applyPreset(preset: Exclude<AssignmentMode, 'advanced'>) {
@@ -126,17 +139,33 @@ export function CreateAssignmentPage() {
   async function handleSubmit() {
     setSubmitted(true)
     if (!name.trim() || hasErrors) return
-    await create({
-      name: name.trim(),
-      description: description.trim() || 'Sem descrição',
-      dueDate: dueDate ? new Date(dueDate).toISOString() : new Date('2026-12-31').toISOString(),
-      assignmentFlags: {
-        ...flags,
-        maxGroupMembers: noLimit ? 999 : maxGroupMembers,
-        maxGroups: 999,
-      },
-    })
-    navigate(-1)
+
+    const hasWarnings = validations.some((v) => v.type === 'warning')
+    if (hasWarnings && !showWarningModal) {
+      setShowWarningModal(true)
+      return
+    }
+
+    await proceedSubmit()
+  }
+
+  async function proceedSubmit() {
+    setShowWarningModal(false)
+    try {
+      await create({
+        name: name.trim(),
+        description: description.trim() || 'Sem descrição',
+        dueDate: dueDate ? new Date(dueDate + 'T23:59:59').toISOString() : new Date('2026-12-31T23:59:59').toISOString(),
+        assignmentFlags: {
+          ...flags,
+          maxGroupMembers: noLimit ? 999 : maxGroupMembers,
+          maxGroups: 999,
+        },
+      })
+      navigate(-1)
+    } catch {
+      // Error handled in mutation hook
+    }
   }
 
   return (
@@ -191,6 +220,7 @@ export function CreateAssignmentPage() {
               className={styles.input}
               type="date"
               value={dueDate}
+              min={getTodayString()}
               onChange={(e) => setDueDate(e.target.value)}
             />
           </div>
@@ -228,49 +258,55 @@ export function CreateAssignmentPage() {
           <label className={styles.label}>Modo do trabalho</label>
           <p className={styles.hint}>Define como os grupos serão formados</p>
           <div className={styles.modeGrid}>
-            {(['free', 'moderate', 'controlled', 'advanced'] as AssignmentMode[]).map((m) => (
-              <button
-                key={m}
-                className={`${styles.modeCard} ${mode === m ? styles.modeCardActive : ''}`}
-                onClick={() => {
-                  if (m === 'advanced') {
-                    setForcedAdvanced(true)
-                    setFlags({
-                      studentsCanCreateGroups: false,
-                      studentsCanLeaveGroups: false,
-                      groupLeaderCanDissolve: false,
-                      groupLeaderCanRemoveMembers: false,
-                      groupLeaderCanChangeMode: false,
-                      groupLeaderCanTransferLeadership: false,
-                      supervisorCanEditGroups: false,
-                    })
-                    setSubmitted(false)
-                  } else {
-                    setForcedAdvanced(false)
-                    applyPreset(m as Exclude<AssignmentMode, 'advanced'>)
-                  }
-                }}
-              >
-                <span className={styles.modeName}>
-                  {m === 'free'
-                    ? 'Livre'
-                    : m === 'moderate'
-                      ? 'Moderado'
-                      : m === 'controlled'
-                        ? 'Controlado'
-                        : 'Avançado'}
-                </span>
-                <span className={styles.modeDesc}>
-                  {m === 'free'
-                    ? 'Estudantes criam e gerenciam os grupos'
-                    : m === 'moderate'
-                      ? 'Responsável estrutura, estudantes entram'
-                      : m === 'controlled'
-                        ? 'Responsável define e mantém a composição'
-                        : 'Configure cada permissão individualmente'}
-                </span>
-              </button>
-            ))}
+            {(['free', 'moderate', 'controlled', 'advanced'] as AssignmentMode[]).map((m) => {
+              const isDisabled = m === 'moderate' || m === 'controlled'
+              return (
+                <button
+                  key={m}
+                  className={`${styles.modeCard} ${mode === m ? styles.modeCardActive : ''} ${
+                    isDisabled ? styles.modeCardDisabled : ''
+                  }`}
+                  disabled={isDisabled}
+                  onClick={() => {
+                    if (m === 'advanced') {
+                      setForcedAdvanced(true)
+                      setFlags({
+                        studentsCanCreateGroups: false,
+                        studentsCanLeaveGroups: false,
+                        groupLeaderCanDissolve: false,
+                        groupLeaderCanRemoveMembers: false,
+                        groupLeaderCanChangeMode: false,
+                        groupLeaderCanTransferLeadership: false,
+                        supervisorCanEditGroups: false,
+                      })
+                      setSubmitted(false)
+                    } else {
+                      setForcedAdvanced(false)
+                      applyPreset(m as Exclude<AssignmentMode, 'advanced'>)
+                    }
+                  }}
+                >
+                  <span className={styles.modeName}>
+                    {m === 'free'
+                      ? 'Livre'
+                      : m === 'moderate'
+                        ? 'Moderado (Desativado)'
+                        : m === 'controlled'
+                          ? 'Controlado (Desativado)'
+                          : 'Avançado'}
+                  </span>
+                  <span className={styles.modeDesc}>
+                    {m === 'free'
+                      ? 'Estudantes criam e gerenciam os grupos'
+                      : m === 'moderate'
+                        ? 'Responsável estrutura, estudantes entram'
+                        : m === 'controlled'
+                          ? 'Responsável define e mantém a composição'
+                          : 'Configure cada permissão individualmente'}
+                  </span>
+                </button>
+              )
+            })}
           </div>
         </div>
 
@@ -295,6 +331,33 @@ export function CreateAssignmentPage() {
                 </label>
               ))}
             </div>
+            {matchingPreset !== 'advanced' && (
+              <div className={styles.alertInfo} style={{ marginTop: '12px' }}>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 16v-4M12 8h.01" />
+                </svg>
+                <p>
+                  Esta combinação de permissões corresponde ao preset{' '}
+                  <strong>
+                    {matchingPreset === 'free'
+                      ? 'Livre'
+                      : matchingPreset === 'moderate'
+                        ? 'Moderado'
+                        : 'Controlado'}
+                  </strong>
+                  .
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -342,6 +405,57 @@ export function CreateAssignmentPage() {
           {isLoading ? 'Criando...' : 'Criar trabalho'}
         </button>
       </div>
+      {showWarningModal && (
+        <>
+          <div className={styles.overlay} onClick={() => setShowWarningModal(false)} />
+          <div className={styles.confirmModal}>
+            <button className={styles.confirmModalCloseBtn} onClick={() => setShowWarningModal(false)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+
+            <p className={styles.confirmModalTitle}>Aviso de Configuração</p>
+            <p className={styles.confirmModalSub}>
+              Algumas configurações de permissões podem causar comportamentos indesejados. Tem certeza que deseja continuar?
+            </p>
+
+            <div className={styles.modalWarningsList}>
+              {validations
+                .filter((v) => v.type === 'warning')
+                .map((w, index) => (
+                  <div key={index} className={styles.modalWarningItem}>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M12 8v4M12 16h.01" />
+                    </svg>
+                    <span>{w.message}</span>
+                  </div>
+                ))}
+            </div>
+
+            <div className={styles.confirmModalActions}>
+              <button className={styles.confirmModalCancelBtn} onClick={() => setShowWarningModal(false)}>
+                Revisar Configurações
+              </button>
+              <button
+                className={styles.confirmModalConfirmBtn}
+                onClick={proceedSubmit}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Criando...' : 'Confirmar Criação'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </main>
   )
 }

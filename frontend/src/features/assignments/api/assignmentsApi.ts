@@ -61,3 +61,26 @@ export async function addArtifact(
   )
   return response.data
 }
+
+export async function editArtifact(
+  courseId: string,
+  assignmentId: string,
+  artifactId: string,
+  data: AddArtifactRequest
+): Promise<AssignmentArtifact> {
+  const response = await api.put<AssignmentArtifact>(
+    `/courses/${courseId}/assignments/${assignmentId}/artifacts/${artifactId}`,
+    data
+  )
+  return response.data
+}
+
+export async function deleteArtifact(
+  courseId: string,
+  assignmentId: string,
+  artifactId: string
+): Promise<void> {
+  await api.delete(
+    `/courses/${courseId}/assignments/${assignmentId}/artifacts/${artifactId}`
+  )
+}

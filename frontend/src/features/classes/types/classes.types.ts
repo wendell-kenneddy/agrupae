@@ -16,9 +16,9 @@ export interface Class {
   createdAt: string
   updatedAt: string
   memberCount: number
-  // activeAssignments: number
+  activeAssignments?: number
   role: ClassRole
-  // previewMembers: ClassMemberPreview[]
+  previewMembers?: ClassMemberPreview[]
 }
 
 export interface CreateClassRequest {

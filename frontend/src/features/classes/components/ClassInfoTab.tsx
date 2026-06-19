@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useArchiveClass } from '@/features/classes/hooks/useArchiveClass.ts'
 import { useGetClassMembers } from '@/features/classes/hooks/useGetClassMembers'
 import type { Class } from '@/features/classes/types/classes.types'
+import { toast } from '@/components/ui/useToast'
 import styles from './ClassInfoTab.module.css'
 
 interface ClassInfoTabProps {
@@ -18,7 +19,9 @@ export function ClassInfoTab({ course }: ClassInfoTabProps) {
 
   function handleCopyCode() {
     navigator.clipboard.writeText(course.inviteCode)
+    toast.success('Código copiado!')
   }
+
 
   function handleConfirmArchive() {
     setShowArchiveModal(false)

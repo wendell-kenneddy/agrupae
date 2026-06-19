@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import styles from './CreateClassPage.module.css'
-import { createClass } from '@/features/classes/api/classesApi'
 import { useCreateClass } from '../hooks/useCreateClass'
 
 const createClassSchema = z.object({
@@ -24,15 +23,6 @@ export function CreateClassPage() {
   } = useForm<CreateClassFormData>({ resolver: zodResolver(createClassSchema) })
 
   const nameValue = watch('name')
-
-  async function onSubmit(data: CreateClassFormData) {
-    try {
-      await createClass(data)
-      navigate('/home')
-    } catch {
-      // tratar erro depois
-    }
-  }
 
   return (
     <main className={styles.page}>
