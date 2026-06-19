@@ -5,6 +5,27 @@
   --color-blue-primary: #2a7eff;
   --color-blue-dark: #00477f;
   --color-blue-light: #9fccff;
+  
+  --color-btn-primary: #00477f;
+  --color-btn-secondary: #2a7eff;
+  --color-btn-inactive: #9fccff;
+  --color-btn-text: #efefef;
+  --color-btn-outline: #00477f;
+
+  --color-green: #35a149;
+  --color-green-light: #dcfce7;
+  --color-green-lightest: #f0fdf4;
+  --color-green-border: #bbf7d0;
+
+  --color-red: #d85858;
+  --color-red-light: #fee2e2;
+  --color-red-lightest: #ead1d1;
+  --color-red-border: #fecaca;
+
+  --color-orange: #cf7230;
+  --color-orange-light: #e8d6c9;
+  --color-orange-border: #fde68a;
+
   --color-yellow: #d7f927;
   --color-text-dark: #00100f;
   --color-text-light: #efefef;
@@ -61,4 +82,29 @@ a {
 
 input {
   font-family: var(--font-main);
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #00100f0d;
+  border-radius: var(--radius-sm);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #00100f33;
+  border-radius: var(--radius-sm);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #00100f59;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00100f33 #00100f0d;
 }

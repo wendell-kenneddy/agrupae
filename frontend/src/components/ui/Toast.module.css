@@ -38,7 +38,7 @@
 .success {
   background: #1a2e1f;
   color: #4ade80;
-  border: 1px solid #166534;
+  border: 1px solid var(--color-green);
 }
 
 .error {

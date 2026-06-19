@@ -7,14 +7,10 @@ interface ClassMembersTabProps {
   course: Class
 }
 
-function MemberAvatar({ name }: { name: string }) {
-  const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`
+import { UserAvatar } from '@/components/ui/UserAvatar'
 
-  return (
-    <div className={styles.avatar} style={{ padding: 0, overflow: 'hidden' }}>
-      <img src={avatarUrl} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-    </div>
-  )
+function MemberAvatar({ name }: { name: string }) {
+  return <UserAvatar name={name} size="md" />
 }
 
 export function ClassMembersTab({ course }: ClassMembersTabProps) {

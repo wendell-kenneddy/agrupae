@@ -25,14 +25,10 @@ import type { GroupEntryRequest, GroupSummary, GroupArtifact } from '@/features/
 
 import styles from './AssignmentPage.module.css'
 
-function MemberAvatar({ name }: { name: string }) {
-  const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`
+import { UserAvatar } from '@/components/ui/UserAvatar'
 
-  return (
-    <div className={styles.avatar} style={{ padding: 0, overflow: 'hidden' }}>
-      <img src={avatarUrl} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-    </div>
-  )
+function MemberAvatar({ name }: { name: string }) {
+  return <UserAvatar name={name} size="md" />
 }
 
 interface DeliveryGroupRowProps {
@@ -287,6 +283,7 @@ export function AssignmentPage() {
   }
 
   async function handleSave() {
+    if (!assignment || assignment.isArchived) return
     if (!formName.trim() || !formLink.trim()) return
     if (modalArtifact === 'new') {
       await add({
@@ -308,6 +305,7 @@ export function AssignmentPage() {
   }
 
   async function handleConfirmDelete() {
+    if (!assignment || assignment.isArchived) return
     if (!artifactToDelete) return
     try {
       await remove(artifactToDelete.id)
@@ -316,12 +314,14 @@ export function AssignmentPage() {
   }
 
   function openCreateGroup() {
+    if (!assignment || assignment.isArchived) return
     setGroupName('')
     setGroupOpen(true)
     setShowCreateGroup(true)
   }
 
   async function handleCreateGroup() {
+    if (!assignment || assignment.isArchived) return
     if (!groupName.trim()) return
     try {
       await createGroup({ name: groupName.trim(), open: groupOpen })
@@ -330,18 +330,21 @@ export function AssignmentPage() {
   }
 
   async function handleJoin(groupId: string) {
+    if (!assignment || assignment.isArchived) return
     try {
       await joinGroup(groupId)
     } catch {}
   }
 
   async function handleRequestEntry(groupId: string) {
+    if (!assignment || assignment.isArchived) return
     try {
       await requestEntry(groupId)
     } catch {}
   }
 
   async function handleCancelRequest(req: GroupEntryRequest) {
+    if (!assignment || assignment.isArchived) return
     try {
       await cancelRequest({ groupId: req.groupId, requestId: req.id })
     } catch {
@@ -373,6 +376,17 @@ export function AssignmentPage() {
       </header>
 
       <div className={styles.content}>
+        {!isAssignmentActive && (
+          <div className={styles.archivedWarningCard}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="21 8 21 21 3 21 3 8" />
+              <rect x="1" y="3" width="22" height="5" />
+              <line x1="10" y1="12" x2="14" y2="12" />
+            </svg>
+            <span>Este trabalho está arquivado. As interações estão desativadas.</span>
+          </div>
+        )}
+
         <div className={styles.infoCard}>
           <div className={styles.infoRow}>
             {dueDate && (
@@ -396,7 +410,7 @@ export function AssignmentPage() {
 
           {!isLoadingArtifacts && artifacts.length > 0 && (
             <div className={styles.artifacts}>
-              {artifacts.map((a) => (
+               {artifacts.map((a) => (
                 <div key={a.id} className={styles.artifactRow}>
                   <a
                     href={a.resourceLink}
@@ -421,7 +435,7 @@ export function AssignmentPage() {
                       {a.description ? ` · ${a.description}` : ''}
                     </span>
                   </a>
-                  {isOwner && (
+                  {isOwner && isAssignmentActive && (
                     <div className={styles.artifactActions}>
                       <button className={styles.artifactEditBtn} onClick={() => openEditArtifact(a)}>
                         <svg
@@ -463,9 +477,9 @@ export function AssignmentPage() {
             </div>
           )}
 
-          {isOwner && (
+          {isOwner && isAssignmentActive && (
             <button className={styles.editBtn} onClick={openNewArtifact}>
-              Adicionar artefatos
+              Adicionar artefato
             </button>
           )}
         </div>
@@ -575,9 +589,8 @@ export function AssignmentPage() {
                       >
                         <div className={styles.groupCardTop}>
                           <div className={styles.groupCardHeaderLeft}>
-                            <span className={styles.groupName}>{g.name}</span>
-                            <div className={styles.groupMeta}>
-                              {isMyGroup && <span className={styles.myGroupTag}>Meu grupo</span>}
+                            <div className={styles.groupNameRow}>
+                              <span className={styles.groupName}>{g.name}</span>
                               {!isMyGroup && myRequest?.status === 'PENDING' && (
                                 <span className={styles.badgePending}>Pendente</span>
                               )}
@@ -586,9 +599,13 @@ export function AssignmentPage() {
                               )}
                             </div>
                           </div>
-                          <span className={`${styles.groupBadge} ${g.open ? styles.openBadge : styles.closedBadge}`}>
-                            {g.open ? 'Aberto' : 'Fechado'}
-                          </span>
+                          {isMyGroup ? (
+                            <span className={styles.myGroupTag}>Meu grupo</span>
+                          ) : (
+                            <span className={`${styles.groupBadge} ${g.open ? styles.openBadge : styles.closedBadge}`}>
+                              {g.open ? 'Aberto' : 'Fechado'}
+                            </span>
+                          )}
                         </div>
 
                         <hr className={styles.groupCardDivider} />
@@ -606,24 +623,108 @@ export function AssignmentPage() {
                           </span>
 
                           <div className={styles.memberAvatarsList}>
-                            {Array.from({ length: g.memberCount }).map((_, index) => {
-                              const seeds = ['custom1', 'custom2', 'custom3', 'custom4', 'custom5']
-                              const seed = seeds[index % seeds.length] + '-' + g.id.slice(0, 4)
-                              const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`
-                              return (
-                                <img
-                                  key={index}
-                                  src={avatarUrl}
-                                  alt="Membro"
-                                  className={styles.memberAvatarImg}
-                                />
-                              )
-                            })}
+                            {(() => {
+                              const groupIndex = groupIds.indexOf(g.id)
+                              const groupMembersQuery = groupMembersQueries[groupIndex]
+                              const membersOfThisGroup = groupMembersQuery?.data?.content ?? []
+                              const isMembersLoading = groupMembersQuery?.isLoading
 
-                            {hasMemberLimit &&
-                              Array.from({ length: Math.max(0, maxMembers - g.memberCount) }).map((_, index) => (
-                                <div key={index} className={styles.emptyMemberSlot} />
-                              ))}
+                              // Fallback loading placeholders
+                              if ((isMembersLoading || membersOfThisGroup.length === 0) && g.memberCount > 0) {
+                                if (g.memberCount <= 4) {
+                                  return Array.from({ length: g.memberCount }).map((_, idx) => (
+                                    <div
+                                      key={`loading-${idx}`}
+                                      className={styles.memberAvatarImg}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        background: 'var(--color-blue-light)',
+                                      }}
+                                    >
+                                      <svg
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="var(--color-blue-dark)"
+                                        strokeWidth="2.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                      >
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                      </svg>
+                                    </div>
+                                  ))
+                                } else {
+                                  return (
+                                    <>
+                                      {Array.from({ length: 4 }).map((_, idx) => (
+                                        <div
+                                          key={`loading-${idx}`}
+                                          className={styles.memberAvatarImg}
+                                          style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            background: 'var(--color-blue-light)',
+                                          }}
+                                        >
+                                          <svg
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="var(--color-blue-dark)"
+                                            strokeWidth="2.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                          >
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                            <circle cx="12" cy="7" r="4" />
+                                          </svg>
+                                        </div>
+                                      ))}
+                                      <div className={styles.emptyMemberSlot}>
+                                        +{g.memberCount - 4}
+                                      </div>
+                                    </>
+                                  )
+                                }
+                              }
+
+                              // Real initials avatar list
+                              if (g.memberCount <= 4) {
+                                return membersOfThisGroup.map((member) => (
+                                  <UserAvatar
+                                    key={member.id}
+                                    name={member.name}
+                                    className={styles.memberAvatarImg}
+                                    style={{ fontSize: '11px' }}
+                                  />
+                                ))
+                              } else {
+                                const displayedMembers = membersOfThisGroup.slice(0, 4)
+                                const extraCount = g.memberCount - 4
+                                return (
+                                  <>
+                                    {displayedMembers.map((member) => (
+                                      <UserAvatar
+                                        key={member.id}
+                                        name={member.name}
+                                        className={styles.memberAvatarImg}
+                                        style={{ fontSize: '11px' }}
+                                      />
+                                    ))}
+                                    <div className={styles.emptyMemberSlot}>
+                                      +{extraCount}
+                                    </div>
+                                  </>
+                                )
+                              }
+                            })()}
                           </div>
                         </div>
 
@@ -755,7 +856,7 @@ export function AssignmentPage() {
                       <button
                         className={styles.cancelRequestInlineBtn}
                         onClick={() => handleCancelRequest(req)}
-                        disabled={isCancelling}
+                        disabled={isCancelling || !isAssignmentActive}
                       >
                         Cancelar
                       </button>
@@ -888,7 +989,8 @@ export function AssignmentPage() {
                     type="button"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3" />
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 9.9-1" />
                     </svg>
                     Aberto
                   </button>

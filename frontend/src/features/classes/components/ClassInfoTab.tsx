@@ -35,6 +35,13 @@ export function ClassInfoTab({ course }: ClassInfoTabProps) {
         <p className={styles.value}>{course.name}</p>
       </div>
 
+      {course.description && (
+        <div className={styles.section}>
+          <p className={styles.label}>Descrição</p>
+          <p className={styles.value}>{course.description}</p>
+        </div>
+      )}
+
       <div className={styles.section}>
         <p className={styles.label}>Quantidade de membros</p>
         <p className={styles.value}>
@@ -46,13 +53,13 @@ export function ClassInfoTab({ course }: ClassInfoTabProps) {
         <p className={styles.inviteLabel}>Código de convite</p>
         <button className={styles.inviteCode} onClick={handleCopyCode}>
           <span>{course.inviteCode}</span>
-          <svg
+          <svg className={styles.inviteIcon}
             width="18"
             height="18"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth="3"
           >
             <rect x="9" y="9" width="13" height="13" rx="2" />
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />

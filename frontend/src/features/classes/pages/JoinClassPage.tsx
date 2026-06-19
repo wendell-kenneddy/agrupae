@@ -17,8 +17,11 @@ export function JoinClassPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<JoinClassFormData>({ resolver: zodResolver(joinClassSchema) })
+
+  const inviteCodeValue = watch('inviteCode')
 
   return (
     <main className={styles.page}>
@@ -56,11 +59,9 @@ export function JoinClassPage() {
           )}
         </div>
 
-        <button className={styles.submitBtn} type="submit" disabled={isLoading}>
+        <button className={styles.submitBtn} type="submit" disabled={!inviteCodeValue || isLoading}>
           {isLoading ? 'Entrando...' : 'Entrar na turma'}
         </button>
-
-        {error && <span className={styles.errorMsg}>{error}</span>}
       </form>
     </main>
   )
