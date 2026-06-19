@@ -52,11 +52,10 @@ function getValidationErrors(
 
   const results: { type: 'error' | 'warning'; message: string }[] = []
 
-  if (!flags.studentsCanCreateGroups && !flags.supervisorCanEditGroups) {
+  if (!flags.studentsCanCreateGroups) {
     results.push({
       type: 'error',
-      message:
-        "Nenhum ator pode criar grupos. Ative 'Estudantes criam grupos' ou 'Responsável edita composição' para continuar.",
+      message: "A permissão 'Estudantes criam grupos' é obrigatória neste modo.",
     })
   }
   if (!flags.studentsCanLeaveGroups && flags.groupLeaderCanDissolve) {
@@ -70,13 +69,6 @@ function getValidationErrors(
       type: 'warning',
       message:
         "Autoridade sobre composição compartilhada com saída bloqueada. Verifique se 'Estudantes podem sair' deve permanecer desativado.",
-    })
-  }
-  if (flags.groupLeaderCanDissolve && !flags.studentsCanCreateGroups && !flags.supervisorCanEditGroups) {
-    results.push({
-      type: 'warning',
-      message:
-        'O líder pode dissolver grupos, mas nenhum novo grupo pode ser criado. Membros dissolvidos ficarão permanentemente sem grupo.',
     })
   }
   return results
@@ -274,39 +266,45 @@ export function EditAssignmentPage() {
           <label className={styles.label}>Modo do trabalho</label>
           <p className={styles.hint}>Define como os grupos serão formados</p>
           <div className={styles.modeGrid}>
-            {(['free', 'moderate', 'controlled', 'advanced'] as AssignmentMode[]).map((m) => (
-              <button
-                key={m}
-                className={`${styles.modeCard} ${mode === m ? styles.modeCardActive : ''}`}
-                onClick={() => {
-                  if (m === 'advanced') {
-                    setForcedAdvanced(true)
-                  } else {
-                    setForcedAdvanced(false)
-                    applyPreset(m as Exclude<AssignmentMode, 'advanced'>)
-                  }
-                }}
-              >
-                <span className={styles.modeName}>
-                  {m === 'free'
-                    ? 'Livre'
-                    : m === 'moderate'
-                      ? 'Moderado'
-                      : m === 'controlled'
-                        ? 'Controlado'
-                        : 'Avançado'}
-                </span>
-                <span className={styles.modeDesc}>
-                  {m === 'free'
-                    ? 'Estudantes criam e gerenciam os grupos'
-                    : m === 'moderate'
-                      ? 'Responsável estrutura, estudantes entram'
-                      : m === 'controlled'
-                        ? 'Responsável define e mantém a composição'
-                        : 'Configure cada permissão individualmente'}
-                </span>
-              </button>
-            ))}
+            {(['free', 'moderate', 'controlled', 'advanced'] as AssignmentMode[]).map((m) => {
+              const isDisabled = m === 'moderate' || m === 'controlled'
+              return (
+                <button
+                  key={m}
+                  className={`${styles.modeCard} ${mode === m ? styles.modeCardActive : ''} ${
+                    isDisabled ? styles.modeCardDisabled : ''
+                  }`}
+                  disabled={isDisabled}
+                  onClick={() => {
+                    if (m === 'advanced') {
+                      setForcedAdvanced(true)
+                    } else {
+                      setForcedAdvanced(false)
+                      applyPreset(m as Exclude<AssignmentMode, 'advanced'>)
+                    }
+                  }}
+                >
+                  <span className={styles.modeName}>
+                    {m === 'free'
+                      ? 'Livre'
+                      : m === 'moderate'
+                        ? 'Moderado (Desativado)'
+                        : m === 'controlled'
+                          ? 'Controlado (Desativado)'
+                          : 'Avançado'}
+                  </span>
+                  <span className={styles.modeDesc}>
+                    {m === 'free'
+                      ? 'Estudantes criam e gerenciam os grupos'
+                      : m === 'moderate'
+                        ? 'Responsável estrutura, estudantes entram'
+                        : m === 'controlled'
+                          ? 'Responsável define e mantém a composição'
+                          : 'Configure cada permissão individualmente'}
+                  </span>
+                </button>
+              )
+            })}
           </div>
         </div>
 
