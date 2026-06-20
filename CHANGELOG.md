@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
+## [0.12.0] 2026-06-20
+
 ### Added
 
 - Add multi-stage Dockerfile for backend (Java 21)
@@ -25,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Add Demo section to README displaying an animated webp preview of the platform
 - Format README authors listing as a table showing circular GitHub avatars
 
-## [0.11.0] 2026-09-19
+## [0.11.0] 2026-06-19
 
 ### Added
 
