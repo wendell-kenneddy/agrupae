@@ -1,26 +1,20 @@
-# === ESTÁGIO 1: Compilação ===
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 
-# Copia os arquivos do Maven (cache de dependências)
 COPY backend/mvnw backend/pom.xml ./
 COPY backend/.mvn .mvn
 RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
 
-# Copia o código-fonte
 COPY backend/src src
 
-# Gera chaves RSA para JWT
 RUN mkdir -p src/main/resources/certs && \
     openssl genpkey -algorithm RSA -out src/main/resources/certs/private.pem \
       -pkeyopt rsa_keygen_bits:2048 && \
     openssl rsa -pubout -in src/main/resources/certs/private.pem \
       -out src/main/resources/certs/public.pem
 
-# Compila o projeto (pula testes para agilizar)
 RUN ./mvnw package -DskipTests -B
 
-# === ESTÁGIO 2: Execução ===
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
