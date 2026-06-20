@@ -12,19 +12,29 @@
 
 <p align="center">
   <a href="#about"><img src="https://img.shields.io/badge/About-24292e?style=for-the-badge&logo=info&logoColor=white" alt="About" /></a>
+  <a href="#demo"><img src="https://img.shields.io/badge/Demo-24292e?style=for-the-badge&logo=airplay&logoColor=white" alt="Demo" /></a>
   <a href="#built-with"><img src="https://img.shields.io/badge/Built%20With-24292e?style=for-the-badge&logo=react&logoColor=61DAFB" alt="Built With" /></a>
   <a href="#getting-started"><img src="https://img.shields.io/badge/Getting%20Started-24292e?style=for-the-badge&logo=docker&logoColor=2496ED" alt="Getting Started" /></a>
   <a href="#environment-variables--security"><img src="https://img.shields.io/badge/Security-24292e?style=for-the-badge&logo=springsecurity&logoColor=6DB33F" alt="Security" /></a>
   <a href="#contributing"><img src="https://img.shields.io/badge/Contributing-24292e?style=for-the-badge&logo=github&logoColor=white" alt="Contributing" /></a>
 </p>
+</br>
+<p align="center">
+  <img src="docs/assets/separator.svg" alt="separator" width="100%" />
+</p>
+<h2>About</h2>
+
+Agrupaê is all about easing the friction between academic group assignments and the creation of such groups, allowing users to easily manage them. It features a robust Java/Spring Boot backend REST API and a fast, responsive React frontend.
 
 <p align="center">
   <img src="docs/assets/separator.svg" alt="separator" width="100%" />
 </p>
 
-<h2>About</h2>
+<h2>Demo</h2>
 
-Agrupaê is all about easing the friction between academic group assignments and the creation of such groups, allowing users to easily manage them. It features a robust Java/Spring Boot backend REST API and a fast, responsive React frontend.
+<p align="center">
+  <img src="docs/assets/agrupae-present.webp" width="100%" alt="Agrupaê Demo" />
+</p>
 
 <p align="center">
   <img src="docs/assets/separator.svg" alt="separator" width="100%" />
@@ -70,16 +80,17 @@ Make sure you have the following installed on your machine:
 ### Execution Steps
 
 1. **Clone the Repository:**
-   <p align="left">
-     <img src="docs/assets/terminal.svg" width="100%" alt="Clone Terminal" />
-   </p>
+   ```bash
+   $ git clone https://github.com/wendell-kenneddy/agrupae.git
+   $ cd agrupae
+   ```
 
 
 2. **Spin up all containers:**
    Run the following command at the project root to fetch dependencies, build the application, and start the services:
-   <p align="left">
-     <img src="docs/assets/terminal-up.svg" width="100%" alt="Docker Compose Up Terminal" />
-   </p>
+   ```bash
+   $ docker compose up --build
+   ```
 
    *Note: The Flyway container will automatically execute database migrations and exit successfully before the backend fully boots up.*
 
@@ -91,9 +102,10 @@ Make sure you have the following installed on your machine:
 
 4. **Tearing Down Services:**
    To stop and remove all container resources, run:
-   <p align="left">
-     <img src="docs/assets/terminal-down.svg" width="100%" alt="Docker Compose Down Terminal" />
-   </p>
+   ```bash
+   $ docker compose down
+   ```
+</br>
 
 
 <p align="center">
@@ -119,19 +131,6 @@ During the backend build process (`Dockerfile.backend`), automated security acti
   <img src="docs/assets/repo-structure.svg" width="100%" alt="Repository Structure" />
 </p>
 
-<details>
-  <summary>📋 Clique aqui para visualizar em formato texto</summary>
-
-```
-agrupae/
-├── backend/            # Spring Boot REST API
-├── frontend/           # React + Vite Single Page Application
-├── Dockerfile.backend  # Java build & runtime instructions
-├── Dockerfile.frontend # Node development environment container setup
-└── docker-compose.yml  # Local multi-container development environment setup
-```
-</details>
-
 <p align="center">
   <img src="docs/assets/separator.svg" alt="separator" width="100%" />
 </p>
@@ -140,20 +139,36 @@ agrupae/
 
 Contributions must follow the guidelines set in the `CONTRIBUTING.md` file under the `docs` directory.
 
-<p align="center">
-  <img src="docs/assets/separator.svg" alt="separator" width="100%" />
-</p>
-
 <h2>Authors</h2>
 
-- [Wendell Kenneddy](https://github.com/wendell-kenneddy)
-- [Kelvin Bezerra](https://github.com/kelvinsbez)
-- [Jeremias Victor](https://github.com/jeremiasvictor)
-- [Guilherme Silva](https://github.com/guilhermedevbr06)
-
-<p align="center">
-  <img src="docs/assets/separator.svg" alt="separator" width="100%" />
-</p>
+<table align="center">
+  <tr>
+    <td align="center">
+      <a href="https://github.com/wendell-kenneddy">
+        <img src="https://github.com/wendell-kenneddy.png" width="100px;" style="border-radius: 50%;" alt="Wendell Kenneddy"/><br />
+        <sub><b>Wendell Kenneddy</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/kelvinsbez">
+        <img src="https://github.com/kelvinsbez.png" width="100px;" style="border-radius: 50%;" alt="Kelvin Bezerra"/><br />
+        <sub><b>Kelvin Bezerra</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/jeremiasvictor">
+        <img src="https://github.com/jeremiasvictor.png" width="100px;" style="border-radius: 50%;" alt="Jeremias Victor"/><br />
+        <sub><b>Jeremias Victor</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/guilhermedevbr06">
+        <img src="https://github.com/guilhermedevbr06.png" width="100px;" style="border-radius: 50%;" alt="Guilherme Silva"/><br />
+        <sub><b>Guilherme Silva</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
 
 <h2>License</h2>
 
