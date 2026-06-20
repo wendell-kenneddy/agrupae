@@ -11,6 +11,9 @@ import type {
 
 import styles from './CreateAssignmentPage.module.css'
 import { useGetAssignment } from '../hooks/useGetAssignment'
+import { useGetClassMembers } from '@/features/classes/hooks/useGetClassMembers'
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
+import { NotFoundPage } from '@/components/ui/NotFoundPage'
 
 const FLAG_LABELS: Record<
   keyof Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'>,
@@ -101,8 +104,8 @@ export function EditAssignmentPage() {
   const { edit, isLoading: isSaving } = useEditAssignment(courseId!, assignmentId!)
   const { assignment, isLoading } = useGetAssignment(courseId!, assignmentId!)
 
-  if (isLoading) return <div>Carregando...</div>
-  if (!assignment) return <div>Trabalho não encontrado.</div>
+  if (isLoading) return <LoadingScreen />
+  if (!assignment) return <NotFoundPage />
 
   return (
     <EditAssignmentForm
@@ -121,6 +124,8 @@ interface EditAssignmentFormProps {
 
 function EditAssignmentForm({ assignment, edit, isSaving }: EditAssignmentFormProps) {
   const navigate = useNavigate()
+  const { id: courseId } = useParams<{ id: string }>()
+  const { members: classMembers = [] } = useGetClassMembers(courseId!)
   const maxGroupMembers = assignment.assignmentFlags.maxGroupMembers
 
   const flagsOnly: Omit<AssignmentFlags, 'maxGroupMembers' | 'maxGroups'> = {
@@ -147,6 +152,17 @@ function EditAssignmentForm({ assignment, edit, isSaving }: EditAssignmentFormPr
   const [forcedAdvanced, setForcedAdvanced] = useState(detectMode(flagsOnly) === 'advanced')
   const [submitted, setSubmitted] = useState(false)
   const [showWarningModal, setShowWarningModal] = useState(false)
+
+  const initialMaxGroups = assignment.assignmentFlags.maxGroups
+  const [manualMaxGroups, setManualMaxGroups] = useState<number | null>(
+    initialMaxGroups === 999 ? null : initialMaxGroups
+  )
+  const [noGroupLimit, setNoGroupLimit] = useState(initialMaxGroups === 999)
+
+  const smartDefaultGroups = classMembers.length > 0
+    ? Math.ceil(classMembers.length / maxGroupMembersState)
+    : 10
+  const maxGroups = manualMaxGroups !== null ? manualMaxGroups : smartDefaultGroups
 
   const mode = forcedAdvanced ? 'advanced' : detectMode(flags)
   const matchingPreset = detectMode(flags)
@@ -197,7 +213,7 @@ function EditAssignmentForm({ assignment, edit, isSaving }: EditAssignmentFormPr
         assignmentFlags: {
           ...flags,
           maxGroupMembers: noLimit ? 999 : maxGroupMembersState,
-          maxGroups: 999,
+          maxGroups: noGroupLimit ? 999 : maxGroups,
         },
       })
       navigate(-1)
@@ -281,18 +297,59 @@ function EditAssignmentForm({ assignment, edit, isSaving }: EditAssignmentFormPr
             </span>
             <button
               className={styles.counterBtn}
-              onClick={() => setMaxGroupMembers((v) => v + 1)}
+              onClick={() => setMaxGroupMembers((v) => Math.min(classMembers.length || 999, v + 1))}
               disabled={noLimit}
             >
               +
             </button>
           </div>
+          {classMembers.length > 0 && (
+            <p className={styles.hint} style={{ marginTop: '4px' }}>
+              Limite máximo permitido: {classMembers.length} (total de alunos na turma)
+            </p>
+          )}
           <label className={styles.toggleRow}>
             <div
               className={`${styles.toggle} ${noLimit ? styles.toggleOn : ''}`}
               onClick={() => setNoLimit((v) => !v)}
             />
             <span className={styles.toggleLabel}>Sem limite de membros</span>
+          </label>
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label}>Limite de grupos formados</label>
+          <div className={styles.counter}>
+            <button
+              className={styles.counterBtn}
+              onClick={() => setManualMaxGroups(Math.max(1, maxGroups - 1))}
+              disabled={noGroupLimit}
+            >
+              −
+            </button>
+            <span className={styles.counterValue} style={noGroupLimit ? { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '7px 0' } : undefined}>
+              {noGroupLimit ? (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+                  <path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4Z" />
+                </svg>
+              ) : (
+                maxGroups
+              )}
+            </span>
+            <button
+              className={styles.counterBtn}
+              onClick={() => setManualMaxGroups(maxGroups + 1)}
+              disabled={noGroupLimit}
+            >
+              +
+            </button>
+          </div>
+          <label className={styles.toggleRow}>
+            <div
+              className={`${styles.toggle} ${noGroupLimit ? styles.toggleOn : ''}`}
+              onClick={() => setNoGroupLimit((v) => !v)}
+            />
+            <span className={styles.toggleLabel}>Sem limite de grupos</span>
           </label>
         </div>
 

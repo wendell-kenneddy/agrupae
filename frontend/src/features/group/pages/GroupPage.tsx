@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useQueries } from '@tanstack/react-query'
 import { getGroupMembers } from '@/features/group/api/groupsApi'
 import { NotFoundPage } from '@/components/ui/NotFoundPage'
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { useAuth } from '@/app/providers/AuthContext'
 import { useGetAssignment } from '@/features/assignments/hooks/useGetAssignment'
 import { useGetClass } from '@/features/classes/hooks/useGetClass'
@@ -113,7 +114,7 @@ export function GroupPage() {
   const groupMembersQueries = useQueries({
     queries: groupIds.map((id) => ({
       queryKey: ['group-members', courseId, assignmentId, id],
-      queryFn: () => getGroupMembers(courseId, assignmentId, id),
+      queryFn: () => getGroupMembers(courseId!, assignmentId!, id),
       enabled: !!courseId && !!assignmentId && !!id,
     })),
   })
@@ -158,7 +159,7 @@ export function GroupPage() {
   }, [isLoadingAssignment, isLoadingGroups, isLoadingMembers, isMember, isOwner, navigate, courseId, assignmentId])
 
   if (isLoadingAssignment || isLoadingGroups || isLoadingMembers) {
-    return <div className={styles.page}>Carregando...</div>
+    return <LoadingScreen />
   }
 
   if (!group || !assignment || (!isMember && !isOwner)) {

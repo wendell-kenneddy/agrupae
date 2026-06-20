@@ -26,6 +26,8 @@ import type { GroupEntryRequest, GroupSummary, GroupArtifact } from '@/features/
 import styles from './AssignmentPage.module.css'
 
 import { UserAvatar } from '@/components/ui/UserAvatar'
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
+import { NotFoundPage } from '@/components/ui/NotFoundPage'
 
 function MemberAvatar({ name }: { name: string }) {
   return <UserAvatar name={name} size="md" />
@@ -138,6 +140,11 @@ export function AssignmentPage() {
   const { join: joinGroup, isLoading: isJoining } = useJoinOpenGroup(courseId!, assignmentId!)
   const { requestEntry, isLoading: isRequesting } = useRequestGroupEntry(courseId!, assignmentId!)
 
+  const isOwner = course?.role === 'OWNER'
+  const canCreateGroup =
+    assignment?.assignmentFlags.studentsCanCreateGroups === true &&
+    !assignment?.isArchived
+
   const [selectedGroupForModal, setSelectedGroupForModal] = useState<GroupSummary | null>(null)
   const [showDeliveriesModal, setShowDeliveriesModal] = useState(false)
 
@@ -179,6 +186,10 @@ export function AssignmentPage() {
       })
     }
   })
+  const hasGroup =
+    !!groupsData?.myGroup ||
+    groupsData?.groups.content.some((g) => g.leaderId === user?.id) ||
+    membersInGroupsIds.has(user?.id || '')
 
   const ungroupedStudents = classMembers.filter(
     (member) => !membersInGroupsIds.has(member.id)
@@ -239,11 +250,6 @@ export function AssignmentPage() {
   const [groupName, setGroupName] = useState('')
   const [groupOpen, setGroupOpen] = useState(true)
 
-  const isOwner = course?.role === 'OWNER'
-  const hasGroup = !!groupsData?.myGroup
-  const canCreateGroup =
-    assignment?.assignmentFlags.studentsCanCreateGroups === true &&
-    !assignment?.isArchived
 
   const myRequestByGroupId = myRequests.reduce<Record<string, GroupEntryRequest>>((acc, req) => {
     if (req.status === 'PENDING' || req.status === 'REJECTED') {
@@ -254,8 +260,8 @@ export function AssignmentPage() {
 
   const hasPendingRequest = myRequests.some((r) => r.status === 'PENDING')
 
-  if (isLoading) return <div className={styles.feedback}>Carregando...</div>
-  if (isError || !assignment) return <div className={styles.feedback}>Trabalho não encontrado.</div>
+  if (isLoading) return <LoadingScreen />
+  if (isError || !assignment) return <NotFoundPage />
 
   const dueDate = assignment.dueDate
     ? new Date(assignment.dueDate).toLocaleDateString('pt-BR')
@@ -265,10 +271,22 @@ export function AssignmentPage() {
   const studentsInGroups = groupsData?.groups.content.reduce((sum, g) => sum + g.memberCount, 0) ?? 0
   const studentsWithoutGroup = Math.max(0, totalStudents - studentsInGroups)
 
-  const maxGroupMembers = assignment.assignmentFlags.maxGroupMembers
-  const hasMemberLimit = maxGroupMembers !== 999
+
   const currentGroups = groupsData?.groups.totalElements ?? 0
-  const maxGroupsCalculated = hasMemberLimit ? Math.ceil(totalStudents / maxGroupMembers) : null
+  const maxGroups = assignment.assignmentFlags.maxGroups
+  const hasGroupsLimit = maxGroups !== 999
+
+  const isGroupsLimitReached = hasGroupsLimit && currentGroups >= maxGroups
+  let createGroupBtnText = 'Criar grupo'
+  let isCreateGroupDisabled = false
+
+  if (hasGroup && !isOwner) {
+    createGroupBtnText = 'Você já possui um grupo'
+    isCreateGroupDisabled = true
+  } else if (isGroupsLimitReached) {
+    createGroupBtnText = 'Limite de grupos atingido'
+    isCreateGroupDisabled = true
+  }
 
   function openNewArtifact() {
     setFormName('')
@@ -551,15 +569,15 @@ export function AssignmentPage() {
               <span>Grupos formados</span>
             </div>
             <span className={styles.groupsCount}>
-              {currentGroups}/{hasMemberLimit ? maxGroupsCalculated : '∞'}
+              {currentGroups}/{hasGroupsLimit ? maxGroups : '∞'}
             </span>
           </div>
-          <div className={`${styles.groupsProgressBar} ${!hasMemberLimit ? styles.inactiveGroupsProgressBar : ''}`}>
-            {hasMemberLimit && (
+          <div className={`${styles.groupsProgressBar} ${!hasGroupsLimit ? styles.inactiveGroupsProgressBar : ''}`}>
+            {hasGroupsLimit && (
               <div
                 className={styles.groupsProgressFill}
                 style={{
-                  width: `${maxGroupsCalculated && maxGroupsCalculated > 0 ? Math.min(100, (currentGroups / maxGroupsCalculated) * 100) : 0}%`,
+                  width: `${maxGroups && maxGroups > 0 ? Math.min(100, (currentGroups / maxGroups) * 100) : 0}%`,
                 }}
               />
             )}
@@ -765,7 +783,7 @@ export function AssignmentPage() {
                                 }}
                                 disabled={isCancelling}
                               >
-                                {isCancelling ? 'Cancelando...' : 'Cancelar'}
+                                {isCancelling ? 'Cancelando...' : 'Cancelar solicitação'}
                               </button>
                             )}
                           </div>
@@ -781,9 +799,9 @@ export function AssignmentPage() {
             <button
               className={styles.createGroupBtn}
               onClick={openCreateGroup}
-              disabled={hasGroup && !isOwner}
+              disabled={isCreateGroupDisabled}
             >
-              Criar grupo
+              {createGroupBtnText}
             </button>
           )}
         </div>
@@ -860,7 +878,7 @@ export function AssignmentPage() {
                         onClick={() => handleCancelRequest(req)}
                         disabled={isCancelling || !isAssignmentActive}
                       >
-                        Cancelar
+                        Cancelar solicitação
                       </button>
                     )}
                     {(req.status === 'ACCEPTED' || req.status === 'REJECTED') && (
