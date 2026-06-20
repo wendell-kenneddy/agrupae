@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
+const apiTarget = process.env.VITE_API_URL || 'http://localhost:8081'
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -10,22 +12,22 @@ export default defineConfig({
   server: {
     proxy: {
       '/auth': {
-        target: 'http://localhost:8081',
+        target: apiTarget,
         changeOrigin: true,
         secure: false,
       },
       '/users': {
-        target: 'http://localhost:8081',
+        target: apiTarget,
         changeOrigin: true,
         secure: false,
       },
       '/courses/join': {
-        target: 'http://localhost:8081',
+        target: apiTarget,
         changeOrigin: true,
         secure: false,
       },
       '/courses': {
-        target: 'http://localhost:8081',
+        target: apiTarget,
         changeOrigin: true,
         secure: false,
       },
