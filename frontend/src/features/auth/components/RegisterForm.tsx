@@ -11,7 +11,7 @@ import { MdOutlineLock } from 'react-icons/md'
 import styles from './RegisterForm.module.css'
 
 const registerSchema = z.object({
-  name: z.string(),
+  name: z.string().trim().min(1, 'Nome é obrigatório'),
   email: z.string().email('Email inválido'),
   password: z.string().min(8, 'Mínimo de 8 caracteres'),
 })

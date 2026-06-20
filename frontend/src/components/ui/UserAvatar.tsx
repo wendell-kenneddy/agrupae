@@ -1,4 +1,4 @@
-import { HTMLAttributes } from 'react'
+import type { HTMLAttributes } from 'react'
 import styles from './UserAvatar.module.css'
 
 interface UserAvatarProps extends HTMLAttributes<HTMLDivElement> {
@@ -14,7 +14,7 @@ const AVATAR_COLORS = [
   { bg: 'var(--color-bg-gray)', border: 'var(--color-text-dark)', text: 'var(--color-text-dark)' },
 ]
 
-export function getInitials(name: string): string {
+function getInitials(name: string): string {
   if (!name) return ''
   const words = name.trim().split(/\s+/).filter(w => w.length > 0)
   if (words.length === 0) return ''

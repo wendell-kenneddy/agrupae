@@ -30,11 +30,11 @@ function ChevronIcon() {
 function AssignmentGroupsProgress({
   courseId,
   assignmentId,
-  maxGroupMembers,
+  maxGroups,
 }: {
   courseId: string
   assignmentId: string
-  maxGroupMembers: number
+  maxGroups: number
 }) {
   const { groupsData, isLoading: isLoadingGroups } = useGetGroups(courseId, assignmentId)
   const { members: classMembers, isLoading: isLoadingMembers } = useGetClassMembers(courseId)
@@ -66,11 +66,9 @@ function AssignmentGroupsProgress({
   }
 
   const totalGroups = groupsData.groups.totalElements
-  const totalStudents = classMembers.length
-  const hasMemberLimit = maxGroupMembers !== 999
-  const maxGroupsCalculated = hasMemberLimit ? Math.ceil(totalStudents / maxGroupMembers) : null
-  const percent = hasMemberLimit && maxGroupsCalculated && maxGroupsCalculated > 0
-    ? Math.min(100, (totalGroups / maxGroupsCalculated) * 100)
+  const hasGroupsLimit = maxGroups !== 999
+  const percent = hasGroupsLimit && maxGroups > 0
+    ? Math.min(100, (totalGroups / maxGroups) * 100)
     : 0
 
   return (
@@ -90,7 +88,7 @@ function AssignmentGroupsProgress({
         </svg>
         <span>Grupos formados</span>
         <span className={styles.groupsCount}>
-          {totalGroups}/{hasMemberLimit ? maxGroupsCalculated : '∞'}
+          {totalGroups}/{hasGroupsLimit ? maxGroups : '∞'}
         </span>
       </div>
       <div className={styles.progressBar}>
@@ -179,7 +177,7 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
                     <AssignmentGroupsProgress
                       courseId={course.id}
                       assignmentId={a.id}
-                      maxGroupMembers={a.assignmentFlags.maxGroupMembers}
+                      maxGroups={a.assignmentFlags.maxGroups}
                     />
                   </div>
                 ))}
@@ -223,7 +221,7 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
                             <AssignmentGroupsProgress
                               courseId={course.id}
                               assignmentId={a.id}
-                              maxGroupMembers={a.assignmentFlags.maxGroupMembers}
+                              maxGroups={a.assignmentFlags.maxGroups}
                             />
                         </div>
                       ))}
@@ -291,7 +289,7 @@ export function ClassAssignmentsTab({ course }: ClassAssignmentsTabProps) {
 
       {archivingId && (
         <>
-          <div className={styles.overlay} onClick={() => setArchivingId(null)} />
+          <div className={`${styles.overlay} ${styles.modalOverlay}`} onClick={() => setArchivingId(null)} />
           <div className={styles.archiveModal}>
             <button className={styles.archiveCloseBtn} onClick={() => setArchivingId(null)}>
               <svg

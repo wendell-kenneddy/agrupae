@@ -211,7 +211,8 @@
 }
 
 .createGroupBtn:disabled {
-  opacity: 0.5;
+  background: var(--color-blue-light);
+  border-color: #000;
   cursor: not-allowed;
   box-shadow: none;
   transform: none;

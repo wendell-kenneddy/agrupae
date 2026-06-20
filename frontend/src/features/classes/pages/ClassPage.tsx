@@ -6,6 +6,7 @@ import { ClassMembersTab } from '@/features/classes/components/ClassMembersTab'
 import { ClassInfoTab } from '@/features/classes/components/ClassInfoTab'
 import { AvatarMenu } from '@/components/ui/AvatarMenu'
 import styles from './ClassPage.module.css'
+import { LoadingScreen } from '@/components/ui/LoadingScreen'
 
 type Tab = 'assignments' | 'members' | 'info'
 
@@ -15,7 +16,7 @@ export function ClassPage() {
   const [activeTab, setActiveTab] = useState<Tab>('assignments')
   const { course, isLoading, isError } = useGetClass(id!)
 
-  if (isLoading) return <div className={styles.feedback}>Carregando...</div>
+  if (isLoading) return <LoadingScreen />
   if (isError || !course) {
     return (
       <main className={styles.notFoundPage}>
