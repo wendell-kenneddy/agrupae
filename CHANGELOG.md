@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Redesign README.md styling and visual layout
 - Update README quick links with custom Shields.io badges
 - Replace standard horizontal rules in README with a custom gradient SVG separator
-- Convert level-2 Markdown headings to explicit HTML <h2> tags in README
+- Convert level-2 Markdown headings to explicit HTML `<h2>` tags in README
 - Add Demo section to README displaying an animated webp preview of the platform
 - Format README authors listing as a table showing circular GitHub avatars
 
