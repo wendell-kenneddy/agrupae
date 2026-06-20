@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
+### Added
+
+- Add multi-stage Dockerfile for backend (Java 21)
+- Add Dockerfile for frontend (Vite dev server)
+- Add docker-compose with db, flyway, backend and frontend services
+- Add .dockerignore
+- Make vite proxy target configurable via VITE_API_URL env var
+- Add .env to .gitignore"
+
 ## [0.11.0] 2026-09-19
 
 ### Added
