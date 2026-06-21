@@ -92,15 +92,16 @@ Make sure you have the following installed on your machine:
    $ docker compose up --build
    ```
 
-   *Note: The Flyway container will automatically execute database migrations and exit successfully before the backend fully boots up.*
+  >[!NOTE]
+   >The Flyway container will automatically execute database migrations and exit successfully before the backend fully boots up.
 
-3. **Accessing the Applications:**
+4. **Accessing the Applications:**
    Once initialization completes, you can access the applications at:
    - **Frontend (Web Application):** [http://localhost:5173](http://localhost:5173)
    - **Backend (API REST):** [http://localhost:8081](http://localhost:8081)
    - **Database (PostgreSQL):** Exposed on port `6543` locally.
 
-4. **Tearing Down Services:**
+5. **Tearing Down Services:**
    To stop and remove all container resources, run:
    ```bash
    $ docker compose down
