@@ -16,6 +16,7 @@ const errorTranslations: Record<string, string> = {
   "FORBIDDEN: maxGroups must be greater than zero.": "O limite máximo de grupos deve ser maior que zero.",
   "FORBIDDEN: either studentsCanCreateGroups or supervisorCanEditGroups must be true.": "Permita que alunos criem grupos ou que o orientador gerencie grupos.",
   "FORBIDDEN: studentsCanLeaveGroups must be true when groupLeaderCanDissolve is true.": "Alunos devem poder sair do grupo se o líder puder dissolvê-lo.",
+  "FORBIDDEN: maxGroupMembers cannot be greater than the class size.": "O limite de membros por grupo não pode ser maior que o total de alunos na turma.",
 
   // User / Auth
   "User not found.": "Usuário não encontrado.",

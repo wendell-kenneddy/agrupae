@@ -178,6 +178,13 @@ function EditAssignmentForm({ assignment, edit, isSaving }: EditAssignmentFormPr
     }
   }
 
+  if (!noLimit && classMembers.length > 0 && maxGroupMembersState > classMembers.length) {
+    validations.push({
+      type: 'error',
+      message: 'O limite de membros por grupo não pode ser maior que o total de alunos na turma.',
+    })
+  }
+
   const hasErrors = validations.some((v) => v.type === 'error')
 
   function applyPreset(preset: Exclude<AssignmentMode, 'advanced'>) {
