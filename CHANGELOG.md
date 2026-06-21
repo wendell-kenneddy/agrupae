@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## Unreleased
 
+### Added
+- (frontend) Added client-side validation to prevent max group members from exceeding total class size during assignment creation/editing
+- (frontend) Added custom LoadingScreen component and loading states across pages
+- (frontend) Changed favicon and tab title to "Agrupaê"
+
+### Changed
+- (frontend) Rename authContext.tsx to AuthContext.tsx to resolve import casing issues
+- (frontend) Improved login/register authentication feedback and forms layout
+- (frontend) Refined home page layout, classes navigation, and group page responsiveness
+- (frontend) Restored max groups limits validation on assignment creation/editing forms
+
 ## [0.12.0] 2026-06-20
 
 ### Added
