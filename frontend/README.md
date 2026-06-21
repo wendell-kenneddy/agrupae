@@ -1,73 +1,98 @@
-# React + TypeScript + Vite
+# Agrupaê — Frontend 🚀
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the repository for the frontend of **Agrupaê**, a web platform designed to facilitate the creation, management, and tracking of group projects within academic classes.
 
-Currently, two official plugins are available:
+The frontend is built using **React**, **TypeScript**, and **Vite**, adhering to the **Bulletproof React** architecture pattern (feature-based organization).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🛠️ Tech Stack & Dependencies
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The primary libraries and tools used in this project include:
 
-## Expanding the ESLint configuration
+*   **Vite**: Fast bundler and development server.
+*   **React 19**: Base library for building user interfaces.
+*   **TypeScript**: JavaScript superset that adds static type definitions to the codebase.
+*   **React Router DOM**: Client-side routing and SPA navigation.
+*   **Axios**: HTTP client for communicating with the backend (equipped with interceptors for authorization headers injection and silent token refreshing).
+*   **React Query (TanStack)**: Async state management, data caching, and server state synchronization.
+*   **React Hook Form & Zod**: Form handling coupled with robust, type-safe schema validations.
+*   **Zustand**: Simple global state management (specifically powering the *Toast* notification system).
+*   **CSS Modules**: Component-level style scoping to avoid conflicts.
+*   **Husky & Lint-Staged**: Git hooks triggered before each commit to enforce formatting and linting.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 Getting Started (Local Development)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Prerequisites
+*   **Node.js** (version 18 or higher recommended)
+*   **npm** (comes bundled with Node.js)
+*   Agrupaê Backend server running (by default on port `8081`)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Step 1: Install Dependencies
+Open your terminal in the frontend directory and run:
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Step 2: Start the Development Server
+To launch the Vite development server locally:
+```bash
+npm run dev
 ```
+The application will be accessible at: [http://localhost:5173](http://localhost:5173).
+
+> 💡 **Vite Proxy:** The development server is configured (`vite.config.ts`) to forward API requests (such as `/auth`, `/users`, `/courses`) automatically to the backend server running locally (default: `http://localhost:8081`).
+
+---
+
+## 🏗️ Folder Structure (Bulletproof)
+
+The project layout organizes files by **Features**, grouping all related logic under a single directory for that specific domain:
+
+```
+src/
+├── app/                    # Global app configurations
+│   ├── providers/          # Global context providers (Auth, QueryClient)
+│   └── router/             # Router definition and route protection
+├── components/             # Reusable global UI components
+│   └── ui/                 # Toast, LoadingScreen, NotFoundPage, UserAvatar
+├── features/               # Feature modules
+│   ├── auth/               # Login, Sign Up, and User Profile
+│   ├── classes/            # Class creation, search, and list actions
+│   ├── assignments/        # Homework and group project assignments management
+│   └── group/              # Group creation, joining, and management logic
+├── lib/                    # Library configurations (Axios, translation dictionary)
+├── types/                  # Shareable global type definitions
+└── utils/                  # Helper utilities
+```
+
+Inside each folder in `features/`, code is divided into standard layers:
+*   `api/`: Pure API fetch/mutations using Axios.
+*   `hooks/`: Custom React hooks connecting APIs to React Query states.
+*   `pages/`: Full views rendered by the router.
+*   `types/`: Domain-specific TypeScript interfaces.
+*   `components/`: Local components used exclusively within this feature (e.g., `ClassCard`).
+
+---
+
+## ⚙️ Environment Variables
+
+If you need to configure the backend API target for development or production, adjust the following variable:
+
+| Variable | Description | Default Value |
+|---|---|---|
+| `VITE_API_URL` | The target backend server address | `http://localhost:8081` |
+
+---
+
+## 🧹 Code Quality & Linting
+
+The repository uses Husky to enforce standard formatting before commits:
+*   **Prettier:** Handles code formatting rules.
+*   **ESLint:** Runs static analysis to prevent bad practices.
+
+Available scripts:
+*   `npm run lint` — Performs ESLint checking across source files.
+*   `npm run build` — Compiles TypeScript and outputs production-ready HTML/JS/CSS bundles in the `/dist` directory.
