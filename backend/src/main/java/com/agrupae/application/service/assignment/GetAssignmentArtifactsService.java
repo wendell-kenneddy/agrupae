@@ -52,6 +52,7 @@ public class GetAssignmentArtifactsService implements GetAssignmentArtifactsUseC
                         artifact.getName(),
                         artifact.getDescription(),
                         artifact.getResourceLink(),
+                        artifact.isRequired(),
                         artifact.getCreatedAt(),
                         artifact.getUpdatedAt()))
                 .collect(Collectors.toList());

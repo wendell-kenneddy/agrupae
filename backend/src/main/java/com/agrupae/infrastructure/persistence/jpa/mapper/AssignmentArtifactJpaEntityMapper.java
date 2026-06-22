@@ -15,6 +15,7 @@ public class AssignmentArtifactJpaEntityMapper {
                 entity.getName(),
                 entity.getDescription(),
                 entity.getResourceLink(),
+                entity.isRequired(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());
     }
@@ -26,6 +27,7 @@ public class AssignmentArtifactJpaEntityMapper {
                 .name(artifact.getName())
                 .description(artifact.getDescription())
                 .resourceLink(artifact.getResourceLink())
+                .required(artifact.isRequired())
                 .createdAt(artifact.getCreatedAt())
                 .updatedAt(artifact.getUpdatedAt())
                 .build();

@@ -9,6 +9,7 @@ public record AssignmentArtifactView(
         String name,
         String description,
         String resourceLink,
+        boolean required,
         Instant createdAt,
         Instant updatedAt) {
 }

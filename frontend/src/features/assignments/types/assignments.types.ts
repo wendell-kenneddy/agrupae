@@ -70,6 +70,7 @@ export interface AssignmentArtifact {
   name: string
   description: string
   resourceLink: string
+  required: boolean
   createdAt: string
   updatedAt: string
 }
@@ -78,4 +79,5 @@ export interface AddArtifactRequest {
   name: string
   description: string
   resourceLink: string
+  required?: boolean
 }

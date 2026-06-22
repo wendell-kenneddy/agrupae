@@ -12,5 +12,18 @@ public interface EditAssignmentArtifactUseCase {
             UUID artifactId,
             String name,
             String description,
-            String resourceLink);
+            String resourceLink,
+            boolean required);
+
+    default AssignmentArtifactView handle(
+            UUID actorId,
+            Role actorRole,
+            UUID courseId,
+            UUID assignmentId,
+            UUID artifactId,
+            String name,
+            String description,
+            String resourceLink) {
+        return handle(actorId, actorRole, courseId, assignmentId, artifactId, name, description, resourceLink, false);
+    }
 }

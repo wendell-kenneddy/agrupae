@@ -35,6 +35,9 @@ public class AssignmentArtifactJpaEntity {
     @Column(name = "link", nullable = false)
     private String resourceLink;
 
+    @Column(name = "required", nullable = false)
+    private boolean required;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 

@@ -139,7 +139,8 @@ public class AssignmentController {
                 assignmentId,
                 request.name(),
                 request.description(),
-                request.resourceLink());
+                request.resourceLink(),
+                request.required());
         return ResponseEntity.status(HttpStatus.CREATED).body(view);
     }
 
@@ -173,7 +174,8 @@ public class AssignmentController {
                 artifactId,
                 request.name(),
                 request.description(),
-                request.resourceLink());
+                request.resourceLink(),
+                request.required());
         return ResponseEntity.ok(view);
     }
 

@@ -38,7 +38,8 @@ public class AddAssignmentArtifactService implements AddReferenceArtifactUseCase
             @NonNull UUID assignmentId,
             @NonNull String name,
             @NonNull String description,
-            @NonNull String resourceLink) {
+            @NonNull String resourceLink,
+            boolean required) {
 
         Course course = this.courseRepository.findById(courseId);
 
@@ -64,7 +65,8 @@ public class AddAssignmentArtifactService implements AddReferenceArtifactUseCase
                 assignmentId,
                 name,
                 description,
-                resourceLink);
+                resourceLink,
+                required);
 
         AssignmentArtifact saved = this.assignmentArtifactRepository.save(artifact);
 
@@ -74,6 +76,7 @@ public class AddAssignmentArtifactService implements AddReferenceArtifactUseCase
                 saved.getName(),
                 saved.getDescription(),
                 saved.getResourceLink(),
+                saved.isRequired(),
                 saved.getCreatedAt(),
                 saved.getUpdatedAt());
     }

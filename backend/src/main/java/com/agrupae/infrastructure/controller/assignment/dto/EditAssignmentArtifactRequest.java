@@ -5,5 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 public record EditAssignmentArtifactRequest(
         @NotBlank String name,
         String description,
-        @NotBlank String resourceLink) {
+        @NotBlank String resourceLink,
+        boolean required) {
 }

@@ -1,0 +1,1 @@
+ALTER TABLE assignment_artifacts ADD COLUMN required BOOLEAN NOT NULL DEFAULT FALSE;

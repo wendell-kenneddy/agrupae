@@ -39,7 +39,8 @@ public class EditAssignmentArtifactService implements EditAssignmentArtifactUseC
             @NonNull UUID artifactId,
             @NonNull String name,
             @NonNull String description,
-            @NonNull String resourceLink) {
+            @NonNull String resourceLink,
+            boolean required) {
         Course course = this.courseRepository.findById(courseId);
 
         if (course == null || !courseMembershipRepository.exists(actorId, courseId)) {
@@ -66,7 +67,7 @@ public class EditAssignmentArtifactService implements EditAssignmentArtifactUseC
             throw new AssignmentArtifactNotFoundException();
         }
 
-        artifact.update(name, description, resourceLink);
+        artifact.update(name, description, resourceLink, required);
 
         AssignmentArtifact saved = this.assignmentArtifactRepository.save(artifact);
 
@@ -76,6 +77,7 @@ public class EditAssignmentArtifactService implements EditAssignmentArtifactUseC
                 saved.getName(),
                 saved.getDescription(),
                 saved.getResourceLink(),
+                saved.isRequired(),
                 saved.getCreatedAt(),
                 saved.getUpdatedAt());
     }

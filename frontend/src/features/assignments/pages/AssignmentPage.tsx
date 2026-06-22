@@ -245,6 +245,7 @@ export function AssignmentPage() {
   const [formName, setFormName] = useState('')
   const [formDescription, setFormDescription] = useState('')
   const [formLink, setFormLink] = useState('')
+  const [formRequired, setFormRequired] = useState(false)
 
   const [showCreateGroup, setShowCreateGroup] = useState(false)
   const [groupName, setGroupName] = useState('')
@@ -292,6 +293,7 @@ export function AssignmentPage() {
     setFormName('')
     setFormDescription('')
     setFormLink('')
+    setFormRequired(false)
     setModalArtifact('new')
   }
 
@@ -299,6 +301,7 @@ export function AssignmentPage() {
     setFormName(artifact.name)
     setFormDescription(artifact.description ?? '')
     setFormLink(artifact.resourceLink)
+    setFormRequired(artifact.required ?? false)
     setModalArtifact(artifact)
   }
 
@@ -310,6 +313,7 @@ export function AssignmentPage() {
         name: formName.trim(),
         description: formDescription.trim(),
         resourceLink: formLink.trim(),
+        required: formRequired,
       })
     } else if (modalArtifact) {
       await edit({
@@ -318,6 +322,7 @@ export function AssignmentPage() {
           name: formName.trim(),
           description: formDescription.trim(),
           resourceLink: formLink.trim(),
+          required: formRequired,
         },
       })
     }
@@ -430,31 +435,37 @@ export function AssignmentPage() {
 
           {!isLoadingArtifacts && artifacts.length > 0 && (
             <div className={styles.artifacts}>
-               {artifacts.map((a) => (
-                <div key={a.id} className={styles.artifactRow}>
-                  <a
-                    href={a.resourceLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.artifactLink}
+               {artifacts.map((a) => {
+                const isRequiredForStudent = !isOwner && a.required;
+                return (
+                  <div
+                    key={a.id}
+                    className={`${styles.artifactRow} ${isRequiredForStudent ? styles.requiredArtifact : ''}`}
                   >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
+                    <a
+                      href={a.resourceLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${styles.artifactLink} ${isRequiredForStudent ? styles.requiredArtifactLink : ''}`}
                     >
-                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                    </svg>
-                    <span>
-                      {a.name}
-                      {a.description ? ` · ${a.description}` : ''}
-                    </span>
-                  </a>
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      >
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                      </svg>
+                      <span>
+                        {a.name}
+                        {a.description ? ` · ${a.description}` : ''}
+                        {isRequiredForStudent && ' (Requerido)'}
+                      </span>
+                    </a>
                   {isOwner && isAssignmentActive && (
                     <div className={styles.artifactActions}>
                       <button className={styles.artifactEditBtn} onClick={() => openEditArtifact(a)}>
@@ -493,9 +504,10 @@ export function AssignmentPage() {
                     </div>
                   )}
                 </div>
-              ))}
-            </div>
-          )}
+              );
+            })}
+          </div>
+        )}
 
           {isOwner && isAssignmentActive && (
             <button className={styles.editBtn} onClick={openNewArtifact}>
@@ -953,6 +965,15 @@ export function AssignmentPage() {
                 value={formLink}
                 onChange={(e) => setFormLink(e.target.value)}
               />
+              <label className={styles.checkboxContainer}>
+                <input
+                  className={styles.checkboxInput}
+                  type="checkbox"
+                  checked={formRequired}
+                  onChange={(e) => setFormRequired(e.target.checked)}
+                />
+                <span>Marcar como requerido</span>
+              </label>
             </div>
 
             <div className={styles.modalActions}>
