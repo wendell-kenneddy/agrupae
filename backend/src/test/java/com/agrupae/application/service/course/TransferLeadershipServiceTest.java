@@ -6,10 +6,13 @@ import java.util.UUID;
 import com.agrupae.application.exception.course.CourseNotFoundException;
 import com.agrupae.application.exception.course.NotAuthorizedToTransferLeadershipException;
 import com.agrupae.application.exception.course.TargetUserNotEnrolled;
-import com.agrupae.application.port.in.course.CourseView;
+import com.agrupae.application.port.in.course.LeadershipTransferRequestView;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
+import com.agrupae.application.port.out.course.LeadershipTransferRequestRepository;
+import com.agrupae.application.port.out.user.UserRepository;
 import com.agrupae.domain.course.Course;
+import com.agrupae.domain.course.LeadershipTransferRequest;
 import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.domain.role.Role;
 
@@ -30,13 +33,18 @@ class TransferLeadershipServiceTest {
 
     private CourseRepository courseRepository;
     private CourseMembershipRepository courseMembershipRepository;
+    private LeadershipTransferRequestRepository leadershipTransferRequestRepository;
+    private UserRepository userRepository;
     private TransferLeadershipService service;
 
     @BeforeEach
     void setUp() {
         courseRepository = mock(CourseRepository.class);
         courseMembershipRepository = mock(CourseMembershipRepository.class);
-        service = new TransferLeadershipService(courseRepository, courseMembershipRepository);
+        leadershipTransferRequestRepository = mock(LeadershipTransferRequestRepository.class);
+        userRepository = mock(UserRepository.class);
+        service = new TransferLeadershipService(courseRepository, courseMembershipRepository,
+                leadershipTransferRequestRepository, userRepository);
     }
 
     private Course buildCourse(UUID id, UUID leaderId, boolean archived) {
@@ -49,7 +57,7 @@ class TransferLeadershipServiceTest {
     class TransferLeadership {
 
         @Test
-        void asLeader_transfersLeadershipPersistsAndReturnsCourseView() {
+        void asLeader_transfersLeadershipPersistsAndReturnsLeadershipTransferRequestView() {
             UUID leaderId = UUID.randomUUID();
             UUID newLeaderId = UUID.randomUUID();
             UUID courseId = UUID.randomUUID();
@@ -57,15 +65,17 @@ class TransferLeadershipServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(courseMembershipRepository.exists(newLeaderId, courseId)).thenReturn(true);
+            when(leadershipTransferRequestRepository.save(any(LeadershipTransferRequest.class)))
+                    .thenAnswer(inv -> inv.getArgument(0));
 
-            CourseView view = service.handle(leaderId, Role.USER, courseId, newLeaderId);
-            ArgumentCaptor<Course> captor = ArgumentCaptor.forClass(Course.class);
+            LeadershipTransferRequestView view = service.handle(leaderId, Role.USER, courseId, newLeaderId);
+            ArgumentCaptor<LeadershipTransferRequest> captor = ArgumentCaptor.forClass(LeadershipTransferRequest.class);
 
-            verify(courseRepository).save(captor.capture());
-            assertThat(captor.getValue().getId()).isEqualTo(courseId);
-            assertThat(captor.getValue().getLeaderId()).isEqualTo(newLeaderId);
-            assertThat(view.id()).isEqualTo(courseId);
-            assertThat(view.leaderId()).isEqualTo(newLeaderId);
+            verify(leadershipTransferRequestRepository).save(captor.capture());
+            assertThat(captor.getValue().getCourseId()).isEqualTo(courseId);
+            assertThat(captor.getValue().getTargetId()).isEqualTo(newLeaderId);
+            assertThat(view.courseId()).isEqualTo(courseId);
+            assertThat(view.targetId()).isEqualTo(newLeaderId);
         }
 
         @Test
@@ -78,13 +88,15 @@ class TransferLeadershipServiceTest {
 
             when(courseRepository.findById(courseId)).thenReturn(course);
             when(courseMembershipRepository.exists(newLeaderId, courseId)).thenReturn(true);
+            when(leadershipTransferRequestRepository.save(any(LeadershipTransferRequest.class)))
+                    .thenAnswer(inv -> inv.getArgument(0));
 
-            CourseView view = service.handle(adminId, Role.ADMIN, courseId, newLeaderId);
-            ArgumentCaptor<Course> captor = ArgumentCaptor.forClass(Course.class);
+            LeadershipTransferRequestView view = service.handle(adminId, Role.ADMIN, courseId, newLeaderId);
+            ArgumentCaptor<LeadershipTransferRequest> captor = ArgumentCaptor.forClass(LeadershipTransferRequest.class);
 
-            verify(courseRepository).save(captor.capture());
-            assertThat(captor.getValue().getLeaderId()).isEqualTo(newLeaderId);
-            assertThat(view.leaderId()).isEqualTo(newLeaderId);
+            verify(leadershipTransferRequestRepository).save(captor.capture());
+            assertThat(captor.getValue().getTargetId()).isEqualTo(newLeaderId);
+            assertThat(view.targetId()).isEqualTo(newLeaderId);
         }
 
         @Test

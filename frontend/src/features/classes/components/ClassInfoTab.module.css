@@ -223,3 +223,91 @@
     transform: translateX(-50%) translateY(0);
   }
 }
+
+.transferRequestCard {
+  background: var(--color-orange-light);
+  border: 2px solid var(--color-orange);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: 3px 3px 0px var(--color-orange);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transferText {
+  font-size: 0.88rem;
+  color: var(--color-text-dark);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.transferTargetContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transferActions {
+  display: flex;
+  gap: 10px;
+}
+
+.acceptBtn {
+  flex: 1;
+  padding: 10px;
+  background: var(--color-green);
+  border: 2px solid #000;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-light);
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 2px 2px 0px #000;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.acceptBtn:active {
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+
+.acceptBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.rejectBtn {
+  flex: 1;
+  padding: 10px;
+  background: var(--color-red);
+  border: 2px solid #000;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-light);
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 2px 2px 0px #000;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rejectBtn:active {
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+
+.rejectBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+

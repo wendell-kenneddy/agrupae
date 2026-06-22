@@ -4,5 +4,5 @@ import java.util.UUID;
 import com.agrupae.domain.role.Role;
 
 public interface TransferLeadershipUseCase {
-    CourseView handle(UUID actorId, Role actorRole, UUID courseId, UUID newLeaderId);
+    LeadershipTransferRequestView handle(UUID actorId, Role actorRole, UUID courseId, UUID newLeaderId);
 } 

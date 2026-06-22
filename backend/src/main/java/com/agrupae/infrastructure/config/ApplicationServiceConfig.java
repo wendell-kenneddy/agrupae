@@ -7,6 +7,7 @@ import com.agrupae.application.port.out.assignment.AssignmentRepository;
 import com.agrupae.application.port.out.authentication.*;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
+import com.agrupae.application.port.out.course.LeadershipTransferRequestRepository;
 import com.agrupae.application.port.out.group.GroupMemberRepository;
 import com.agrupae.application.port.out.group.GroupRepository;
 import com.agrupae.application.port.out.user.UserRepository;
@@ -24,6 +25,9 @@ import com.agrupae.application.service.course.CreateCourseService;
 import com.agrupae.application.service.course.GetACourseService;
 import com.agrupae.application.service.course.JoinCourseService;
 import com.agrupae.application.service.course.TransferLeadershipService;
+import com.agrupae.application.service.course.AcceptLeadershipTransferService;
+import com.agrupae.application.service.course.RejectLeadershipTransferService;
+import com.agrupae.application.service.course.GetPendingLeadershipTransferRequestService;
 import com.agrupae.application.service.user.GetUserProfileService;
 import com.agrupae.application.service.user.UpdateProfileService;
 import com.agrupae.application.service.course.GetCoursesService;
@@ -161,8 +165,37 @@ public class ApplicationServiceConfig {
 
         @Bean
         public TransferLeadershipService transferLeadershipService(CourseRepository courseRepository,
-                        CourseMembershipRepository courseMembershipRepository) {
-                return new TransferLeadershipService(courseRepository, courseMembershipRepository);
+                        CourseMembershipRepository courseMembershipRepository,
+                        LeadershipTransferRequestRepository leadershipTransferRequestRepository,
+                        UserRepository userRepository) {
+                return new TransferLeadershipService(courseRepository, courseMembershipRepository,
+                                leadershipTransferRequestRepository, userRepository);
+        }
+
+        @Bean
+        public AcceptLeadershipTransferService acceptLeadershipTransferService(
+                        LeadershipTransferRequestRepository leadershipTransferRequestRepository,
+                        CourseRepository courseRepository,
+                        UserRepository userRepository) {
+                return new AcceptLeadershipTransferService(leadershipTransferRequestRepository, courseRepository, userRepository);
+        }
+
+        @Bean
+        public RejectLeadershipTransferService rejectLeadershipTransferService(
+                        LeadershipTransferRequestRepository leadershipTransferRequestRepository,
+                        CourseRepository courseRepository,
+                        UserRepository userRepository) {
+                return new RejectLeadershipTransferService(leadershipTransferRequestRepository, courseRepository, userRepository);
+        }
+
+        @Bean
+        public GetPendingLeadershipTransferRequestService getPendingLeadershipTransferRequestService(
+                        LeadershipTransferRequestRepository leadershipTransferRequestRepository,
+                        CourseRepository courseRepository,
+                        CourseMembershipRepository courseMembershipRepository,
+                        UserRepository userRepository) {
+                return new GetPendingLeadershipTransferRequestService(leadershipTransferRequestRepository, courseRepository,
+                                courseMembershipRepository, userRepository);
         }
 
         @Bean

@@ -22,6 +22,10 @@ import com.agrupae.application.port.in.course.GetACourseUseCase;
 import com.agrupae.application.port.in.course.JoinCourseUseCase;
 import com.agrupae.application.port.in.course.GetCoursesUseCase;
 import com.agrupae.application.port.in.course.TransferLeadershipUseCase;
+import com.agrupae.application.port.in.course.AcceptLeadershipTransferUseCase;
+import com.agrupae.application.port.in.course.RejectLeadershipTransferUseCase;
+import com.agrupae.application.port.in.course.GetPendingLeadershipTransferRequestUseCase;
+import com.agrupae.application.port.in.course.LeadershipTransferRequestView;
 import com.agrupae.domain.role.Role;
 import com.agrupae.infrastructure.controller.course.dto.CreateCourseRequest;
 import com.agrupae.infrastructure.controller.course.dto.JoinCourseRequest;
@@ -42,6 +46,9 @@ public class CourseController {
     private final TransferLeadershipUseCase transferLeadershipUseCase;
     private final GetACourseUseCase getACourseUseCase;
     private final GetMembersUseCase getMembersUseCase;
+    private final AcceptLeadershipTransferUseCase acceptLeadershipTransferUseCase;
+    private final RejectLeadershipTransferUseCase rejectLeadershipTransferUseCase;
+    private final GetPendingLeadershipTransferRequestUseCase getPendingLeadershipTransferRequestUseCase;
 
     @PostMapping
     public ResponseEntity<CourseView> create(
@@ -91,12 +98,44 @@ public class CourseController {
     }
 
     @PostMapping("/{id}/transfer")
-    public ResponseEntity<CourseView> transferLeadership(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody TransferLeadershipRequest request) {
+    public ResponseEntity<LeadershipTransferRequestView> transferLeadership(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id, @RequestBody TransferLeadershipRequest request) {
         UUID actorId = UUID.fromString(jwt.getSubject());
         Role actorRole = Role.valueOf(jwt.getClaimAsString("role"));
         UUID newLeaderId = request.newLeaderId();
-        CourseView view = this.transferLeadershipUseCase.handle(actorId, actorRole, id,newLeaderId);
+        LeadershipTransferRequestView view = this.transferLeadershipUseCase.handle(actorId, actorRole, id, newLeaderId);
 
+        return ResponseEntity.ok(view);
+    }
+
+    @GetMapping("/{id}/transfer/request")
+    public ResponseEntity<LeadershipTransferRequestView> getPendingTransferRequest(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID id) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        LeadershipTransferRequestView view = this.getPendingLeadershipTransferRequestUseCase.handle(actorId, id);
+        if (view == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(view);
+    }
+
+    @PostMapping("/{id}/transfer/requests/{requestId}/accept")
+    public ResponseEntity<LeadershipTransferRequestView> acceptTransferRequest(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID id,
+            @PathVariable UUID requestId) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        LeadershipTransferRequestView view = this.acceptLeadershipTransferUseCase.handle(actorId, id, requestId);
+        return ResponseEntity.ok(view);
+    }
+
+    @PostMapping("/{id}/transfer/requests/{requestId}/reject")
+    public ResponseEntity<LeadershipTransferRequestView> rejectTransferRequest(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID id,
+            @PathVariable UUID requestId) {
+        UUID actorId = UUID.fromString(jwt.getSubject());
+        LeadershipTransferRequestView view = this.rejectLeadershipTransferUseCase.handle(actorId, id, requestId);
         return ResponseEntity.ok(view);
     }
 

@@ -5,6 +5,10 @@ import { useGetClassMembers } from '@/features/classes/hooks/useGetClassMembers'
 import type { Class } from '@/features/classes/types/classes.types'
 import { toast } from '@/components/ui/useToast'
 import styles from './ClassInfoTab.module.css'
+import { useAuth } from '@/app/providers/AuthContext'
+import { useGetPendingTransferRequest } from '@/features/classes/hooks/useGetPendingTransferRequest'
+import { useAcceptTransferRequest } from '@/features/classes/hooks/useAcceptTransferRequest'
+import { useRejectTransferRequest } from '@/features/classes/hooks/useRejectTransferRequest'
 
 interface ClassInfoTabProps {
   course: Class
@@ -12,8 +16,13 @@ interface ClassInfoTabProps {
 
 export function ClassInfoTab({ course }: ClassInfoTabProps) {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const { handleArchive, isLoading } = useArchiveClass(course.id)
   const { members, isLoading: isMembersLoading } = useGetClassMembers(course.id)
+  const { pendingRequest } = useGetPendingTransferRequest(course.id)
+  const { accept, isLoading: isAccepting } = useAcceptTransferRequest(course.id)
+  const { reject, isLoading: isRejecting } = useRejectTransferRequest(course.id)
+  
   const isOwner = course.role === 'OWNER'
   const [showArchiveModal, setShowArchiveModal] = useState(false)
 
@@ -67,13 +76,46 @@ export function ClassInfoTab({ course }: ClassInfoTabProps) {
         </button>
       </div>
 
+      {pendingRequest && (
+        <div className={styles.transferRequestCard}>
+          {pendingRequest.senderId === user?.id ? (
+            <p className={styles.transferText}>
+              Solicitação de transferência de responsabilidade enviada para <strong>{pendingRequest.targetName}</strong>. Aguardando aceitação...
+            </p>
+          ) : pendingRequest.targetId === user?.id ? (
+            <div className={styles.transferTargetContainer}>
+              <p className={styles.transferText}>
+                <strong>{pendingRequest.senderName}</strong> deseja transferir a responsabilidade desta turma para você.
+              </p>
+              <div className={styles.transferActions}>
+                <button
+                  className={styles.acceptBtn}
+                  onClick={() => accept(pendingRequest.id)}
+                  disabled={isAccepting || isRejecting}
+                >
+                  {isAccepting ? 'Aceitando...' : 'Aceitar'}
+                </button>
+                <button
+                  className={styles.rejectBtn}
+                  onClick={() => reject(pendingRequest.id)}
+                  disabled={isAccepting || isRejecting}
+                >
+                  {isRejecting ? 'Recusando...' : 'Recusar'}
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      )}
+
       {isOwner && (
         <div className={styles.actions}>
           <button
             className={styles.transferBtn}
             onClick={() => navigate(`/classes/${course.id}/transfer`)}
+            disabled={!!pendingRequest}
           >
-            Transferir responsabilidade
+            {pendingRequest ? 'Transferência pendente' : 'Transferir responsabilidade'}
           </button>
           <button
             className={styles.archiveBtn}

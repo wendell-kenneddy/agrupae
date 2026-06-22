@@ -38,3 +38,15 @@ export interface Member {
   createdAt: string
   updatedAt: string
 }
+
+export interface LeadershipTransferRequest {
+  id: string
+  courseId: string
+  senderId: string
+  senderName: string
+  targetId: string
+  targetName: string
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
+  createdAt: string
+  updatedAt: string
+}
