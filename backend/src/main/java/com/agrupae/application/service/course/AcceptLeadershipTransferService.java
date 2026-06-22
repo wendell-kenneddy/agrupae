@@ -11,7 +11,6 @@ import com.agrupae.application.port.in.course.AcceptLeadershipTransferUseCase;
 import com.agrupae.application.port.in.course.LeadershipTransferRequestView;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.application.port.out.course.LeadershipTransferRequestRepository;
-import com.agrupae.application.port.out.user.UserRepository;
 import com.agrupae.domain.course.Course;
 import com.agrupae.domain.course.LeadershipTransferRequest;
 import com.agrupae.domain.exception.DomainException;
@@ -23,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class AcceptLeadershipTransferService implements AcceptLeadershipTransferUseCase {
     private final LeadershipTransferRequestRepository leadershipTransferRequestRepository;
     private final CourseRepository courseRepository;
-    private final UserRepository userRepository;
+    private final LeadershipTransferRequestViewMapper viewMapper;
 
     @Override
     @Transactional
@@ -59,18 +58,7 @@ public class AcceptLeadershipTransferService implements AcceptLeadershipTransfer
         course.transferLeadership(request.getTargetId());
         this.courseRepository.save(course);
 
-        com.agrupae.domain.user.User sender = this.userRepository.findById(request.getSenderId());
-        com.agrupae.domain.user.User target = this.userRepository.findById(request.getTargetId());
-
-        return new LeadershipTransferRequestView(
-                request.getId(),
-                request.getCourseId(),
-                request.getSenderId(),
-                sender != null ? sender.getName() : "",
-                request.getTargetId(),
-                target != null ? target.getName() : "",
-                request.getStatus(),
-                request.getCreatedAt(),
-                request.getUpdatedAt());
+        return this.viewMapper.toView(request);
     }
 }
+

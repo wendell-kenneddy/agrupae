@@ -107,7 +107,7 @@ public class CourseController {
         return ResponseEntity.ok(view);
     }
 
-    @GetMapping("/{id}/transfer/request")
+    @GetMapping("/{id}/transfer/requests/pending")
     public ResponseEntity<LeadershipTransferRequestView> getPendingTransferRequest(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable UUID id) {

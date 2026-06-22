@@ -95,6 +95,37 @@ class AddReferenceArtifactServiceTest {
                         assertThat(view.name()).isEqualTo("Ref Article");
                         assertThat(view.description()).isEqualTo("Read this");
                         assertThat(view.resourceLink()).isEqualTo("https://example.com/paper");
+                        assertThat(view.required()).isFalse();
+                        assertThat(view.createdAt()).isNotNull();
+                        assertThat(view.updatedAt()).isEqualTo(view.createdAt());
+                }
+
+                @Test
+                void asLeaderWithRequiredTrue_persistsAndReturnsMappedViewWithRequiredTrue() {
+                        UUID leaderId = UUID.randomUUID();
+                        UUID courseId = UUID.randomUUID();
+                        UUID assignmentId = UUID.randomUUID();
+
+                        Assignment assignment = buildAssignment(assignmentId, courseId);
+                        Course course = buildCourse(courseId, leaderId);
+
+                        when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+                        when(courseRepository.findById(courseId)).thenReturn(course);
+                        when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
+                        when(assignmentArtifactRepository.save(any(AssignmentArtifact.class)))
+                                        .thenAnswer(inv -> inv.getArgument(0));
+
+                        AssignmentArtifactView view = service.handle(
+                                        leaderId, Role.USER, courseId, assignmentId, "Ref Article", "Read this",
+                                        "https://example.com/paper", true);
+
+                        verify(assignmentArtifactRepository).save(any(AssignmentArtifact.class));
+                        assertThat(view.id()).isNotNull();
+                        assertThat(view.assignmentId()).isEqualTo(assignmentId);
+                        assertThat(view.name()).isEqualTo("Ref Article");
+                        assertThat(view.description()).isEqualTo("Read this");
+                        assertThat(view.resourceLink()).isEqualTo("https://example.com/paper");
+                        assertThat(view.required()).isTrue();
                         assertThat(view.createdAt()).isNotNull();
                         assertThat(view.updatedAt()).isEqualTo(view.createdAt());
                 }

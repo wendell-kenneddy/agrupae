@@ -105,6 +105,7 @@ class EditAssignmentArtifactServiceTest {
                         assertThat(view.name()).isEqualTo("Updated Name");
                         assertThat(view.description()).isEqualTo("Updated Desc");
                         assertThat(view.resourceLink()).isEqualTo("https://example.com/updated");
+                        assertThat(view.required()).isFalse();
                         assertThat(view.createdAt()).isNotNull();
                         assertThat(view.updatedAt()).isAfter(artifact.getCreatedAt());
                 }
@@ -135,6 +136,63 @@ class EditAssignmentArtifactServiceTest {
                         verify(assignmentArtifactRepository).save(any(AssignmentArtifact.class));
                         assertThat(view.id()).isEqualTo(artifactId);
                         assertThat(view.name()).isEqualTo("Updated Name");
+                        assertThat(view.required()).isFalse();
+                }
+
+                @Test
+                void toggleRequiredFromFalseToTrue_updatesAndPersists() {
+                        UUID leaderId = UUID.randomUUID();
+                        UUID courseId = UUID.randomUUID();
+                        UUID assignmentId = UUID.randomUUID();
+                        UUID artifactId = UUID.randomUUID();
+
+                        Assignment assignment = buildAssignment(assignmentId, courseId);
+                        Course course = buildCourse(courseId, leaderId);
+                        AssignmentArtifact artifact = AssignmentArtifact.reconstruct(artifactId, assignmentId, "Original Name", "Original Desc",
+                                        "https://example.com/original", false, Instant.now().minusSeconds(10), Instant.now().minusSeconds(10));
+
+                        when(courseRepository.findById(courseId)).thenReturn(course);
+                        when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
+                        when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+                        when(assignmentArtifactRepository.findById(artifactId)).thenReturn(artifact);
+                        when(assignmentArtifactRepository.save(any(AssignmentArtifact.class)))
+                                        .thenAnswer(inv -> inv.getArgument(0));
+
+                        AssignmentArtifactView view = service.handle(
+                                        leaderId, Role.USER, courseId, assignmentId, artifactId,
+                                        "Updated Name", "Updated Desc", "https://example.com/updated", true);
+
+                        verify(assignmentArtifactRepository).save(any(AssignmentArtifact.class));
+                        assertThat(view.id()).isEqualTo(artifactId);
+                        assertThat(view.required()).isTrue();
+                }
+
+                @Test
+                void toggleRequiredFromTrueToFalse_updatesAndPersists() {
+                        UUID leaderId = UUID.randomUUID();
+                        UUID courseId = UUID.randomUUID();
+                        UUID assignmentId = UUID.randomUUID();
+                        UUID artifactId = UUID.randomUUID();
+
+                        Assignment assignment = buildAssignment(assignmentId, courseId);
+                        Course course = buildCourse(courseId, leaderId);
+                        AssignmentArtifact artifact = AssignmentArtifact.reconstruct(artifactId, assignmentId, "Original Name", "Original Desc",
+                                        "https://example.com/original", true, Instant.now().minusSeconds(10), Instant.now().minusSeconds(10));
+
+                        when(courseRepository.findById(courseId)).thenReturn(course);
+                        when(courseMembershipRepository.exists(leaderId, courseId)).thenReturn(true);
+                        when(assignmentRepository.findById(assignmentId)).thenReturn(assignment);
+                        when(assignmentArtifactRepository.findById(artifactId)).thenReturn(artifact);
+                        when(assignmentArtifactRepository.save(any(AssignmentArtifact.class)))
+                                        .thenAnswer(inv -> inv.getArgument(0));
+
+                        AssignmentArtifactView view = service.handle(
+                                        leaderId, Role.USER, courseId, assignmentId, artifactId,
+                                        "Updated Name", "Updated Desc", "https://example.com/updated", false);
+
+                        verify(assignmentArtifactRepository).save(any(AssignmentArtifact.class));
+                        assertThat(view.id()).isEqualTo(artifactId);
+                        assertThat(view.required()).isFalse();
                 }
 
                 @Test

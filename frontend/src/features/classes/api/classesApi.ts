@@ -32,7 +32,7 @@ export async function transferOwnership(courseId: string, newLeaderId: string): 
 }
 
 export async function getPendingTransferRequest(courseId: string): Promise<LeadershipTransferRequest | null> {
-  const response = await api.get<LeadershipTransferRequest | null>(`/courses/${courseId}/transfer/request`)
+  const response = await api.get<LeadershipTransferRequest | null>(`/courses/${courseId}/transfer/requests/pending`)
   return response.status === 204 ? null : response.data
 }
 

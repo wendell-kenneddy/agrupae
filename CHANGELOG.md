@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## Unreleased
 
 ### Added
+- (frontned/backend) Added course leadership transfer confirmation for target user;
+- (frontend/backend) Added required assignment deliverable feature; 
 - (frontend) Added client-side validation to prevent max group members from exceeding total class size during assignment creation/editing
 - (frontend) Added custom LoadingScreen component and loading states across pages
 - (frontend) Changed favicon and tab title to "Agrupaê"

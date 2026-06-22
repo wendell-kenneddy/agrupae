@@ -80,9 +80,9 @@ class GetAssignmentArtifactsServiceTest {
 
             Instant now = Instant.now();
             AssignmentArtifact artifact1 = AssignmentArtifact.reconstruct(
-                    UUID.randomUUID(), assignmentId, "Artifact 1", "Desc 1", "https://link1.com", now, now);
+                    UUID.randomUUID(), assignmentId, "Artifact 1", "Desc 1", "https://link1.com", true, now, now);
             AssignmentArtifact artifact2 = AssignmentArtifact.reconstruct(
-                    UUID.randomUUID(), assignmentId, "Artifact 2", "Desc 2", "https://link2.com", now, now);
+                    UUID.randomUUID(), assignmentId, "Artifact 2", "Desc 2", "https://link2.com", false, now, now);
             when(assignmentArtifactRepository.findByAssignmentId(assignmentId))
                     .thenReturn(List.of(artifact1, artifact2));
 
@@ -96,6 +96,7 @@ class GetAssignmentArtifactsServiceTest {
             assertThat(view1.name()).isEqualTo("Artifact 1");
             assertThat(view1.description()).isEqualTo("Desc 1");
             assertThat(view1.resourceLink()).isEqualTo("https://link1.com");
+            assertThat(view1.required()).isTrue();
             assertThat(view1.createdAt()).isEqualTo(now);
             assertThat(view1.updatedAt()).isEqualTo(now);
 
@@ -105,6 +106,7 @@ class GetAssignmentArtifactsServiceTest {
             assertThat(view2.name()).isEqualTo("Artifact 2");
             assertThat(view2.description()).isEqualTo("Desc 2");
             assertThat(view2.resourceLink()).isEqualTo("https://link2.com");
+            assertThat(view2.required()).isFalse();
             assertThat(view2.createdAt()).isEqualTo(now);
             assertThat(view2.updatedAt()).isEqualTo(now);
         }

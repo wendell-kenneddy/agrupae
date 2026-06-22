@@ -10,9 +10,9 @@ import com.agrupae.application.port.in.course.LeadershipTransferRequestView;
 import com.agrupae.application.port.out.course.CourseMembershipRepository;
 import com.agrupae.application.port.out.course.CourseRepository;
 import com.agrupae.application.port.out.course.LeadershipTransferRequestRepository;
-import com.agrupae.application.port.out.user.UserRepository;
 import com.agrupae.domain.course.Course;
 import com.agrupae.domain.course.LeadershipTransferRequest;
+
 import com.agrupae.application.exception.course.CourseArchivedException;
 import com.agrupae.domain.role.Role;
 
@@ -34,7 +34,7 @@ class TransferLeadershipServiceTest {
     private CourseRepository courseRepository;
     private CourseMembershipRepository courseMembershipRepository;
     private LeadershipTransferRequestRepository leadershipTransferRequestRepository;
-    private UserRepository userRepository;
+    private LeadershipTransferRequestViewMapper viewMapper;
     private TransferLeadershipService service;
 
     @BeforeEach
@@ -42,9 +42,9 @@ class TransferLeadershipServiceTest {
         courseRepository = mock(CourseRepository.class);
         courseMembershipRepository = mock(CourseMembershipRepository.class);
         leadershipTransferRequestRepository = mock(LeadershipTransferRequestRepository.class);
-        userRepository = mock(UserRepository.class);
+        viewMapper = mock(LeadershipTransferRequestViewMapper.class);
         service = new TransferLeadershipService(courseRepository, courseMembershipRepository,
-                leadershipTransferRequestRepository, userRepository);
+                leadershipTransferRequestRepository, viewMapper);
     }
 
     private Course buildCourse(UUID id, UUID leaderId, boolean archived) {
@@ -67,6 +67,13 @@ class TransferLeadershipServiceTest {
             when(courseMembershipRepository.exists(newLeaderId, courseId)).thenReturn(true);
             when(leadershipTransferRequestRepository.save(any(LeadershipTransferRequest.class)))
                     .thenAnswer(inv -> inv.getArgument(0));
+            when(viewMapper.toView(any(LeadershipTransferRequest.class)))
+                    .thenAnswer(inv -> {
+                        LeadershipTransferRequest r = inv.getArgument(0);
+                        return new LeadershipTransferRequestView(
+                                r.getId(), r.getCourseId(), r.getSenderId(), "",
+                                r.getTargetId(), "", r.getStatus(), r.getCreatedAt(), r.getUpdatedAt());
+                    });
 
             LeadershipTransferRequestView view = service.handle(leaderId, Role.USER, courseId, newLeaderId);
             ArgumentCaptor<LeadershipTransferRequest> captor = ArgumentCaptor.forClass(LeadershipTransferRequest.class);
@@ -90,6 +97,13 @@ class TransferLeadershipServiceTest {
             when(courseMembershipRepository.exists(newLeaderId, courseId)).thenReturn(true);
             when(leadershipTransferRequestRepository.save(any(LeadershipTransferRequest.class)))
                     .thenAnswer(inv -> inv.getArgument(0));
+            when(viewMapper.toView(any(LeadershipTransferRequest.class)))
+                    .thenAnswer(inv -> {
+                        LeadershipTransferRequest r = inv.getArgument(0);
+                        return new LeadershipTransferRequestView(
+                                r.getId(), r.getCourseId(), r.getSenderId(), "",
+                                r.getTargetId(), "", r.getStatus(), r.getCreatedAt(), r.getUpdatedAt());
+                    });
 
             LeadershipTransferRequestView view = service.handle(adminId, Role.ADMIN, courseId, newLeaderId);
             ArgumentCaptor<LeadershipTransferRequest> captor = ArgumentCaptor.forClass(LeadershipTransferRequest.class);

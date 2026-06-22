@@ -28,6 +28,7 @@ import com.agrupae.application.service.course.TransferLeadershipService;
 import com.agrupae.application.service.course.AcceptLeadershipTransferService;
 import com.agrupae.application.service.course.RejectLeadershipTransferService;
 import com.agrupae.application.service.course.GetPendingLeadershipTransferRequestService;
+import com.agrupae.application.service.course.LeadershipTransferRequestViewMapper;
 import com.agrupae.application.service.user.GetUserProfileService;
 import com.agrupae.application.service.user.UpdateProfileService;
 import com.agrupae.application.service.course.GetCoursesService;
@@ -164,28 +165,34 @@ public class ApplicationServiceConfig {
         }
 
         @Bean
+        public LeadershipTransferRequestViewMapper leadershipTransferRequestViewMapper(
+                        UserRepository userRepository) {
+                return new LeadershipTransferRequestViewMapper(userRepository);
+        }
+
+        @Bean
         public TransferLeadershipService transferLeadershipService(CourseRepository courseRepository,
                         CourseMembershipRepository courseMembershipRepository,
                         LeadershipTransferRequestRepository leadershipTransferRequestRepository,
-                        UserRepository userRepository) {
+                        LeadershipTransferRequestViewMapper viewMapper) {
                 return new TransferLeadershipService(courseRepository, courseMembershipRepository,
-                                leadershipTransferRequestRepository, userRepository);
+                                leadershipTransferRequestRepository, viewMapper);
         }
 
         @Bean
         public AcceptLeadershipTransferService acceptLeadershipTransferService(
                         LeadershipTransferRequestRepository leadershipTransferRequestRepository,
                         CourseRepository courseRepository,
-                        UserRepository userRepository) {
-                return new AcceptLeadershipTransferService(leadershipTransferRequestRepository, courseRepository, userRepository);
+                        LeadershipTransferRequestViewMapper viewMapper) {
+                return new AcceptLeadershipTransferService(leadershipTransferRequestRepository, courseRepository, viewMapper);
         }
 
         @Bean
         public RejectLeadershipTransferService rejectLeadershipTransferService(
                         LeadershipTransferRequestRepository leadershipTransferRequestRepository,
                         CourseRepository courseRepository,
-                        UserRepository userRepository) {
-                return new RejectLeadershipTransferService(leadershipTransferRequestRepository, courseRepository, userRepository);
+                        LeadershipTransferRequestViewMapper viewMapper) {
+                return new RejectLeadershipTransferService(leadershipTransferRequestRepository, courseRepository, viewMapper);
         }
 
         @Bean
@@ -193,9 +200,9 @@ public class ApplicationServiceConfig {
                         LeadershipTransferRequestRepository leadershipTransferRequestRepository,
                         CourseRepository courseRepository,
                         CourseMembershipRepository courseMembershipRepository,
-                        UserRepository userRepository) {
+                        LeadershipTransferRequestViewMapper viewMapper) {
                 return new GetPendingLeadershipTransferRequestService(leadershipTransferRequestRepository, courseRepository,
-                                courseMembershipRepository, userRepository);
+                                courseMembershipRepository, viewMapper);
         }
 
         @Bean
